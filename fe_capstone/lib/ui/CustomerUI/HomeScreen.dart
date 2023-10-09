@@ -127,20 +127,20 @@ class _HomeScreenState extends State<HomeScreen> {
             minChildSize: 0.3,
             maxChildSize: 0.7,
             builder: (context, scrollController) {
-              return CheckOutContent(scrollController);
-              // if (showParkingDetail) {
-              //   return ParkingDetailContent(
-              //     scrollController: scrollController,
-              //     showParkingDetailContent: showParkingDetailContent,
-              //     closeParkingDetail: () {
-              //       setState(() {
-              //         showParkingDetail = false;
-              //       });
-              //     },
-              //   );
-              // } else {
-              //   return HomeScreenContent(scrollController, showParkingDetailContent);
-              // }
+              // return CheckOutContent(scrollController);
+              if (showParkingDetail) {
+                return ParkingDetailContent(
+                  scrollController: scrollController,
+                  showParkingDetailContent: showParkingDetailContent,
+                  closeParkingDetail: () {
+                    setState(() {
+                      showParkingDetail = false;
+                    });
+                  },
+                );
+              } else {
+                return HomeScreenContent(scrollController, showParkingDetailContent);
+              }
             },
           ),
         ],
@@ -398,7 +398,7 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                                 Container(
                                   margin: EdgeInsets.only(bottom: 6 * fem),
                                   child: Text(
-                                    'Sáng/Tối',
+                                    'Sáng',
                                     style: TextStyle(
                                       fontSize: 12 * ffem,
                                       fontWeight: FontWeight.w400,
@@ -420,7 +420,45 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                             ),
                           ),
                           SizedBox(
-                            width: 15 * fem,
+                            width: 10 * fem,
+                          ),
+                          Container(
+                            padding: EdgeInsets.fromLTRB(
+                                15 * fem, 10 * fem, 15 * fem, 8 * fem),
+                            height: 50 * fem,
+                            decoration: BoxDecoration(
+                              color: Colors.grey[350],
+                              borderRadius: BorderRadius.circular(6 * fem),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  margin: EdgeInsets.only(bottom: 6 * fem),
+                                  child: Text(
+                                    'Tối',
+                                    style: TextStyle(
+                                      fontSize: 12 * ffem,
+                                      fontWeight: FontWeight.w400,
+                                      height: 1.175 * ffem / fem,
+                                      color: Color(0xff5b5b5b),
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  '3k',
+                                  style: TextStyle(
+                                    fontSize: 15 * ffem,
+                                    fontWeight: FontWeight.w600,
+                                    height: 1.2175 * ffem / fem,
+                                    color: Color(0xff000000),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            width: 10 * fem,
                           ),
                           Container(
                             padding: EdgeInsets.fromLTRB(
@@ -458,11 +496,11 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                             ),
                           ),
                           SizedBox(
-                            width: 15 * fem,
+                            width: 10 * fem,
                           ),
                           Container(
                             padding: EdgeInsets.fromLTRB(
-                                15 * fem, 10 * fem, 15 * fem, 8 * fem),
+                                12 * fem, 10 * fem, 12 * fem, 8 * fem),
                             height: 50 * fem,
                             decoration: BoxDecoration(
                               color: Colors.grey[350],
@@ -496,11 +534,11 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                             ),
                           ),
                           SizedBox(
-                            width: 15 * fem,
+                            width: 10 * fem,
                           ),
                           Container(
                             padding: EdgeInsets.fromLTRB(
-                                22 * fem, 10 * fem, 22 * fem, 8 * fem),
+                                20 * fem, 10 * fem, 20 * fem, 8 * fem),
                             height: 50 * fem,
                             decoration: BoxDecoration(
                               color: Colors.grey[350],

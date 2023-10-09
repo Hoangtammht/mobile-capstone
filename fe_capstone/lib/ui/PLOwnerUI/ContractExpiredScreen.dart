@@ -22,10 +22,12 @@ class ContractExpiredScreen extends StatelessWidget {
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Image.asset('assets/images/expired.png'),
+            Padding(
+              padding:  EdgeInsets.only(top: 55 * fem),
+              child: Image.asset('assets/images/expired.png'),
+            ),
             Padding(
               padding: EdgeInsets.only(top: 15 * fem),
               child: Text('Hợp đồng bãi đỗ xe của bạn \nđã hết hiệu lực',

@@ -9,12 +9,16 @@ import 'package:fe_capstone/ui/PLOwnerUI/PloChatScreen.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/PloHomeScreen.dart';
 import 'package:fe_capstone/ui/screens/LoginScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 late Size mq;
 late double fem;
 late double ffem;
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  _initializeFirebase();
   runApp(const MyApp());
 }
 
@@ -38,3 +42,8 @@ class MyApp extends StatelessWidget {
   }
 }
 
+_initializeFirebase() async {
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+}

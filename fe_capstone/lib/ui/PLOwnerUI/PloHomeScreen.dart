@@ -3,7 +3,7 @@ import 'package:fe_capstone/ui/PLOwnerUI/PloChatScreen.dart';
 import 'package:fe_capstone/ui/components/widgetPLO/WaitingParkingCard.dart';
 import 'package:flutter/material.dart';
 
-enum ParkingStatus { closed, full, available }
+enum ParkingStatus { closed, available }
 
 class PloHomeScreen extends StatefulWidget {
   const PloHomeScreen({Key? key}) : super(key: key);
@@ -180,7 +180,6 @@ class _PloHomeScreenState extends State<PloHomeScreen> {
                       },
                       items: <ParkingStatus>[
                         ParkingStatus.closed,
-                        ParkingStatus.full,
                         ParkingStatus.available,
                       ].map<DropdownMenuItem<ParkingStatus>>((ParkingStatus value) {
                         String text;
@@ -190,11 +189,6 @@ class _PloHomeScreenState extends State<PloHomeScreen> {
                           case ParkingStatus.closed:
                             text = 'Đóng';
                             backgroundColor = Colors.red;
-                            textColor = Colors.white;
-                            break;
-                          case ParkingStatus.full:
-                            text = 'Hết chỗ';
-                            backgroundColor = Colors.orange;
                             textColor = Colors.white;
                             break;
                           case ParkingStatus.available:
@@ -263,17 +257,7 @@ class _PloHomeScreenState extends State<PloHomeScreen> {
                       Text('Thay đổi trạng thái sang',
                           style: TextStyle(
                               fontSize: 18 * fem, fontWeight: FontWeight.bold)),
-                      if (_selectedStatus == ParkingStatus.full)
-                        Padding(
-                          padding:
-                              EdgeInsets.only(top: 10 * fem, bottom: 5 * fem),
-                          child: Text('hết chỗ',
-                              style: TextStyle(
-                                  color: Colors.orange,
-                                  fontSize: 18 * fem,
-                                  fontWeight: FontWeight.bold)),
-                        )
-                      else if (_selectedStatus == ParkingStatus.available)
+                      if (_selectedStatus == ParkingStatus.available)
                         Padding(
                           padding:
                               EdgeInsets.only(top: 10 * fem, bottom: 5 * fem),

@@ -32,7 +32,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
           },
         ),
         title: Text(
-          'Chỉnh sửa',
+          'Đặt chỗ',
           style: TextStyle(
             fontSize: 26 * ffem,
             fontWeight: FontWeight.w700,
@@ -76,7 +76,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                       Container(
                         margin: EdgeInsets.only(bottom: 6 * fem),
                         child: Text(
-                          'Sáng/Tối',
+                          'Sáng',
                           style: TextStyle(
                             fontSize: 13 * ffem,
                             fontWeight: FontWeight.w400,
@@ -98,11 +98,49 @@ class _ReservationScreenState extends State<ReservationScreen> {
                   ),
                 ),
                 SizedBox(
-                  width: 15 * fem,
+                  width: 10 * fem,
                 ),
                 Container(
                   padding: EdgeInsets.fromLTRB(
                       15 * fem, 10 * fem, 15 * fem, 8 * fem),
+                  height: 50 * fem,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[350],
+                    borderRadius: BorderRadius.circular(6 * fem),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(bottom: 6 * fem),
+                        child: Text(
+                          'Tối',
+                          style: TextStyle(
+                            fontSize: 13 * ffem,
+                            fontWeight: FontWeight.w400,
+                            height: 1.175 * ffem / fem,
+                            color: Color(0xff5b5b5b),
+                          ),
+                        ),
+                      ),
+                      Text(
+                        '3k',
+                        style: TextStyle(
+                          fontSize: 15 * ffem,
+                          fontWeight: FontWeight.w600,
+                          height: 1.2175 * ffem / fem,
+                          color: Color(0xff000000),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  width: 10 * fem,
+                ),
+                Container(
+                  padding: EdgeInsets.fromLTRB(
+                      12 * fem, 10 * fem, 12 * fem, 8 * fem),
                   height: 50 * fem,
                   decoration: BoxDecoration(
                     color: Colors.grey[350],
@@ -136,11 +174,11 @@ class _ReservationScreenState extends State<ReservationScreen> {
                   ),
                 ),
                 SizedBox(
-                  width: 15 * fem,
+                  width: 10 * fem,
                 ),
                 Container(
                   padding: EdgeInsets.fromLTRB(
-                      15 * fem, 10 * fem, 15 * fem, 8 * fem),
+                      12 * fem, 10 * fem, 12 * fem, 8 * fem),
                   height: 50 * fem,
                   decoration: BoxDecoration(
                     color: Colors.grey[350],
@@ -174,11 +212,11 @@ class _ReservationScreenState extends State<ReservationScreen> {
                   ),
                 ),
                 SizedBox(
-                  width: 15 * fem,
+                  width: 10 * fem,
                 ),
                 Container(
                   padding: EdgeInsets.fromLTRB(
-                      22 * fem, 10 * fem, 22 * fem, 8 * fem),
+                      15 * fem, 10 * fem, 15 * fem, 8 * fem),
                   height: 50 * fem,
                   decoration: BoxDecoration(
                     color: Colors.grey[350],

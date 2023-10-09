@@ -16,6 +16,8 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTeET9OkThGxXQWnPrfXR_2NY45Xn1cqtKJwXhtNx2bjjW8rM8fUwW-ChoZM-3FyzI0MmQ&usqp=CAU",
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTeET9OkThGxXQWnPrfXR_2NY45Xn1cqtKJwXhtNx2bjjW8rM8fUwW-ChoZM-3FyzI0MmQ&usqp=CAU"
   ];
+  String? _image;
+
 
   @override
   Widget build(BuildContext context) {
@@ -270,11 +272,17 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
                         ),
                         onPressed: () async {
                           final ImagePicker picker = ImagePicker();
-                          final XFile? image = await picker.pickImage(
-                            source: ImageSource.gallery,
-                            imageQuality: 80,
-                          );
-                          Navigator.pop(context);
+                          final XFile? image =
+                          await picker.pickImage(source: ImageSource.gallery, imageQuality: 80);
+                          if (image != null) {
+                            print(
+                                'Image Path: ${image.path} -- MimeType: ${image.mimeType}');
+                            setState(() {
+                              _image = image.path;
+                            });
+                            //APIs image parking
+                            Navigator.pop(context);
+                          }
                         },
                         child: Image.asset('assets/images/file.png'),
                       ),
@@ -293,9 +301,16 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
                           ),
                           onPressed: () async {
                             final ImagePicker picker = ImagePicker();
-                            final XFile? image = await picker.pickImage(
-                                source: ImageSource.camera, imageQuality: 80);
-                            Navigator.pop(context);
+                            final XFile? image =
+                            await picker.pickImage(source: ImageSource.camera, imageQuality: 80);
+                            if (image != null) {
+                              print('Image Path: ${image.path}');
+                              setState(() {
+                                _image = image.path;
+                              });
+                              //APIs image parking
+                              Navigator.pop(context);
+                            }
                           },
                           child: Image.asset('assets/images/camera.png')),
                     ),

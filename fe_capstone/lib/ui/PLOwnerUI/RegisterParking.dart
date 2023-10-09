@@ -1,4 +1,5 @@
 import 'package:fe_capstone/main.dart';
+import 'package:fe_capstone/ui/PLOwnerUI/RegistrationFeeScreen.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/WaitingApprovalScreen.dart';
 import 'package:fe_capstone/ui/helper/ConfirmDialog.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +22,7 @@ class _RegisterParkingState extends State<RegisterParking> {
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTeET9OkThGxXQWnPrfXR_2NY45Xn1cqtKJwXhtNx2bjjW8rM8fUwW-ChoZM-3FyzI0MmQ&usqp=CAU",
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTeET9OkThGxXQWnPrfXR_2NY45Xn1cqtKJwXhtNx2bjjW8rM8fUwW-ChoZM-3FyzI0MmQ&usqp=CAU"
   ];
+  String? _image;
 
   void _updateCheckboxState() {
     setState(() {
@@ -381,16 +383,8 @@ class _RegisterParkingState extends State<RegisterParking> {
               InkWell(
                 onTap: canSubmit
                     ? () {
-                        CustomDialogs.showCustomDialog(
-                          context,
-                          "Gửi yêu cầu đăng ký bãi\nđỗ xe",
-                          "Xác nhận",
-                          Color(0xffff3737),
-                          () {
-                            PersistentNavBarNavigator.pushNewScreen(context, screen: WaitingApprovalScreen(), withNavBar: true, pageTransitionAnimation: PageTransitionAnimation.cupertino, );
-                          },
-                        );
-                      }
+                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => RegistrationFeeScreen()));
+                          }
                     : null,
                 child: Container(
                   padding: EdgeInsets.all(8 * fem),
@@ -406,7 +400,7 @@ class _RegisterParkingState extends State<RegisterParking> {
                   ),
                   child: Center(
                     child: Text(
-                      'Gửi phiếu đăng ký',
+                      'Tiếp tục',
                       style: TextStyle(
                         fontSize: 19 * ffem,
                         fontWeight: FontWeight.w600,
@@ -468,11 +462,17 @@ class _RegisterParkingState extends State<RegisterParking> {
                         ),
                         onPressed: () async {
                           final ImagePicker picker = ImagePicker();
-                          final XFile? image = await picker.pickImage(
-                            source: ImageSource.gallery,
-                            imageQuality: 80,
-                          );
-                          Navigator.pop(context);
+                          final XFile? image =
+                          await picker.pickImage(source: ImageSource.gallery, imageQuality: 80);
+                          if (image != null) {
+                            print(
+                                'Image Path: ${image.path} -- MimeType: ${image.mimeType}');
+                            setState(() {
+                              _image = image.path;
+                            });
+                            //APIs image parking
+                            Navigator.pop(context);
+                          }
                         },
                         child: Image.asset('assets/images/file.png'),
                       ),
@@ -491,9 +491,16 @@ class _RegisterParkingState extends State<RegisterParking> {
                           ),
                           onPressed: () async {
                             final ImagePicker picker = ImagePicker();
-                            final XFile? image = await picker.pickImage(
-                                source: ImageSource.camera, imageQuality: 80);
-                            Navigator.pop(context);
+                            final XFile? image =
+                            await picker.pickImage(source: ImageSource.camera, imageQuality: 80);
+                            if (image != null) {
+                              print('Image Path: ${image.path}');
+                              setState(() {
+                                _image = image.path;
+                              });
+                              //APIs image parking
+                              Navigator.pop(context);
+                            }
                           },
                           child: Image.asset('assets/images/camera.png')),
                     ),
@@ -611,102 +618,4 @@ class _RegisterParkingState extends State<RegisterParking> {
     );
   }
 
-  Future<void> _showRegisterParkingDialog(BuildContext context) async {
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(23),
-          ),
-          backgroundColor: const Color(0xffffffff),
-          child: Container(
-            padding: EdgeInsets.all(10),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Center(
-                  child: Container(
-                    padding: EdgeInsets.only(bottom: 30 * fem, top: 20 * fem),
-                    child: const Text(
-                      "Gửi yêu cầu đăng ký bãi\nđỗ xe",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        children: [
-                          Container(
-                            height: 1,
-                            color: Color(0xffb3abab), // Đường thẳng ngang
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: Text(
-                              'Hủy',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xff5767f5),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Column(
-                      children: [
-                        Container(
-                          width: 1,
-                          height: 48,
-                          color: Color(0xffb3abab),
-                        ),
-                      ],
-                    ),
-                    Expanded(
-                      child: Column(
-                        children: [
-                          Container(
-                            height: 1,
-                            color: Color(0xffb3abab),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          WaitingApprovalScreen()));
-                            },
-                            child: Text(
-                              'Xác nhận',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xffff3737),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
 }

@@ -3,6 +3,7 @@ import 'package:fe_capstone/ui/PLOwnerUI/NotificationScreen.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/ParkingScreen.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/PloHomeScreen.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/PloProfileScreen.dart';
+import 'package:fe_capstone/ui/PLOwnerUI/RegisterParking.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/RevenueScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
@@ -18,7 +19,7 @@ class _BottomTabNavPloState extends State<BottomTabNavPlo> {
 
   List<Widget> _buildScreens() {
     return [
-      PloHomeScreen(),
+      RegisterParking(),
       ParkingScreen(),
       RevenueScreen(),
       PloProfileScreen(),
