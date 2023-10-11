@@ -18,8 +18,13 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool isPasswordVisible = false;
-  List<String> list = <String>['Khách hàng', 'Chủ bãi xe'];
-  late String dropdownValue = list.first;
+  String dropdownValue = 'Khách hàng'; // Ban đầu giá trị là "Khách hàng"
+
+  void toggleUserRole() {
+    setState(() {
+      dropdownValue = dropdownValue == 'Khách hàng' ? 'Chủ bãi xe' : 'Khách hàng';
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,49 +74,62 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     Container(
-                      margin: EdgeInsets.only(left: 150 * fem, bottom: 20 * fem),
-                      child: DropdownMenu<String>(
-                        initialSelection: list.first,
-                        onSelected: (String? value) {
-                          setState(() {
-                            dropdownValue = value!;
-                          });
-                        },
-                        dropdownMenuEntries:
-                            list.map<DropdownMenuEntry<String>>((String value) {
-                          return DropdownMenuEntry<String>(
-                              value: value, label: value);
-                        }).toList(),
-                      ),
-                    ),
-                    Container(
                       margin: EdgeInsets.fromLTRB(
-                          0, 0, 0, 15 * fem), // Thêm khoảng cách bottom 15*fem
+                          0, 0, 0, 15 * fem),
                       padding: EdgeInsets.fromLTRB(20.5 * fem, 0, 20.5 * fem,
-                          0), // Thay đổi padding để loại bỏ khoảng cách ở trên và dưới
+                          0),
                       width: double.infinity,
                       decoration: BoxDecoration(
                         border: Border.all(color: Theme.of(context).primaryColor),
                         borderRadius: BorderRadius.circular(30 * fem),
                       ),
-                      child: TextFormField(
-                        style: TextStyle(
-                          fontSize: 20 * ffem,
-                          fontWeight: FontWeight.w600,
-                          height: 1.175 * ffem / fem,
-                          color: Color(0xff000000),
-                        ),
-                        decoration: InputDecoration(
-                          border: InputBorder
-                              .none, // Loại bỏ viền của TextFormField
-                          hintText: 'Số điện thoại', // Gợi ý cho người dùng
-                          hintStyle: TextStyle(
-                            fontSize: 20 * ffem,
-                            fontWeight: FontWeight.w600,
-                            height: 1.175 * ffem / fem,
-                            color: Color(0xffa3a3a3),
+                      child: Row(
+                        children: [
+                          GestureDetector(
+                            onTap: toggleUserRole,
+                            child: Container(
+                              margin: EdgeInsets.fromLTRB(0 * fem, 0 * fem, 14 * fem, 0 * fem),
+                              child: Text(
+                                dropdownValue == 'Khách hàng' ? 'C' : 'P',
+                                style: TextStyle(
+                                  fontSize: 20 * ffem,
+                                  fontWeight: FontWeight.w600,
+                                  height: 1.175 * ffem / fem,
+                                  color: Color(0xffa3a3a3),
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
+                          Container(
+                            margin:  EdgeInsets.fromLTRB(0*fem, 0*fem, 11.5*fem, 0.99*fem),
+                            width:  2*fem,
+                            height:  48.01*fem,
+                            decoration:  BoxDecoration (
+                              color:  Color(0xff6ec2f7),
+                            ),
+                          ),
+                          Expanded(
+                            child: TextFormField(
+                              style: TextStyle(
+                                fontSize: 20 * ffem,
+                                fontWeight: FontWeight.w600,
+                                height: 1.175 * ffem / fem,
+                                color: Color(0xff000000),
+                              ),
+                              decoration: InputDecoration(
+                                border: InputBorder
+                                    .none,
+                                hintText: 'Số điện thoại',
+                                hintStyle: TextStyle(
+                                  fontSize: 20 * ffem,
+                                  fontWeight: FontWeight.w600,
+                                  height: 1.175 * ffem / fem,
+                                  color: Color(0xffa3a3a3),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     Container(

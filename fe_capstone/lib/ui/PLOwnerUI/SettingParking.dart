@@ -48,19 +48,21 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    margin: EdgeInsets.only(bottom: 5 * fem),
-                    child: DropdownMenu<String>(
-                      initialSelection: list.first,
-                      onSelected: (String? value) {
-                        setState(() {
-                          dropdownValue = value!;
-                        });
-                      },
-                      dropdownMenuEntries:
-                      list.map<DropdownMenuEntry<String>>((String value) {
-                        return DropdownMenuEntry<String>(
-                            value: value, label: value);
-                      }).toList(),
+                    padding:  EdgeInsets.fromLTRB(7*fem, 14*fem, 10*fem, 12*fem),
+                    decoration:  BoxDecoration (
+                      color:  Color(0xfff5f5f5),
+                      borderRadius:  BorderRadius.circular(9*fem),
+                    ),
+                    child:
+                    Text(
+                      'Ban ngày',
+                      textAlign:  TextAlign.center,
+                      style:  TextStyle (
+                        fontSize:  19*ffem,
+                        fontWeight:  FontWeight.w500,
+                        height:  1.175*ffem/fem,
+                        color:  Color(0xff222222),
+                      ),
                     ),
                   ),
                   Padding(
@@ -164,47 +166,34 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
                 ],
               ),
             ),
-            if(isIconVisibleOne)
-            InkWell(
-              onTap: (){
-                setState(() {
-                  isIconVisibleOne = false;
-                  _firstAddClicked = true;
-                });
-              },
-              child: Container(
-                margin: EdgeInsets.symmetric(vertical: 5 * fem),
-                width:  40*fem,
-                height:  40*fem,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Color(0xff9e9e9e)),
-                  borderRadius: BorderRadius.circular(9 * fem),
-                  color: Colors.transparent,
-                ),
-                child:
-                Icon(Icons.add),
+            Padding(
+              padding: EdgeInsets.only(left: 40 * fem, right: 40 * fem, top: 20 * fem, bottom: 15 * fem),
+              child: Divider(
+                thickness: 3,
+                height: 2 * fem,
               ),
             ),
-            if (!isIconVisibleOne)
             Container(
               margin: EdgeInsets.only(top: 10 * fem),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    margin: EdgeInsets.only(bottom: 5 * fem),
-                    child: DropdownMenu<String>(
-                      initialSelection: list.first,
-                      onSelected: (String? value) {
-                        setState(() {
-                          dropdownValue = value!;
-                        });
-                      },
-                      dropdownMenuEntries:
-                      list.map<DropdownMenuEntry<String>>((String value) {
-                        return DropdownMenuEntry<String>(
-                            value: value, label: value);
-                      }).toList(),
+                    padding:  EdgeInsets.fromLTRB(7*fem, 14*fem, 10*fem, 12*fem),
+                    decoration:  BoxDecoration (
+                      color:  Color(0xfff5f5f5),
+                      borderRadius:  BorderRadius.circular(9*fem),
+                    ),
+                    child:
+                    Text(
+                      'Ban đêm',
+                      textAlign:  TextAlign.center,
+                      style:  TextStyle (
+                        fontSize:  19*ffem,
+                        fontWeight:  FontWeight.w500,
+                        height:  1.175*ffem/fem,
+                        color:  Color(0xff222222),
+                      ),
                     ),
                   ),
                   Padding(
@@ -264,7 +253,7 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
                           Center(
                             child:
                             Text(
-                              '11 PM',
+                              '18 PM',
                               style:  TextStyle (
                                 fontSize:  16*ffem,
                                 fontWeight:  FontWeight.w400,
@@ -291,7 +280,7 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
                           Center(
                             child:
                             Text(
-                              '11 PM',
+                              '23 PM',
                               style:  TextStyle (
                                 fontSize:  16*ffem,
                                 fontWeight:  FontWeight.w400,
@@ -331,49 +320,34 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
 
 
             ),
-
-            if (_firstAddClicked)
-              if(isIconVisibleTwo)
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      isIconVisibleTwo = false;
-                      _firstAddClicked = false;
-                    });
-                  },
-                  child: Container(
-                    margin: EdgeInsets.symmetric(vertical: 5 * fem),
-                    width: 40 * fem,
-                    height: 40 * fem,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Color(0xff9e9e9e)),
-                      borderRadius: BorderRadius.circular(9 * fem),
-                      color: Colors.transparent,
-                    ),
-                    child:
-                    Icon(Icons.add),
-                  ),
-                ),
-              if (!isIconVisibleTwo)
-                Container(
+            Padding(
+              padding: EdgeInsets.only(left: 40 * fem, right: 40 * fem, top: 20 * fem, bottom: 15 * fem),
+              child: Divider(
+                thickness: 3,
+                height: 2 * fem,
+              ),
+            ),
+            Container(
                   margin: EdgeInsets.only(top: 10 * fem),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        margin: EdgeInsets.only(bottom: 5 * fem),
-                        child: DropdownMenu<String>(
-                          initialSelection: list.first,
-                          onSelected: (String? value) {
-                            setState(() {
-                              dropdownValue = value!;
-                            });
-                          },
-                          dropdownMenuEntries:
-                          list.map<DropdownMenuEntry<String>>((String value) {
-                            return DropdownMenuEntry<String>(
-                                value: value, label: value);
-                          }).toList(),
+                        padding:  EdgeInsets.fromLTRB(7*fem, 14*fem, 10*fem, 12*fem),
+                        decoration:  BoxDecoration (
+                          color:  Color(0xfff5f5f5),
+                          borderRadius:  BorderRadius.circular(9*fem),
+                        ),
+                        child:
+                        Text(
+                          'Qua đêm',
+                          textAlign:  TextAlign.center,
+                          style:  TextStyle (
+                            fontSize:  19*ffem,
+                            fontWeight:  FontWeight.w500,
+                            height:  1.175*ffem/fem,
+                            color:  Color(0xff222222),
+                          ),
                         ),
                       ),
                       Padding(
@@ -436,7 +410,7 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
                               Center(
                                 child:
                                 Text(
-                                  '11 PM',
+                                  '23 PM',
                                   style: TextStyle(
                                     fontSize: 16 * ffem,
                                     fontWeight: FontWeight.w400,
@@ -475,30 +449,6 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
                               ),
                             ),
                           ],
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          setState(() {
-                            isIconVisibleTwo = true;
-                            _firstAddClicked = true;
-                          });
-                        },
-                        child: Container(
-                          margin: EdgeInsets.fromLTRB(
-                              0 * fem, 25 * fem, 0 * fem, 0 * fem),
-                          width: 361 * fem,
-                          height: 51 * fem,
-                          decoration: BoxDecoration(
-                            color: Colors.red,
-                            borderRadius: BorderRadius.circular(9 * fem),
-                          ),
-                          child:
-                          Center(
-                            child:
-                            Icon(Icons.delete_forever_outlined,
-                              color: Colors.white,),
-                          ),
                         ),
                       ),
                     ],

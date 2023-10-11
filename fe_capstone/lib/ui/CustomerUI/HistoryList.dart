@@ -16,19 +16,22 @@ class _HistoryListState extends State<HistoryList> {
       title: 'Khách sạn No Romantic',
       address: '681A Đường Nguyễn Huệ, Bến Nghé, Quận 1, TP HCM',
       status: 'Ban ngày',
-      date: 'Từ 3 tiếng trước',
+      checkIn: '10:30:00 - 22/04/2023',
+      checkOut: '10:30:00 - 22/04/2023',
     ),
     History(
       title: 'Khách sạn ABC',
       address: '123 Đường ABC, Quận XYZ, TP HCM',
       status: 'Ban Đêm',
-      date: 'Từ 5 tiếng trước',
+      checkIn: '10:30:00 - 22/04/2023',
+      checkOut: '10:30:00 - 22/04/2023',
     ),
     History(
       title: 'Nhà hàng XYZ',
       address: '456 Đường XYZ, Quận ABC, TP HCM',
       status: 'Qua đêm',
-      date: 'Từ 1 ngày trước',
+      checkIn: '10:30:00 - 22/04/2023',
+      checkOut: '10:30:00 - 22/04/2023',
     ),
   ];
 

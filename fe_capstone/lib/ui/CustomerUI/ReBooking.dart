@@ -37,41 +37,10 @@ class ReBooking extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Container(
-              margin: EdgeInsets.fromLTRB(226 * fem, 0 * fem, 0 * fem, 5 * fem),
-              padding: EdgeInsets.fromLTRB(14 * fem, 14 * fem, 4 * fem, 10 * fem), // Adjusted padding
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Color(0xffdcdada),
-                borderRadius: BorderRadius.circular(6 * fem),
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 20 * fem, // Reduced icon size
-                    height: 20 * fem, // Reduced icon size
-                    child: Icon(Icons.fmd_good_outlined),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(left: 8 * fem),
-                    child: Text(
-                      'Chỉ đường',
-                      style: TextStyle(
-                        fontSize: 16 * ffem,
-                        fontWeight: FontWeight.w600,
-                        height: 1.175 * ffem / fem,
-                        color: Color(0xff000000),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
               margin: EdgeInsets.only(top: 25 * fem),
               padding: EdgeInsets.symmetric(horizontal: 8 * fem),
               width: 358 * fem,
-              height: 326 * fem,
+              height: 350 * fem,
               decoration: BoxDecoration(
                 color: Colors.grey[200],
                 borderRadius: BorderRadius.circular(16 * fem),
@@ -146,7 +115,7 @@ class ReBooking extends StatelessWidget {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.fromLTRB(16 * fem, 25 * fem, 0, 0),
+                    padding: EdgeInsets.fromLTRB(16 * fem, 15 * fem, 0, 0),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
@@ -197,31 +166,6 @@ class ReBooking extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Container(
-                    padding: EdgeInsets.fromLTRB(16 * fem, 21 * fem, 0, 0),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Số lượng chỗ',
-                          style: TextStyle(
-                            fontSize: 15 * ffem,
-                            fontWeight: FontWeight.w400,
-                            color: Color(0xff5b5b5b),
-                          ),
-                        ),
-                        Spacer(),
-                        Text(
-                          '1',
-                          style: TextStyle(
-                            fontSize: 15 * ffem,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xff000000),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Divider(
@@ -253,7 +197,41 @@ class ReBooking extends StatelessWidget {
                       ],
                     ),
                   ),
-
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Divider(
+                      thickness: 1,
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.fromLTRB(15 * fem, 10 * fem, 0, 0),
+                    child:  Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Text.rich(
+                            TextSpan(
+                                children: [
+                                  TextSpan(
+                                      text: 'Địa chỉ: ',
+                                      style: TextStyle(
+                                          fontSize: 18 * fem
+                                      )
+                                  ),
+                                  TextSpan(
+                                      text: '681A Đ. Nguyễn Huệ, Bến Nghé, Quận 1, TP HCM',
+                                      style: TextStyle(
+                                        fontSize: 16 * fem,
+                                        fontWeight: FontWeight.bold,
+                                      )
+                                  )
+                                ]
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),

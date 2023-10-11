@@ -1,5 +1,4 @@
 import 'package:fe_capstone/main.dart';
-import 'package:fe_capstone/ui/CustomerUI/HomeScreen.dart';
 import 'package:fe_capstone/ui/components/FooterComponent.dart';
 import 'package:fe_capstone/ui/components/HeaderComponent.dart';
 import 'package:fe_capstone/ui/screens/LoginScreen.dart';
@@ -17,6 +16,7 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   bool isPasswordVisible = false;
   bool isConfirmPasswordVisible = false;
+  bool isOwner = false;
 
   @override
   Widget build(BuildContext context) {
@@ -171,7 +171,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     Container(
                       margin: EdgeInsets.fromLTRB(
-                          0 * fem, 0 * fem, 0 * fem, 18 * fem),
+                          0 * fem, 0 * fem, 0 * fem, 5 * fem),
                       padding: EdgeInsets.fromLTRB(
                           20.5 * fem, 0, 20.5 * fem, 0),
                       width: double.infinity,
@@ -186,7 +186,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             child: TextFormField(
                               obscureText: isConfirmPasswordVisible
                                   ? false
-                                  : true, // Ẩn mật khẩu
+                                  : true, 
                               style: TextStyle(
                                 fontSize: 20 * ffem,
                                 fontWeight: FontWeight.w600,
@@ -222,6 +222,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ],
                       ),
                     ),
+                    buildOwnerCheckbox(),
                     ElevatedButton(
                       onPressed: () {
                         Navigator.push(
@@ -314,6 +315,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget buildOwnerCheckbox() {
+    return CheckboxListTile(
+      title: Text(
+        "Bạn là chủ bãi xe",
+        style: TextStyle(
+          fontSize: 15 * ffem,
+          fontWeight: FontWeight.w600,
+          height: 1.175 * ffem / fem,
+          color: Colors.grey,
+        ),
+      ),
+      value: isOwner,
+      onChanged: (newValue) {
+        setState(() {
+          isOwner = newValue ?? false;
+        });
+      },
+      controlAffinity: ListTileControlAffinity.leading, // Đặt checkbox bên trái văn bản
     );
   }
 }
