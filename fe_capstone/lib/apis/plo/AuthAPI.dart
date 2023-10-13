@@ -4,15 +4,16 @@ import 'package:fe_capstone/models/UpdateProfileRequest.dart';
 
 class AuthPloAPIs{
   static Dio dio = Dio();
+  static const String baseUrl = 'https://eparking.azurewebsites.net';
 
   static Future<PloProfile> getPloProfile(String token) async {
     try {
       final response = await dio.get(
-        'https://eparking.azurewebsites.net/PLO/profile',
+        '$baseUrl/PLO/profile',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
-            'Accept': 'application/json',
+            'Content-Type': 'application/json',
           },
         ),
       );
@@ -37,11 +38,11 @@ class AuthPloAPIs{
       ) async {
     try {
       final response = await dio.put(
-        'https://eparking.azurewebsites.net/PLO/changePassword',
+        '$baseUrl/PLO/changePassword',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
-            'Accept': 'application/json',
+            'Content-Type': 'application/json',
           },
         ),
         queryParameters: {
@@ -64,11 +65,11 @@ class AuthPloAPIs{
   static Future<void> updateProfile(String token, UpdateProfileRequest request) async {
     try {
       final response = await dio.put(
-        'https://eparking.azurewebsites.net/PLO/updateProfile',
+        '$baseUrl/PLO/updateProfile',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
-            'Accept': 'application/json',
+            'Content-Type': 'application/json',
           },
         ),
         data: request.toJson(),

@@ -19,7 +19,7 @@ class _BottomTabNavPloState extends State<BottomTabNavPlo> {
 
   List<Widget> _buildScreens() {
     return [
-      RegisterParking(),
+      PloHomeScreen(),
       ParkingScreen(),
       RevenueScreen(),
       PloProfileScreen(),

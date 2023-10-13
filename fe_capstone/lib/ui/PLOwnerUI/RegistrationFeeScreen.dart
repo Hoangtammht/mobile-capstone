@@ -16,9 +16,6 @@ class RegistrationFeeScreen extends StatefulWidget {
 }
 
 class _RegistrationFeeScreenState extends State<RegistrationFeeScreen> {
-  List<String> images = [
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTeET9OkThGxXQWnPrfXR_2NY45Xn1cqtKJwXhtNx2bjjW8rM8fUwW-ChoZM-3FyzI0MmQ&usqp=CAU",
-  ];
   String? _image;
 
   @override

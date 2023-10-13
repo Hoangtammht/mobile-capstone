@@ -1,7 +1,14 @@
+import 'dart:io';
+
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:fe_capstone/apis/plo/ParkingAPI.dart';
 import 'package:fe_capstone/main.dart';
+import 'package:fe_capstone/models/ParkingInformationModel.dart';
 import 'package:fe_capstone/ui/helper/ConfirmDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+
+import 'ParkingInformation.dart';
 
 class EditParkingInformation extends StatefulWidget {
   const EditParkingInformation({Key? key}) : super(key: key);
@@ -11,12 +18,30 @@ class EditParkingInformation extends StatefulWidget {
 }
 
 class _EditParkingInformationState extends State<EditParkingInformation> {
+
   List<String> images = [
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTeET9OkThGxXQWnPrfXR_2NY45Xn1cqtKJwXhtNx2bjjW8rM8fUwW-ChoZM-3FyzI0MmQ&usqp=CAU",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTeET9OkThGxXQWnPrfXR_2NY45Xn1cqtKJwXhtNx2bjjW8rM8fUwW-ChoZM-3FyzI0MmQ&usqp=CAU",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTeET9OkThGxXQWnPrfXR_2NY45Xn1cqtKJwXhtNx2bjjW8rM8fUwW-ChoZM-3FyzI0MmQ&usqp=CAU"
   ];
+
+  List<String> newListImage = [];
+
   String? _image;
+
+  late Future<ParkingInformationModel> parkingInformationFuture;
+  String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQTDA5MzQzMjg4MTMiLCJyb2xlIjoiUExPIiwiaXNzIjoiaHR0cHM6Ly9lcGFya2luZy5henVyZXdlYnNpdGVzLm5ldC91c2VyL2xvZ2luVXNlciJ9.Etq-tq7gqaBvuWZTowodVXG9xjAX044FySmFp80mvic";
+  TextEditingController _parkingNameController = TextEditingController();
+  TextEditingController _descriptionController = TextEditingController();
+
+
+  @override
+  void initState() {
+    super.initState();
+    parkingInformationFuture = ParkingAPI.getParkingInformation(token);
+    parkingInformationFuture.then((data) {
+      _parkingNameController.text = data?.parkingName ?? '';
+      _descriptionController.text = data?.description ?? '';
+      images = data.image.map((imageObject) => imageObject.imageLink).toList();
+    });
+  }
 
 
   @override
@@ -46,182 +71,199 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 10 * fem, vertical: 15 * fem),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              height: 60 * fem,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
+        child: FutureBuilder<ParkingInformationModel>(
+          future: parkingInformationFuture,
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            } else {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  for (var imageUrl in images)
-                    InkWell(
-                      onTap: () {
-                        _showConfirmDeleteImageDialog(context);
-                      },
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 5 * fem),
-                        child: Container(
-                          width: 100 * fem,
-                          height: 60 * fem,
-                          child: Image.network(
-                            imageUrl,
-                            fit: BoxFit.cover,
+                  Container(
+                    height: 60 * fem,
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: [
+                        for (var imageUrl in images.asMap().entries)
+                          InkWell(
+                            onTap: () {
+                              _showConfirmDeleteImageDialog(context, imageUrl.key, imageUrl.value);
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 5 * fem),
+                              child: Container(
+                                width: 100 * fem,
+                                height: 60 * fem,
+                                child: CachedNetworkImage(
+                                  imageUrl: imageUrl.value,
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) => CircularProgressIndicator(),
+                                  errorWidget: (context, url, error) => Icon(Icons.error),
+                                ),
+                              ),
+                            ),
                           ),
+                        InkWell(
+                          onTap: () {
+                            _showBottomSheet();
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              width: 50 * fem,
+                              height: 50 * fem,
+                              child: Image.asset(
+                                'assets/images/addImage.png',
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 10 * fem, vertical: 15 * fem),
+                    child: Container(
+                      margin:
+                      EdgeInsets.fromLTRB(1 * fem, 0 * fem, 0 * fem, 16 * fem),
+                      child: Text(
+                        'Tên bãi',
+                        style: TextStyle(
+                          fontSize: 19 * ffem,
+                          fontWeight: FontWeight.w600,
+                          height: 1.175 * ffem / fem,
+                          color: Color(0xff000000),
                         ),
                       ),
                     ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 10 * fem, vertical: 15 * fem),
+                    child: Container(
+                      margin:
+                      EdgeInsets.fromLTRB(0 * fem, 0 * fem, 0 * fem, 16 * fem),
+                      padding:
+                      EdgeInsets.fromLTRB(18 * fem, 0 * fem, 18 * fem, 0 * fem),
+                      width: 361 * fem,
+                      decoration: BoxDecoration(
+                        color: Color(0xfff5f5f5),
+                        borderRadius: BorderRadius.circular(9 * fem),
+                      ),
+                      child: TextFormField(
+                        controller: _parkingNameController,
+                        style: TextStyle(
+                          fontSize: 16 * ffem,
+                          fontWeight: FontWeight.w400,
+                          height: 1.175 * ffem / fem,
+                          color: Color(0xff9e9e9e),
+                        ),
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                        ),
+
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 10 * fem, vertical: 15 * fem),
+                    child: Container(
+                      margin:
+                      EdgeInsets.fromLTRB(1 * fem, 0 * fem, 0 * fem, 16 * fem),
+                      child: Text(
+                        'Mô tả',
+                        style: TextStyle(
+                          fontSize: 19 * ffem,
+                          fontWeight: FontWeight.w600,
+                          height: 1.175 * ffem / fem,
+                          color: Color(0xff000000),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 10 * fem, vertical: 15 * fem),
+                    child: Container(
+                      padding:
+                      EdgeInsets.fromLTRB(18 * fem, 0 * fem, 18 * fem, 0 * fem),
+                      width: 361 * fem,
+                      decoration: BoxDecoration(
+                        color: Color(0xfff5f5f5),
+                        borderRadius: BorderRadius.circular(9 * fem),
+                      ),
+                      child: TextFormField(
+                        controller: _descriptionController,
+                        minLines: 1,
+                        maxLines: null,
+                        style: TextStyle(
+                          fontSize: 16 * ffem,
+                          fontWeight: FontWeight.w400,
+                          height: 1.175 * ffem / fem,
+                          color: Color(0xff9e9e9e),
+                        ),
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 40 * fem,
+                  ),
                   InkWell(
                     onTap: () {
-                      _showBottomSheet();
+                      String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQTDA5MzQzMjg4MTMiLCJyb2xlIjoiUExPIiwiaXNzIjoiaHR0cHM6Ly9lcGFya2luZy5henVyZXdlYnNpdGVzLm5ldC91c2VyL2xvZ2luVXNlciJ9.Etq-tq7gqaBvuWZTowodVXG9xjAX044FySmFp80mvic";
+                      String newParkingName = _parkingNameController.text;
+                      String description = _descriptionController.text;
+                      print(newParkingName);
+                      print(description);
+                      print(images);
+
+                      CustomDialogs.showCustomDialog(
+                        context,
+                        "Thay đổi thông tin bãi xe",
+                        "Xác nhận",
+                        Color(0xffff3737),
+                            () async {
+                              try {
+                                await ParkingAPI.updateParkingInformation(token, description, images, newParkingName);
+                              } catch (e) {
+                                print("Error: $e");
+                              }
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ParkingInformation()));
+                        },
+                      );
                     },
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        width: 50 * fem,
-                        height: 50 * fem,
-                        child: Image.asset(
-                          'assets/images/addImage.png',
-                          fit: BoxFit.cover,
+                    child: Container(
+                      margin:
+                      EdgeInsets.fromLTRB(10 * fem, 0 * fem, 10 * fem, 0 * fem),
+                      height: 50 * fem,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColor,
+                        borderRadius: BorderRadius.circular(9 * fem),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Chỉnh sửa',
+                          style: TextStyle(
+                            fontSize: 19 * ffem,
+                            fontWeight: FontWeight.w600,
+                            height: 1.175 * ffem / fem,
+                            color: Color(0xffffffff),
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ],
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: 10 * fem, vertical: 15 * fem),
-              child: Container(
-                margin:
-                    EdgeInsets.fromLTRB(1 * fem, 0 * fem, 0 * fem, 16 * fem),
-                child: Text(
-                  'Tên bãi',
-                  style: TextStyle(
-                    fontSize: 19 * ffem,
-                    fontWeight: FontWeight.w600,
-                    height: 1.175 * ffem / fem,
-                    color: Color(0xff000000),
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: 10 * fem, vertical: 15 * fem),
-              child: Container(
-                margin:
-                    EdgeInsets.fromLTRB(0 * fem, 0 * fem, 0 * fem, 16 * fem),
-                padding:
-                    EdgeInsets.fromLTRB(18 * fem, 0 * fem, 18 * fem, 0 * fem),
-                width: 361 * fem,
-                decoration: BoxDecoration(
-                  color: Color(0xfff5f5f5),
-                  borderRadius: BorderRadius.circular(9 * fem),
-                ),
-                child: TextFormField(
-                  initialValue: 'Nguyễn Văn Thám', // Giá trị ban đầu
-                  style: TextStyle(
-                    fontSize: 16 * ffem,
-                    fontWeight: FontWeight.w400,
-                    height: 1.175 * ffem / fem,
-                    color: Color(0xff9e9e9e),
-                  ),
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                  ),
-                  onChanged: (newValue) {
-                    // Xử lý khi giá trị thay đổi
-                  },
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: 10 * fem, vertical: 15 * fem),
-              child: Container(
-                margin:
-                    EdgeInsets.fromLTRB(1 * fem, 0 * fem, 0 * fem, 16 * fem),
-                child: Text(
-                  'Mô tả',
-                  style: TextStyle(
-                    fontSize: 19 * ffem,
-                    fontWeight: FontWeight.w600,
-                    height: 1.175 * ffem / fem,
-                    color: Color(0xff000000),
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: 10 * fem, vertical: 15 * fem),
-              child: Container(
-                padding:
-                    EdgeInsets.fromLTRB(18 * fem, 0 * fem, 18 * fem, 0 * fem),
-                width: 361 * fem,
-                decoration: BoxDecoration(
-                  color: Color(0xfff5f5f5),
-                  borderRadius: BorderRadius.circular(9 * fem),
-                ),
-                child: TextFormField(
-                  initialValue:
-                      'bãi xe dành cho xe máy với nhiều chỗ trống và coi xe 24/24',
-                  minLines: 1,
-                  maxLines: null,
-                  style: TextStyle(
-                    fontSize: 16 * ffem,
-                    fontWeight: FontWeight.w400,
-                    height: 1.175 * ffem / fem,
-                    color: Color(0xff9e9e9e),
-                  ),
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                  ),
-                  onChanged: (newValue) {
-                    // Xử lý khi giá trị thay đổi
-                  },
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 40 * fem,
-            ),
-            InkWell(
-              onTap: () {
-                CustomDialogs.showCustomDialog(
-                  context,
-                  "Thay đổi thông tin bãi xe",
-                  "Xác nhận",
-                  Color(0xffff3737),
-                      () {
-                    Navigator.of(context).pop();
-                  },
-                );
-              },
-              child: Container(
-                margin:
-                    EdgeInsets.fromLTRB(10 * fem, 0 * fem, 10 * fem, 0 * fem),
-                height: 50 * fem,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor,
-                  borderRadius: BorderRadius.circular(9 * fem),
-                ),
-                child: Center(
-                  child: Text(
-                    'Chỉnh sửa',
-                    style: TextStyle(
-                      fontSize: 19 * ffem,
-                      fontWeight: FontWeight.w600,
-                      height: 1.175 * ffem / fem,
-                      color: Color(0xffffffff),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
+              );
+            }
+          },
         ),
       ),
     );
@@ -265,24 +307,22 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
                         EdgeInsets.fromLTRB(15 * fem, 0, 15 * fem, 10 * fem),
                     child: Container(
                       width: double.infinity,
-                      height: fem * 40, // Đặt chiều cao của nút
+                      height: fem * 40,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           primary: Colors.white,
                         ),
                         onPressed: () async {
                           final ImagePicker picker = ImagePicker();
-                          final XFile? image =
-                          await picker.pickImage(source: ImageSource.gallery, imageQuality: 80);
-                          if (image != null) {
-                            print(
-                                'Image Path: ${image.path} -- MimeType: ${image.mimeType}');
+                          final List<XFile> imageFiles =
+                          await picker.pickMultiImage(imageQuality: 70);
+                          for (var i in imageFiles) {
+                            String? image = await ParkingAPI.uploadFile(File(i.path!));
                             setState(() {
-                              _image = image.path;
+                              images.add(image!);
                             });
-                            //APIs image parking
-                            Navigator.pop(context);
                           }
+                          Navigator.pop(context);
                         },
                         child: Image.asset('assets/images/file.png'),
                       ),
@@ -301,14 +341,13 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
                           ),
                           onPressed: () async {
                             final ImagePicker picker = ImagePicker();
-                            final XFile? image =
+                            final XFile? imageFile =
                             await picker.pickImage(source: ImageSource.camera, imageQuality: 80);
-                            if (image != null) {
-                              print('Image Path: ${image.path}');
+                            if (imageFile != null) {
+                              String? image = await ParkingAPI.uploadFile(File(imageFile.path!));
                               setState(() {
-                                _image = image.path;
+                                images.add(image!);
                               });
-                              //APIs image parking
                               Navigator.pop(context);
                             }
                           },
@@ -322,102 +361,7 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
         });
   }
 
-  Future<void> _showConfirmEditParkingDialog(BuildContext context) async {
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(23),
-          ),
-          backgroundColor: const Color(0xffffffff),
-          child: Container(
-            padding: EdgeInsets.all(10),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Center(
-                  child: Container(
-                    padding: EdgeInsets.only(bottom: 30 * fem, top: 20 * fem),
-                    child: Text(
-                      "Thay đổi thông tin bãi xe",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                      textAlign: TextAlign.center, // Căn giữa dọc
-                    ),
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        children: [
-                          Container(
-                            height: 1,
-                            color: Color(0xffb3abab), // Đường thẳng ngang
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: Text(
-                              'Hủy',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xff5767f5),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Column(
-                      children: [
-                        Container(
-                          width: 1,
-                          height: 48,
-                          color: Color(0xffb3abab), // Đường thẳng dọc
-                        ),
-                      ],
-                    ),
-                    Expanded(
-                      child: Column(
-                        children: [
-                          Container(
-                            height: 1,
-                            color: Color(0xffb3abab), // Đường thẳng ngang
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop(); // Đóng hộp thoại
-                            },
-                            child: Text(
-                              'Xác nhận',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xffff3737),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Future<void> _showConfirmDeleteImageDialog(BuildContext context) async {
+  Future<void> _showConfirmDeleteImageDialog(BuildContext context, int index, String imgLink) async {
     await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -450,7 +394,7 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
                     width: 100 * fem,
                     height: 60 * fem,
                     child: Image.network(
-                      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTeET9OkThGxXQWnPrfXR_2NY45Xn1cqtKJwXhtNx2bjjW8rM8fUwW-ChoZM-3FyzI0MmQ&usqp=CAU',
+                      imgLink,
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -463,7 +407,7 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
                         children: [
                           Container(
                             height: 1,
-                            color: Color(0xffb3abab), // Đường thẳng ngang
+                            color: Color(0xffb3abab),
                           ),
                           TextButton(
                             onPressed: () {
@@ -499,7 +443,8 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
                           ),
                           TextButton(
                             onPressed: () {
-                              Navigator.of(context).pop();
+                                images.removeAt(index);
+                                Navigator.of(context).pop();
                             },
                             child: Text(
                               'Xác nhận',

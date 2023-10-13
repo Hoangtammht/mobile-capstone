@@ -30,8 +30,6 @@ class _PloProfileScreenState extends State<PloProfileScreen> {
   }
 
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
