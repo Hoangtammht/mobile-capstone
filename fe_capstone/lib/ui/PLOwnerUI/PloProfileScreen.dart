@@ -9,6 +9,7 @@ import 'package:fe_capstone/ui/PLOwnerUI/TransferParking.dart';
 import 'package:fe_capstone/ui/screens/LoginScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PloProfileScreen extends StatefulWidget {
   const PloProfileScreen({Key? key}) : super(key: key);
@@ -418,7 +419,9 @@ class _PloProfileScreenState extends State<PloProfileScreen> {
                       height: 14 * fem,
                     ),
                     InkWell(
-                      onTap: (){
+                      onTap: () async {
+                        SharedPreferences prefs = await SharedPreferences.getInstance();
+                        prefs.remove('access_token');
                         PersistentNavBarNavigator.pushNewScreen( context, screen: LoginScreen(), withNavBar: false, pageTransitionAnimation: PageTransitionAnimation.cupertino, );
                       },
                       child: Container(

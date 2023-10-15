@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class MyDateUtil{
 
@@ -99,4 +100,12 @@ class MyDateUtil{
     }
     return 'NA';
   }
+
+  static String formatDateTime(String dateTimeString) {
+    DateTime dateTime = DateTime.parse(dateTimeString);
+    return DateFormat('MM/dd/yyyy').format(dateTime);
+  }
+
+
+
 }

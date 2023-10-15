@@ -1,4 +1,6 @@
+import 'package:fe_capstone/apis/plo/ParkingAPI.dart';
 import 'package:fe_capstone/main.dart';
+import 'package:fe_capstone/models/ListVehicleInParking.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/ParkingInformation.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/ParkingPresentScreen.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/SettingParking.dart';
@@ -16,11 +18,34 @@ class _ParkingScreenState extends State<ParkingScreen>
     with SingleTickerProviderStateMixin {
   late TabController _controller;
   bool isConfirmed = false;
+  late List<ListVehicleInParking> list1 = [];
+  late List<ListVehicleInParking> list2 = [];
+  late List<ListVehicleInParking> list3 = [];
+  late List<ListVehicleInParking> list4 = [];
+
+  String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQTDA5MzQzMjg4MTMiLCJyb2xlIjoiUExPIiwiaXNzIjoiaHR0cHM6Ly9lcGFya2luZy5henVyZXdlYnNpdGVzLm5ldC91c2VyL2xvZ2luVXNlciJ9.Etq-tq7gqaBvuWZTowodVXG9xjAX044FySmFp80mvic";
+
 
   @override
   void initState() {
     super.initState();
     _controller = TabController(length: 4, vsync: this, initialIndex: 0);
+    fetchData();
+    print('Init state called');
+  }
+
+  void fetchData() async {
+    try {
+      list1 = await ParkingAPI.fetchListVehicleInParking(token, 1);
+      list2 = await ParkingAPI.fetchListVehicleInParking(token, 2);
+      list3 = await ParkingAPI.fetchListVehicleInParking(token, 3);
+      list4 = await ParkingAPI.fetchListVehicleInParking(token, 4);
+      setState(() {
+
+      });
+    } catch (e) {
+      // Xử lý lỗi ở đây
+    }
   }
 
   @override
@@ -119,11 +144,8 @@ class _ParkingScreenState extends State<ParkingScreen>
               ];
             },
             onSelected: (String value) {
-              // Xử lý khi một mục được chọn
               if (value == 'settings') {
-                // Xử lý khi chọn "Cài đặt"
               } else if (value == 'delete') {
-                // Xử lý khi chọn "Xóa"
               }
             },
           ),
@@ -150,148 +172,13 @@ class _ParkingScreenState extends State<ParkingScreen>
       body: TabBarView(
         controller: _controller,
         children: [
-          ParkingPresent(type: ["Present", "Later"]),
-          ParkingPresent(type: ["Going"]),
-          ParkingPresent(type: ["Later"]),
-          ParkingPresent(type: ["Normal"]),
+          ParkingPresent(type: ["Present"], vehicleList: list1),
+          ParkingPresent(type: ["Going"], vehicleList: list2),
+          ParkingPresent(type: ["Later"], vehicleList: list3),
+          ParkingPresent(type: ["Normal"], vehicleList: list4),
         ],
       ),
     );
   }
 
-  Future<void> _showConfirmDeleteParkingDialog(BuildContext context) async {
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(23),
-          ),
-          backgroundColor: const Color(0xffffffff),
-          child: Container(
-            padding: EdgeInsets.all(10),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: 15 * fem, vertical: 10 * fem),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Xóa bãi đỗ xe này khỏi tài khoản của bạn',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 18 * fem),
-                      )
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8 * fem),
-                  child: Text.rich(
-                    TextSpan(children: [
-                      TextSpan(
-                          text: '*Lưu ý: ',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 14 * fem)),
-                      TextSpan(
-                          text:
-                              'Doanh thu vẫn chưa được rút ra khỏi tài khoản. Bạn sẽ mất nếu tiếp tục xóa.',
-                          style: TextStyle(
-                            fontSize: 14 * fem,
-                          ))
-                    ]),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: Checkbox(
-                        value: isConfirmed,
-                        activeColor:
-                            isConfirmed ? Colors.yellowAccent : Colors.grey,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(100)),
-                        onChanged: (value) {
-                          setState(() {
-                            isConfirmed = !isConfirmed;
-                          });
-                        },
-                      ),
-                    ),
-                    // Nút lựa chọn xác nhận
-                    Text('Click vô ô bên nếu bạn muốn tiếp tục xóa')
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        children: [
-                          Container(
-                            height: 1,
-                            color: Color(0xffb3abab), // Đường thẳng ngang
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: Text(
-                              'Hủy',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xff5767f5),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Column(
-                      children: [
-                        Container(
-                          width: 1,
-                          height: 48,
-                          color: Color(0xffb3abab), // Đường thẳng dọc
-                        ),
-                      ],
-                    ),
-                    Expanded(
-                      child: Column(
-                        children: [
-                          Container(
-                            height: 1,
-                            color: Color(0xffb3abab), // Đường thẳng ngang
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop(); // Đóng hộp thoại
-                            },
-                            child: Text(
-                              'Xác nhận',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xffff3737),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
 }

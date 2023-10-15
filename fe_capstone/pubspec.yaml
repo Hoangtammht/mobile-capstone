@@ -43,6 +43,7 @@ dependencies:
   emoji_picker_flutter: ^1.6.1
   firebase_core: ^2.2.0
   dio: ^5.3.3
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_test:

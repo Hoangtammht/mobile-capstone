@@ -1,16 +1,24 @@
 import 'package:fe_capstone/main.dart';
+import 'package:fe_capstone/models/ListVehicleInParking.dart';
 import 'package:fe_capstone/ui/components/widgetPLO/ParkingDetailCard.dart';
+import 'package:fe_capstone/ui/helper/my_date_until.dart';
 import 'package:flutter/material.dart';
 
-class ParkingCard extends StatelessWidget {
+class ParkingCard extends StatefulWidget {
   final List<String> type;
-  const ParkingCard({Key? key, required this.type}) : super(key: key);
+  final ListVehicleInParking vehicleData;
+  const ParkingCard({Key? key, required this.type, required this.vehicleData}) : super(key: key);
 
+  @override
+  State<ParkingCard> createState() => _ParkingCardState();
+}
+
+class _ParkingCardState extends State<ParkingCard> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context) => ParkingDetailCard(type: type,)));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => ParkingDetailCard(type: widget.type,)));
       },
       child: Container(
         margin:  EdgeInsets.fromLTRB(5*fem, 3*fem, 5*fem, 5*fem),
@@ -23,7 +31,7 @@ class ParkingCard extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.only(left: 3 * fem, top: 3 * fem, bottom: 3 * fem),
                   child: Text(
-                    '61A-999999',
+                    widget.vehicleData.licensePlate,
                     style: TextStyle(
                         color: Colors.black,
                         fontSize: 16 * fem,
@@ -31,7 +39,7 @@ class ParkingCard extends StatelessWidget {
                   ),
                 ),
                 Spacer(),
-                if(type.contains('Later'))
+                if(widget.type.contains('Later'))
                 Padding(
                   padding: EdgeInsets.only(left: 3 * fem, top: 3 * fem, bottom: 3 * fem),
                   child: Text(
@@ -47,7 +55,7 @@ class ParkingCard extends StatelessWidget {
             Padding(
               padding: EdgeInsets.only(left: 3 * fem, top: 3 * fem, bottom: 3 * fem),
               child: Text(
-                'Mai Hoàng Tâm',
+                widget.vehicleData.fullName,
                 style: TextStyle(
                     color: Colors.grey,
                     fontSize: 12 * fem,
@@ -68,7 +76,7 @@ class ParkingCard extends StatelessWidget {
                     child: Align(
                       alignment: Alignment.center,
                       child: Text(
-                        'Ban ngày',
+                        widget.vehicleData.methodName,
                         style: TextStyle(
                           fontSize: 11 * ffem,
                           fontWeight: FontWeight.w400,
@@ -79,7 +87,7 @@ class ParkingCard extends StatelessWidget {
                     ),
                   ),
                   Spacer(),
-                  if (type.contains("Going"))
+                  if (widget.type.contains("Going"))
                     InkWell(
                       onTap: (){
                         _showUpdateVehicleEntryDialog(context);
@@ -112,7 +120,7 @@ class ParkingCard extends StatelessWidget {
                         ),
                       ),
                     )
-                    else if (type.contains("Present"))
+                    else if (widget.type.contains("Present"))
                     InkWell(
                       onTap: (){
                         _showUpdateVehicleExitDialog(context);
@@ -147,7 +155,7 @@ class ParkingCard extends StatelessWidget {
                     )
                     else
                     Text(
-                      '10/02/2024 - 10/03/2024',
+                      '${MyDateUtil.formatDateTime(widget.vehicleData.startTime)} - ${MyDateUtil.formatDateTime(widget.vehicleData.endTime)}',
                       style: TextStyle(
                         fontSize: 14 * ffem,
                         fontWeight: FontWeight.w400,
@@ -232,7 +240,7 @@ class ParkingCard extends StatelessWidget {
                         children: [
                           Container(
                             height: 1,
-                            color: Color(0xffb3abab), // Đường thẳng ngang
+                            color: Color(0xffb3abab),
                           ),
                           TextButton(
                             onPressed: () {
@@ -346,7 +354,7 @@ class ParkingCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (type.contains('Later') && type.contains('Present'))
+                if (widget.type.contains('Later') && widget.type.contains('Present'))
                 Text.rich(
                   TextSpan(
                       children: [
@@ -433,6 +441,4 @@ class ParkingCard extends StatelessWidget {
       },
     );
   }
-
-
 }

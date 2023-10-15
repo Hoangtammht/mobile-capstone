@@ -1,9 +1,10 @@
+import 'package:fe_capstone/apis/Auth.dart';
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/ui/CustomerUI/BottomTabNavCustomer.dart';
-import 'package:fe_capstone/ui/CustomerUI/HomeScreen.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/BottomTabNavPlo.dart';
 import 'package:fe_capstone/ui/components/FooterComponent.dart';
 import 'package:fe_capstone/ui/components/HeaderComponent.dart';
+import 'package:fe_capstone/ui/helper/dialogs.dart';
 import 'package:fe_capstone/ui/screens/RegisterScreen.dart';
 import 'package:fe_capstone/ui/screens/ResetPassword.dart';
 import 'package:flutter/gestures.dart';
@@ -18,13 +19,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool isPasswordVisible = false;
-  String dropdownValue = 'Khách hàng'; // Ban đầu giá trị là "Khách hàng"
-
-  void toggleUserRole() {
-    setState(() {
-      dropdownValue = dropdownValue == 'Khách hàng' ? 'Chủ bãi xe' : 'Khách hàng';
-    });
-  }
+  TextEditingController _userNameController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -74,42 +70,20 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     Container(
-                      margin: EdgeInsets.fromLTRB(
-                          0, 0, 0, 15 * fem),
-                      padding: EdgeInsets.fromLTRB(20.5 * fem, 0, 20.5 * fem,
-                          0),
+                      margin: EdgeInsets.fromLTRB(0, 0, 0, 15 * fem),
+                      padding:
+                          EdgeInsets.fromLTRB(20.5 * fem, 0, 20.5 * fem, 0),
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        border: Border.all(color: Theme.of(context).primaryColor),
+                        border:
+                            Border.all(color: Theme.of(context).primaryColor),
                         borderRadius: BorderRadius.circular(30 * fem),
                       ),
                       child: Row(
                         children: [
-                          GestureDetector(
-                            onTap: toggleUserRole,
-                            child: Container(
-                              margin: EdgeInsets.fromLTRB(0 * fem, 0 * fem, 14 * fem, 0 * fem),
-                              child: Text(
-                                dropdownValue == 'Khách hàng' ? 'C' : 'P',
-                                style: TextStyle(
-                                  fontSize: 20 * ffem,
-                                  fontWeight: FontWeight.w600,
-                                  height: 1.175 * ffem / fem,
-                                  color: Color(0xffa3a3a3),
-                                ),
-                              ),
-                            ),
-                          ),
-                          Container(
-                            margin:  EdgeInsets.fromLTRB(0*fem, 0*fem, 11.5*fem, 0.99*fem),
-                            width:  2*fem,
-                            height:  48.01*fem,
-                            decoration:  BoxDecoration (
-                              color:  Color(0xff6ec2f7),
-                            ),
-                          ),
                           Expanded(
                             child: TextFormField(
+                              controller: _userNameController,
                               style: TextStyle(
                                 fontSize: 20 * ffem,
                                 fontWeight: FontWeight.w600,
@@ -117,8 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 color: Color(0xff000000),
                               ),
                               decoration: InputDecoration(
-                                border: InputBorder
-                                    .none,
+                                border: InputBorder.none,
                                 hintText: 'Số điện thoại',
                                 hintStyle: TextStyle(
                                   fontSize: 20 * ffem,
@@ -139,7 +112,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           EdgeInsets.fromLTRB(20.5 * fem, 0, 20.5 * fem, 0),
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        border: Border.all(color: Theme.of(context).primaryColor),
+                        border:
+                            Border.all(color: Theme.of(context).primaryColor),
                         borderRadius: BorderRadius.circular(30),
                       ),
                       child: Row(
@@ -147,9 +121,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         children: [
                           Expanded(
                             child: TextFormField(
+                              controller: _passwordController,
                               obscureText: isPasswordVisible
                                   ? false
-                                  : true, // Ẩn mật khẩu
+                                  : true,
                               style: TextStyle(
                                 fontSize: 20 * ffem,
                                 fontWeight: FontWeight.w600,
@@ -173,14 +148,14 @@ class _LoginScreenState extends State<LoginScreen> {
                               icon: Icon(
                                 isPasswordVisible
                                     ? Icons
-                                        .visibility // Hiển thị khi mật khẩu ẩn
+                                        .visibility
                                     : Icons
-                                        .visibility_off, // Hiển thị khi mật khẩu hiển thị
+                                        .visibility_off,
                               ),
                               onPressed: () {
                                 setState(() {
                                   isPasswordVisible =
-                                      !isPasswordVisible; // Đảo ngược trạng thái
+                                      !isPasswordVisible;
                                 });
                               },
                             ),
@@ -194,7 +169,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (context) =>
-                                ResetPasswordScreen(), // Thay thế ResetPasswordScreen bằng tên thực tế của màn hình ResetPassword của bạn
+                                ResetPasswordScreen(),
                           ),
                         );
                       },
@@ -208,7 +183,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             fontWeight: FontWeight.w600,
                             height: 1.175 * ffem / fem,
                             color: Theme.of(context).primaryColor,
-                            // decoration: TextDecoration.underline, // Thêm gạch chân
+                            // decoration: TextDecoration.underline,
                           ),
                         ),
                       ),
@@ -231,20 +206,30 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       child: TextButton(
                         onPressed: () {
-                          if(dropdownValue == 'Chủ bãi xe'){
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => BottomTabNavPlo(),
-                              ),
-                            );
-                          }else{
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => BottomTabNavCustomer(),
-                              ),
-                            );
+                          String username = _userNameController.text;
+                          String password = _passwordController.text;
+                          if (username.isNotEmpty && password.isNotEmpty) {
+                            AuthAPIs.loginUser(username, password).then((_) {
+                              if (username.startsWith('P')) {
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => BottomTabNavPlo(),
+                                  ),
+                                );
+                              } else if (username.startsWith('C')) {
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => BottomTabNavCustomer(),
+                                  ),
+                                );
+                              }
+                            }).catchError((error) {
+                              Dialogs.showSnackbar(context, "Tài khoản hoặc mật khẩu không đúng. Vui lòng đăng nhập lại.");
+                            });
+                          } else {
+                            Dialogs.showSnackbar(context, "Tài khoản hoặc mật khẩu không được để trống.");
                           }
                         },
                         child: Center(

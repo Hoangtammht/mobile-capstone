@@ -22,15 +22,11 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
   List<String> images = [
   ];
 
-  List<String> newListImage = [];
-
-  String? _image;
-
   late Future<ParkingInformationModel> parkingInformationFuture;
   String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQTDA5MzQzMjg4MTMiLCJyb2xlIjoiUExPIiwiaXNzIjoiaHR0cHM6Ly9lcGFya2luZy5henVyZXdlYnNpdGVzLm5ldC91c2VyL2xvZ2luVXNlciJ9.Etq-tq7gqaBvuWZTowodVXG9xjAX044FySmFp80mvic";
   TextEditingController _parkingNameController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
-
+  TextEditingController _slotController = TextEditingController();
 
   @override
   void initState() {
@@ -39,6 +35,7 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
     parkingInformationFuture.then((data) {
       _parkingNameController.text = data?.parkingName ?? '';
       _descriptionController.text = data?.description ?? '';
+      _slotController.text = data?.slot.toString() ?? '0';
       images = data.image.map((imageObject) => imageObject.imageLink).toList();
     });
   }
@@ -125,10 +122,10 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(
-                        horizontal: 10 * fem, vertical: 15 * fem),
+                        horizontal: 10 * fem, vertical: 10 * fem),
                     child: Container(
                       margin:
-                      EdgeInsets.fromLTRB(1 * fem, 0 * fem, 0 * fem, 16 * fem),
+                      EdgeInsets.fromLTRB(1 * fem, 0 * fem, 0 * fem, 5 * fem),
                       child: Text(
                         'Tên bãi',
                         style: TextStyle(
@@ -142,10 +139,8 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(
-                        horizontal: 10 * fem, vertical: 15 * fem),
+                        horizontal: 10 * fem, vertical: 5 * fem),
                     child: Container(
-                      margin:
-                      EdgeInsets.fromLTRB(0 * fem, 0 * fem, 0 * fem, 16 * fem),
                       padding:
                       EdgeInsets.fromLTRB(18 * fem, 0 * fem, 18 * fem, 0 * fem),
                       width: 361 * fem,
@@ -170,10 +165,10 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(
-                        horizontal: 10 * fem, vertical: 15 * fem),
+                        horizontal: 10 * fem, vertical: 10 * fem),
                     child: Container(
                       margin:
-                      EdgeInsets.fromLTRB(1 * fem, 0 * fem, 0 * fem, 16 * fem),
+                      EdgeInsets.fromLTRB(1 * fem, 0 * fem, 0 * fem, 0 * fem),
                       child: Text(
                         'Mô tả',
                         style: TextStyle(
@@ -212,17 +207,62 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
                       ),
                     ),
                   ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 10 * fem, vertical: 15 * fem),
+                    child: Container(
+                      margin:
+                      EdgeInsets.fromLTRB(1 * fem, 0 * fem, 0 * fem, 16 * fem),
+                      child: Text(
+                        'Số chỗ:',
+                        style: TextStyle(
+                          fontSize: 19 * ffem,
+                          fontWeight: FontWeight.w600,
+                          height: 1.175 * ffem / fem,
+                          color: Color(0xff000000),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 10 * fem, vertical: 15 * fem),
+                    child: Container(
+                      padding:
+                      EdgeInsets.fromLTRB(18 * fem, 0 * fem, 18 * fem, 0 * fem),
+                      width: 361 * fem,
+                      decoration: BoxDecoration(
+                        color: Color(0xfff5f5f5),
+                        borderRadius: BorderRadius.circular(9 * fem),
+                      ),
+                      child: TextFormField(
+                        controller: _slotController,
+                        minLines: 1,
+                        maxLines: null,
+                        keyboardType: TextInputType.number,
+                        style: TextStyle(
+                          fontSize: 16 * ffem,
+                          fontWeight: FontWeight.w400,
+                          height: 1.175 * ffem / fem,
+                          color: Color(0xff9e9e9e),
+                        ),
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                        ),
+                      ),
+                    ),
+                  ),
                   SizedBox(
-                    height: 40 * fem,
+                    height: 30 * fem,
                   ),
                   InkWell(
                     onTap: () {
                       String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQTDA5MzQzMjg4MTMiLCJyb2xlIjoiUExPIiwiaXNzIjoiaHR0cHM6Ly9lcGFya2luZy5henVyZXdlYnNpdGVzLm5ldC91c2VyL2xvZ2luVXNlciJ9.Etq-tq7gqaBvuWZTowodVXG9xjAX044FySmFp80mvic";
                       String newParkingName = _parkingNameController.text;
                       String description = _descriptionController.text;
-                      print(newParkingName);
-                      print(description);
-                      print(images);
+                      int slot = int.parse(_slotController.text);
+
+                      print(slot);
 
                       CustomDialogs.showCustomDialog(
                         context,

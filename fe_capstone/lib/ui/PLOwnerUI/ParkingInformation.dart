@@ -302,7 +302,7 @@ class _ParkingInformationState extends State<ParkingInformation> {
                               itemCount: listRating!.length,
                               itemBuilder: (context, index) {
                                 return RatingCard(
-                                  fromBy: listRating[index].customerID,
+                                  fromBy: listRating[index].fullName,
                                   star: listRating[index].star,
                                   content: listRating[index].content,
                                 );

@@ -4,6 +4,7 @@ class RatingModel {
     required this.star,
     required this.content,
     required this.customerID,
+    required this.fullName,
     required this.ploID,
     required this.reservationID,
     required this.feedbackDate,
@@ -12,6 +13,7 @@ class RatingModel {
   late final int star;
   late final String content;
   late final String customerID;
+  late final String fullName;
   late final String ploID;
   late final String reservationID;
   late final String feedbackDate;
@@ -21,6 +23,7 @@ class RatingModel {
     star = json['star'] ?? 0;
     content = json['content'] ?? '';
     customerID = json['customerID'] ?? '';
+    fullName = json['fullName'] ?? '';
     ploID = json['ploID'] ?? '';
     reservationID = json['reservationID'] ?? 0;
     feedbackDate = json['feedbackDate'] ?? '';
@@ -32,6 +35,7 @@ class RatingModel {
     _data['star'] = star;
     _data['content'] = content;
     _data['customerID'] = customerID;
+    _data['fullName'] = fullName;
     _data['ploID'] = ploID;
     _data['reservationID'] = reservationID;
     _data['feedbackDate'] = feedbackDate;
