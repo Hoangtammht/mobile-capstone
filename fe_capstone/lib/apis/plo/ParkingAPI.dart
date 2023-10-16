@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:fe_capstone/models/ListVehicleInParking.dart';
 import 'package:fe_capstone/models/ParkingInformationModel.dart';
 import 'package:fe_capstone/models/RatingModel.dart';
+import 'package:fe_capstone/models/ResponseSettingParking.dart';
 
 class ParkingAPI {
   static Dio dio = Dio();
@@ -154,4 +155,71 @@ class ParkingAPI {
       throw Exception('Error: $e');
     }
   }
+
+  static Future<ResponseSettingParking> getParkingSetting(String token) async {
+    try {
+      var response = await dio.get(
+        '$baseUrl/parking/getParkingSetting',
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        Map<String, dynamic> responseData = response.data;
+        var responseSettingParking = ResponseSettingParking.fromJson(responseData);
+        return responseSettingParking;
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      throw Exception('Request failed. Please check your connection.');
+    }
+  }
+
+  static Future<void> updateParkingSetting(
+      String token, List<Map<String, dynamic>> data) async {
+    try {
+      final response = await dio.post(
+        '$baseUrl/parking/updateParkingSetting',
+        data: data,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+      if (response.statusCode == 200) {
+        print("Update setting parking successfully");
+      } else {
+        throw Exception('Failed to update parking setting');
+      }
+    } catch (e) {
+      throw Exception('Failed to update parking setting: $e');
+    }
+  }
+
+  static Future<void> checkoutReservation(String token, int reservationID) async {
+    try {
+      var response = await dio.put(
+        '$baseUrl/reservation/checkoutReservation',
+        data: {"reservationID": reservationID},
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+      if (response.statusCode == 200) {
+        print("Checkout successfully");
+      } else {
+        throw Exception('Failed to update parking setting');
+      }
+    } catch (e) {
+      throw Exception('Failed to checkout reservation: $e');
+    }
+  }
+
 }

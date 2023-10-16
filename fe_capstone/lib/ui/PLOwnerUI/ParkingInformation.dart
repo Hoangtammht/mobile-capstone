@@ -19,7 +19,6 @@ class _ParkingInformationState extends State<ParkingInformation> {
   late Future<List<RatingModel>> listRatingModelFuture;
   String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQTDA5MzQzMjg4MTMiLCJyb2xlIjoiUExPIiwiaXNzIjoiaHR0cHM6Ly9lcGFya2luZy5henVyZXdlYnNpdGVzLm5ldC91c2VyL2xvZ2luVXNlciJ9.Etq-tq7gqaBvuWZTowodVXG9xjAX044FySmFp80mvic";
 
-
   @override
   void initState() {
     super.initState();

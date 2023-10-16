@@ -1,5 +1,8 @@
+import 'package:fe_capstone/apis/plo/ParkingAPI.dart';
 import 'package:fe_capstone/main.dart';
+import 'package:fe_capstone/models/ResponseSettingParking.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingParkingScreen extends StatefulWidget {
   const SettingParkingScreen({Key? key}) : super(key: key);
@@ -14,6 +17,30 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
   bool isIconVisibleOne = true;
   bool isIconVisibleTwo = true;
   bool _firstAddClicked = false;
+  late Future<ResponseSettingParking> settingParkingFuture;
+
+  TextEditingController _priceOfMethodOneController = TextEditingController();
+  TextEditingController _priceOfMethodTwoController = TextEditingController();
+  TextEditingController _priceOfMethodThreeController = TextEditingController();
+
+  String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQTDA5MzQzMjg4MTMiLCJyb2xlIjoiUExPIiwiaXNzIjoiaHR0cHM6Ly9lcGFya2luZy5henVyZXdlYnNpdGVzLm5ldC91c2VyL2xvZ2luVXNlciJ9.Etq-tq7gqaBvuWZTowodVXG9xjAX044FySmFp80mvic";
+
+  @override
+  void initState() {
+    super.initState();
+    settingParkingFuture = ParkingAPI.getParkingSetting(token);
+    settingParkingFuture.then((settingParking) {
+      settingParking?.methodList?.forEach((method) {
+        if (method.methodID == 1) {
+          _priceOfMethodOneController.text = method.price.toStringAsFixed(0).toString();
+        } else if (method.methodID == 2) {
+          _priceOfMethodTwoController.text = method.price.toStringAsFixed(0).toString();
+        } else if (method.methodID == 3) {
+          _priceOfMethodThreeController.text = method.price.toStringAsFixed(0).toString();
+        }
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,455 +60,478 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
         ),
       body: SingleChildScrollView(
         padding: EdgeInsets.fromLTRB(10 * fem, 20 * fem, 10 * fem, 10 * fem),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 5 * fem),
-              child: Text('Mức phí & hoạt động', style: TextStyle(
-                fontSize: 18 * fem,
-                fontWeight: FontWeight.bold
-              ),),
-            ),
-            Container(
-              child: Column(
+        child: FutureBuilder<ResponseSettingParking>(
+          future: settingParkingFuture,
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            } else {
+              return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    padding:  EdgeInsets.fromLTRB(7*fem, 14*fem, 10*fem, 12*fem),
-                    decoration:  BoxDecoration (
-                      color:  Color(0xfff5f5f5),
-                      borderRadius:  BorderRadius.circular(9*fem),
-                    ),
-                    child:
-                    Text(
-                      'Ban ngày',
-                      textAlign:  TextAlign.center,
-                      style:  TextStyle (
-                        fontSize:  19*ffem,
-                        fontWeight:  FontWeight.w500,
-                        height:  1.175*ffem/fem,
-                        color:  Color(0xff222222),
-                      ),
-                    ),
-                  ),
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 5 * fem),
-                    child: Text('Mức phí', style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 15 * fem,
-                        fontWeight: FontWeight.w400
+                    child: Text('Mức phí & hoạt động', style: TextStyle(
+                        fontSize: 18 * fem,
+                        fontWeight: FontWeight.bold
                     ),),
                   ),
                   Container(
-                    margin: EdgeInsets.fromLTRB(0 * fem, 0 * fem, 0 * fem, 16 * fem),
-                    padding: EdgeInsets.symmetric(horizontal: 10 * fem),
-                    decoration: BoxDecoration(
-                      color: Color(0xfff5f5f5),
-                      borderRadius: BorderRadius.circular(9 * fem),
-                    ),
-                    child: TextFormField(
-                      initialValue: '3.000', // Giá trị ban đầu
-                      style: TextStyle(
-                        fontSize: 16 * ffem,
-                        fontWeight: FontWeight.w400,
-                        height: 1.175 * ffem / fem,
-                        color: Color(0xff9e9e9e),
-                      ),
-                      decoration: InputDecoration(
-                        border: InputBorder.none, // Loại bỏ viền của TextFormField
-                      ),
-                      onChanged: (newValue) {
-                        // Xử lý khi giá trị thay đổi
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 5 * fem),
-                    child: Text('Thời gian hoạt động', style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 15 * fem,
-                        fontWeight: FontWeight.w400
-                    ),
-                    ),
-                  ),
-                  Container(
-                    height:  51*fem,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
-                          margin:  EdgeInsets.fromLTRB(0*fem, 0*fem, 35*fem, 0*fem),
-                          width:  120*fem,
-                          height:  double.infinity,
+                          padding:  EdgeInsets.fromLTRB(7*fem, 14*fem, 10*fem, 12*fem),
                           decoration:  BoxDecoration (
                             color:  Color(0xfff5f5f5),
                             borderRadius:  BorderRadius.circular(9*fem),
                           ),
                           child:
-                          Center(
-                            child:
-                            Text(
-                              '6 AM',
-                              style:  TextStyle (
-                                fontSize:  16*ffem,
-                                fontWeight:  FontWeight.w400,
-                                height:  1.2175*ffem/fem,
-                                color:  Color(0x7f222222),
-                              ),
+                          Text(
+                            'Ban ngày',
+                            textAlign:  TextAlign.center,
+                            style:  TextStyle (
+                              fontSize:  19*ffem,
+                              fontWeight:  FontWeight.w500,
+                              height:  1.175*ffem/fem,
+                              color:  Color(0xff222222),
                             ),
                           ),
                         ),
-                        Container(
-                          margin:  EdgeInsets.fromLTRB(0*fem, 0*fem, 34*fem, 0*fem),
-                          width:  35*fem,
-                          child:
-                          Icon(Icons.arrow_forward),
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 5 * fem),
+                          child: Text('Mức phí', style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 15 * fem,
+                              fontWeight: FontWeight.w400
+                          ),),
                         ),
                         Container(
-                          width:  120*fem,
-                          height:  double.infinity,
-                          decoration:  BoxDecoration (
-                            color:  Color(0xfff5f5f5),
-                            borderRadius:  BorderRadius.circular(9*fem),
+                          margin: EdgeInsets.fromLTRB(0 * fem, 0 * fem, 0 * fem, 16 * fem),
+                          padding: EdgeInsets.symmetric(horizontal: 10 * fem),
+                          decoration: BoxDecoration(
+                            color: Color(0xfff5f5f5),
+                            borderRadius: BorderRadius.circular(9 * fem),
                           ),
-                          child:
-                          Center(
-                            child:
-                            Text(
-                              '18 PM',
-                              style:  TextStyle (
-                                fontSize:  16*ffem,
-                                fontWeight:  FontWeight.w400,
-                                height:  1.2175*ffem/fem,
-                                color:  Color(0x7f222222),
-                              ),
+                          child: TextFormField(
+                            controller: _priceOfMethodOneController,
+                            keyboardType: TextInputType.number,
+                            style: TextStyle(
+                              fontSize: 16 * ffem,
+                              fontWeight: FontWeight.w400,
+                              height: 1.175 * ffem / fem,
+                              color: Color(0xff9e9e9e),
+                            ),
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
                             ),
                           ),
                         ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 5 * fem),
+                          child: Text('Thời gian hoạt động', style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 15 * fem,
+                              fontWeight: FontWeight.w400
+                          ),
+                          ),
+                        ),
+                        Container(
+                          height:  51*fem,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                margin:  EdgeInsets.fromLTRB(0*fem, 0*fem, 35*fem, 0*fem),
+                                width:  120*fem,
+                                height:  double.infinity,
+                                decoration:  BoxDecoration (
+                                  color:  Color(0xfff5f5f5),
+                                  borderRadius:  BorderRadius.circular(9*fem),
+                                ),
+                                child:
+                                Center(
+                                  child:
+                                  Text(
+                                    '6 AM',
+                                    style:  TextStyle (
+                                      fontSize:  16*ffem,
+                                      fontWeight:  FontWeight.w400,
+                                      height:  1.2175*ffem/fem,
+                                      color:  Color(0x7f222222),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                margin:  EdgeInsets.fromLTRB(0*fem, 0*fem, 34*fem, 0*fem),
+                                width:  35*fem,
+                                child:
+                                Icon(Icons.arrow_forward),
+                              ),
+                              Container(
+                                width:  120*fem,
+                                height:  double.infinity,
+                                decoration:  BoxDecoration (
+                                  color:  Color(0xfff5f5f5),
+                                  borderRadius:  BorderRadius.circular(9*fem),
+                                ),
+                                child:
+                                Center(
+                                  child:
+                                  Text(
+                                    '18 PM',
+                                    style:  TextStyle (
+                                      fontSize:  16*ffem,
+                                      fontWeight:  FontWeight.w400,
+                                      height:  1.2175*ffem/fem,
+                                      color:  Color(0x7f222222),
+                                    ),
+                                  ),
+                                ),
+                              ),
 
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: 40 * fem, right: 40 * fem, top: 20 * fem, bottom: 15 * fem),
-              child: Divider(
-                thickness: 3,
-                height: 2 * fem,
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.only(top: 10 * fem),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    padding:  EdgeInsets.fromLTRB(7*fem, 14*fem, 10*fem, 12*fem),
-                    decoration:  BoxDecoration (
-                      color:  Color(0xfff5f5f5),
-                      borderRadius:  BorderRadius.circular(9*fem),
-                    ),
-                    child:
-                    Text(
-                      'Ban đêm',
-                      textAlign:  TextAlign.center,
-                      style:  TextStyle (
-                        fontSize:  19*ffem,
-                        fontWeight:  FontWeight.w500,
-                        height:  1.175*ffem/fem,
-                        color:  Color(0xff222222),
-                      ),
-                    ),
-                  ),
                   Padding(
-                    padding: EdgeInsets.symmetric(vertical: 5 * fem),
-                    child: Text('Mức phí', style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 15 * fem,
-                        fontWeight: FontWeight.w400
-                    ),),
-                  ),
-                  Container(
-                    margin: EdgeInsets.fromLTRB(0 * fem, 0 * fem, 0 * fem, 16 * fem),
-                    padding: EdgeInsets.symmetric(horizontal: 10 * fem),
-                    decoration: BoxDecoration(
-                      color: Color(0xfff5f5f5),
-                      borderRadius: BorderRadius.circular(9 * fem),
-                    ),
-                    child: TextFormField(
-                      initialValue: '3.000', // Giá trị ban đầu
-                      style: TextStyle(
-                        fontSize: 16 * ffem,
-                        fontWeight: FontWeight.w400,
-                        height: 1.175 * ffem / fem,
-                        color: Color(0xff9e9e9e),
-                      ),
-                      decoration: InputDecoration(
-                        border: InputBorder.none, // Loại bỏ viền của TextFormField
-                      ),
-                      onChanged: (newValue) {
-                        // Xử lý khi giá trị thay đổi
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 5 * fem),
-                    child: Text('Thời gian hoạt động', style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 15 * fem,
-                        fontWeight: FontWeight.w400
-                    ),
+                    padding: EdgeInsets.only(left: 40 * fem, right: 40 * fem, top: 20 * fem, bottom: 15 * fem),
+                    child: Divider(
+                      thickness: 3,
+                      height: 2 * fem,
                     ),
                   ),
                   Container(
-                    height:  51*fem,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                    margin: EdgeInsets.only(top: 10 * fem),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
-                          margin:  EdgeInsets.fromLTRB(0*fem, 0*fem, 35*fem, 0*fem),
-                          width:  120*fem,
-                          height:  double.infinity,
+                          padding:  EdgeInsets.fromLTRB(7*fem, 14*fem, 10*fem, 12*fem),
                           decoration:  BoxDecoration (
                             color:  Color(0xfff5f5f5),
                             borderRadius:  BorderRadius.circular(9*fem),
                           ),
                           child:
-                          Center(
-                            child:
-                            Text(
-                              '18 PM',
-                              style:  TextStyle (
-                                fontSize:  16*ffem,
-                                fontWeight:  FontWeight.w400,
-                                height:  1.2175*ffem/fem,
-                                color:  Color(0x7f222222),
-                              ),
+                          Text(
+                            'Ban đêm',
+                            textAlign:  TextAlign.center,
+                            style:  TextStyle (
+                              fontSize:  19*ffem,
+                              fontWeight:  FontWeight.w500,
+                              height:  1.175*ffem/fem,
+                              color:  Color(0xff222222),
                             ),
                           ),
                         ),
-                        Container(
-                          margin:  EdgeInsets.fromLTRB(0*fem, 0*fem, 34*fem, 0*fem),
-                          width:  35*fem,
-                          child:
-                          Icon(Icons.arrow_forward),
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 5 * fem),
+                          child: Text('Mức phí', style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 15 * fem,
+                              fontWeight: FontWeight.w400
+                          ),),
                         ),
                         Container(
-                          width:  120*fem,
-                          height:  double.infinity,
+                          margin: EdgeInsets.fromLTRB(0 * fem, 0 * fem, 0 * fem, 16 * fem),
+                          padding: EdgeInsets.symmetric(horizontal: 10 * fem),
+                          decoration: BoxDecoration(
+                            color: Color(0xfff5f5f5),
+                            borderRadius: BorderRadius.circular(9 * fem),
+                          ),
+                          child: TextFormField(
+                            controller: _priceOfMethodTwoController,
+                            keyboardType: TextInputType.number,
+                            style: TextStyle(
+                              fontSize: 16 * ffem,
+                              fontWeight: FontWeight.w400,
+                              height: 1.175 * ffem / fem,
+                              color: Color(0xff9e9e9e),
+                            ),
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 5 * fem),
+                          child: Text('Thời gian hoạt động', style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 15 * fem,
+                              fontWeight: FontWeight.w400
+                          ),
+                          ),
+                        ),
+                        Container(
+                          height:  51*fem,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                margin:  EdgeInsets.fromLTRB(0*fem, 0*fem, 35*fem, 0*fem),
+                                width:  120*fem,
+                                height:  double.infinity,
+                                decoration:  BoxDecoration (
+                                  color:  Color(0xfff5f5f5),
+                                  borderRadius:  BorderRadius.circular(9*fem),
+                                ),
+                                child:
+                                Center(
+                                  child:
+                                  Text(
+                                    '18 PM',
+                                    style:  TextStyle (
+                                      fontSize:  16*ffem,
+                                      fontWeight:  FontWeight.w400,
+                                      height:  1.2175*ffem/fem,
+                                      color:  Color(0x7f222222),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                margin:  EdgeInsets.fromLTRB(0*fem, 0*fem, 34*fem, 0*fem),
+                                width:  35*fem,
+                                child:
+                                Icon(Icons.arrow_forward),
+                              ),
+                              Container(
+                                width:  120*fem,
+                                height:  double.infinity,
+                                decoration:  BoxDecoration (
+                                  color:  Color(0xfff5f5f5),
+                                  borderRadius:  BorderRadius.circular(9*fem),
+                                ),
+                                child:
+                                Center(
+                                  child:
+                                  Text(
+                                    '23 PM',
+                                    style:  TextStyle (
+                                      fontSize:  16*ffem,
+                                      fontWeight:  FontWeight.w400,
+                                      height:  1.2175*ffem/fem,
+                                      color:  Color(0x7f222222),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        if(_firstAddClicked)
+                          InkWell(
+                            onTap: (){
+                              setState(() {
+                                isIconVisibleOne = true;
+                              });
+                            },
+                            child: Container(
+                              margin:  EdgeInsets.fromLTRB(0*fem, 25*fem, 0*fem, 0*fem),
+                              width:  361*fem,
+                              height:  51*fem,
+                              decoration:  BoxDecoration (
+                                color: Colors.red,
+                                borderRadius:  BorderRadius.circular(9*fem),
+                              ),
+                              child:
+                              Center(
+                                child:
+                                Icon(Icons.delete_forever_outlined, color: Colors.white,),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+
+
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 40 * fem, right: 40 * fem, top: 20 * fem, bottom: 15 * fem),
+                    child: Divider(
+                      thickness: 3,
+                      height: 2 * fem,
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(top: 10 * fem),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          padding:  EdgeInsets.fromLTRB(7*fem, 14*fem, 10*fem, 12*fem),
                           decoration:  BoxDecoration (
                             color:  Color(0xfff5f5f5),
                             borderRadius:  BorderRadius.circular(9*fem),
                           ),
                           child:
-                          Center(
-                            child:
-                            Text(
-                              '23 PM',
-                              style:  TextStyle (
-                                fontSize:  16*ffem,
-                                fontWeight:  FontWeight.w400,
-                                height:  1.2175*ffem/fem,
-                                color:  Color(0x7f222222),
-                              ),
+                          Text(
+                            'Qua đêm',
+                            textAlign:  TextAlign.center,
+                            style:  TextStyle (
+                              fontSize:  19*ffem,
+                              fontWeight:  FontWeight.w500,
+                              height:  1.175*ffem/fem,
+                              color:  Color(0xff222222),
                             ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 5 * fem),
+                          child: Text('Mức phí', style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 15 * fem,
+                              fontWeight: FontWeight.w400
+                          ),),
+                        ),
+                        Container(
+                          margin: EdgeInsets.fromLTRB(
+                              0 * fem, 0 * fem, 0 * fem, 16 * fem),
+                          padding: EdgeInsets.symmetric(horizontal: 10 * fem),
+                          decoration: BoxDecoration(
+                            color: Color(0xfff5f5f5),
+                            borderRadius: BorderRadius.circular(9 * fem),
+                          ),
+                          child: TextFormField(
+                            controller: _priceOfMethodThreeController,
+                            keyboardType: TextInputType.number,
+                            style: TextStyle(
+                              fontSize: 16 * ffem,
+                              fontWeight: FontWeight.w400,
+                              height: 1.175 * ffem / fem,
+                              color: Color(0xff9e9e9e),
+                            ),
+                            decoration: InputDecoration(
+                              border: InputBorder
+                                  .none,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 5 * fem),
+                          child: Text('Thời gian hoạt động', style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 15 * fem,
+                              fontWeight: FontWeight.w400
+                          ),
+                          ),
+                        ),
+                        Container(
+                          height: 51 * fem,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                margin: EdgeInsets.fromLTRB(
+                                    0 * fem, 0 * fem, 35 * fem, 0 * fem),
+                                width: 120 * fem,
+                                height: double.infinity,
+                                decoration: BoxDecoration(
+                                  color: Color(0xfff5f5f5),
+                                  borderRadius: BorderRadius.circular(9 * fem),
+                                ),
+                                child:
+                                Center(
+                                  child:
+                                  Text(
+                                    '23 PM',
+                                    style: TextStyle(
+                                      fontSize: 16 * ffem,
+                                      fontWeight: FontWeight.w400,
+                                      height: 1.2175 * ffem / fem,
+                                      color: Color(0x7f222222),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                margin: EdgeInsets.fromLTRB(
+                                    0 * fem, 0 * fem, 34 * fem, 0 * fem),
+                                width: 35 * fem,
+                                child:
+                                Icon(Icons.arrow_forward),
+                              ),
+                              Container(
+                                width: 120 * fem,
+                                height: double.infinity,
+                                decoration: BoxDecoration(
+                                  color: Color(0xfff5f5f5),
+                                  borderRadius: BorderRadius.circular(9 * fem),
+                                ),
+                                child:
+                                Center(
+                                  child:
+                                  Text(
+                                    '11 PM',
+                                    style: TextStyle(
+                                      fontSize: 16 * ffem,
+                                      fontWeight: FontWeight.w400,
+                                      height: 1.2175 * ffem / fem,
+                                      color: Color(0x7f222222),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ),
                   ),
-                  if(_firstAddClicked)
+
                   InkWell(
-                    onTap: (){
-                      setState(() {
-                        isIconVisibleOne = true;
-                      });
+                    onTap: () async {
+                      String price1 = _priceOfMethodOneController.text;
+                      String price2 = _priceOfMethodTwoController.text;
+                      String price3 = _priceOfMethodThreeController.text;
+
+                      List<Map<String, dynamic>> data = [];
+                      if (price1 != null && price1.isNotEmpty) {
+                        data.add({"methodID": 1, "price": price1});
+                      }
+                      if (price2 != null && price2.isNotEmpty) {
+                        data.add({"methodID": 2, "price": price2});
+                      }
+                      if (price3 != null && price3.isNotEmpty) {
+                        data.add({"methodID": 3, "price": price3});
+                      }
+
+                      try {
+                        await ParkingAPI.updateParkingSetting(token, data);
+                        _showSuccessfulDialog(context);
+                      } catch (e) {
+                        _showFailureDialog(context);
+                      }
                     },
                     child: Container(
-                      margin:  EdgeInsets.fromLTRB(0*fem, 25*fem, 0*fem, 0*fem),
-                      width:  361*fem,
-                      height:  51*fem,
+                      margin:  EdgeInsets.fromLTRB(0*fem, 55*fem, 0*fem, 0*fem),
+                      height:  50*fem,
                       decoration:  BoxDecoration (
-                        color: Colors.red,
+                        color: Theme.of(context).primaryColor,
                         borderRadius:  BorderRadius.circular(9*fem),
                       ),
                       child:
                       Center(
                         child:
-                        Icon(Icons.delete_forever_outlined, color: Colors.white,),
+                        Text(
+                          'Lưu thay đổi',
+                          style:  TextStyle (
+                            fontSize:  19*ffem,
+                            fontWeight:  FontWeight.w600,
+                            height:  1.175*ffem/fem,
+                            color:  Color(0xffffffff),
+                          ),
+                        ),
                       ),
                     ),
                   ),
                 ],
-              ),
-
-
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: 40 * fem, right: 40 * fem, top: 20 * fem, bottom: 15 * fem),
-              child: Divider(
-                thickness: 3,
-                height: 2 * fem,
-              ),
-            ),
-            Container(
-                  margin: EdgeInsets.only(top: 10 * fem),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        padding:  EdgeInsets.fromLTRB(7*fem, 14*fem, 10*fem, 12*fem),
-                        decoration:  BoxDecoration (
-                          color:  Color(0xfff5f5f5),
-                          borderRadius:  BorderRadius.circular(9*fem),
-                        ),
-                        child:
-                        Text(
-                          'Qua đêm',
-                          textAlign:  TextAlign.center,
-                          style:  TextStyle (
-                            fontSize:  19*ffem,
-                            fontWeight:  FontWeight.w500,
-                            height:  1.175*ffem/fem,
-                            color:  Color(0xff222222),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 5 * fem),
-                        child: Text('Mức phí', style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 15 * fem,
-                            fontWeight: FontWeight.w400
-                        ),),
-                      ),
-                      Container(
-                        margin: EdgeInsets.fromLTRB(
-                            0 * fem, 0 * fem, 0 * fem, 16 * fem),
-                        padding: EdgeInsets.symmetric(horizontal: 10 * fem),
-                        decoration: BoxDecoration(
-                          color: Color(0xfff5f5f5),
-                          borderRadius: BorderRadius.circular(9 * fem),
-                        ),
-                        child: TextFormField(
-                          initialValue: '3.000', // Giá trị ban đầu
-                          style: TextStyle(
-                            fontSize: 16 * ffem,
-                            fontWeight: FontWeight.w400,
-                            height: 1.175 * ffem / fem,
-                            color: Color(0xff9e9e9e),
-                          ),
-                          decoration: InputDecoration(
-                            border: InputBorder
-                                .none, // Loại bỏ viền của TextFormField
-                          ),
-                          onChanged: (newValue) {
-                            // Xử lý khi giá trị thay đổi
-                          },
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 5 * fem),
-                        child: Text('Thời gian hoạt động', style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 15 * fem,
-                            fontWeight: FontWeight.w400
-                        ),
-                        ),
-                      ),
-                      Container(
-                        height: 51 * fem,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                              margin: EdgeInsets.fromLTRB(
-                                  0 * fem, 0 * fem, 35 * fem, 0 * fem),
-                              width: 120 * fem,
-                              height: double.infinity,
-                              decoration: BoxDecoration(
-                                color: Color(0xfff5f5f5),
-                                borderRadius: BorderRadius.circular(9 * fem),
-                              ),
-                              child:
-                              Center(
-                                child:
-                                Text(
-                                  '23 PM',
-                                  style: TextStyle(
-                                    fontSize: 16 * ffem,
-                                    fontWeight: FontWeight.w400,
-                                    height: 1.2175 * ffem / fem,
-                                    color: Color(0x7f222222),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Container(
-                              margin: EdgeInsets.fromLTRB(
-                                  0 * fem, 0 * fem, 34 * fem, 0 * fem),
-                              width: 35 * fem,
-                              child:
-                              Icon(Icons.arrow_forward),
-                            ),
-                            Container(
-                              width: 120 * fem,
-                              height: double.infinity,
-                              decoration: BoxDecoration(
-                                color: Color(0xfff5f5f5),
-                                borderRadius: BorderRadius.circular(9 * fem),
-                              ),
-                              child:
-                              Center(
-                                child:
-                                Text(
-                                  '11 PM',
-                                  style: TextStyle(
-                                    fontSize: 16 * ffem,
-                                    fontWeight: FontWeight.w400,
-                                    height: 1.2175 * ffem / fem,
-                                    color: Color(0x7f222222),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-            InkWell(
-              onTap: (){
-                _showFailureDialog(context);
-              },
-              child: Container(
-                margin:  EdgeInsets.fromLTRB(0*fem, 55*fem, 0*fem, 0*fem),
-                height:  50*fem,
-                decoration:  BoxDecoration (
-                  color: Theme.of(context).primaryColor,
-                  borderRadius:  BorderRadius.circular(9*fem),
-                ),
-                child:
-                Center(
-                  child:
-                  Text(
-                    'Lưu thay đổi',
-                    style:  TextStyle (
-                      fontSize:  19*ffem,
-                      fontWeight:  FontWeight.w600,
-                      height:  1.175*ffem/fem,
-                      color:  Color(0xffffffff),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
+              );
+            }
+          },
         ),
       ),
     );
@@ -547,7 +597,7 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
                   ),
                   InkWell(
                     onTap: (){
-                      Navigator.pop(context);
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => SettingParkingScreen()));
                     },
                     child: Container(
                       width:  60 * fem,

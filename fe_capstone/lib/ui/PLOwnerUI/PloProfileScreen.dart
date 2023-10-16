@@ -19,10 +19,8 @@ class PloProfileScreen extends StatefulWidget {
 }
 
 class _PloProfileScreenState extends State<PloProfileScreen> {
-
   late Future<PloProfile> ploProfileFuture;
   String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQTDA5MzQzMjg4MTMiLCJyb2xlIjoiUExPIiwiaXNzIjoiaHR0cHM6Ly9lcGFya2luZy5henVyZXdlYnNpdGVzLm5ldC91c2VyL2xvZ2luVXNlciJ9.Etq-tq7gqaBvuWZTowodVXG9xjAX044FySmFp80mvic";
-
 
   @override
   void initState() {

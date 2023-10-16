@@ -1,5 +1,7 @@
+import 'package:fe_capstone/apis/plo/ParkingAPI.dart';
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/models/ListVehicleInParking.dart';
+import 'package:fe_capstone/ui/PLOwnerUI/ParkingScreen.dart';
 import 'package:fe_capstone/ui/components/widgetPLO/ParkingDetailCard.dart';
 import 'package:fe_capstone/ui/helper/my_date_until.dart';
 import 'package:flutter/material.dart';
@@ -123,6 +125,7 @@ class _ParkingCardState extends State<ParkingCard> {
                     else if (widget.type.contains("Present"))
                     InkWell(
                       onTap: (){
+                        print('Chuẩn bị rời bãi');
                         _showUpdateVehicleExitDialog(context);
                       },
                       child: Container(
@@ -223,7 +226,7 @@ class _ParkingCardState extends State<ParkingCard> {
                   child: Container(
                     padding: EdgeInsets.only(bottom: 30),
                     child: Text(
-                      "61A-88888",
+                      widget.vehicleData.licensePlate,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
@@ -263,31 +266,35 @@ class _ParkingCardState extends State<ParkingCard> {
                         Container(
                           width: 1,
                           height: 48,
-                          color: Color(0xffb3abab), // Đường thẳng dọc
+                          color: Color(0xffb3abab),
                         ),
                       ],
                     ),
-                    Expanded(
-                      child: Column(
-                        children: [
-                          Container(
-                            height: 1,
-                            color: Color(0xffb3abab), // Đường thẳng ngang
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop(); // Đóng hộp thoại
-                            },
-                            child: Text(
-                              'Xác nhận',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xffff3737),
+                    InkWell(
+                      onTap: () async {
+                      },
+                      child: Expanded(
+                        child: Column(
+                          children: [
+                            Container(
+                              height: 1,
+                              color: Color(0xffb3abab),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text(
+                                'Xác nhận',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xffff3737),
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -345,16 +352,16 @@ class _ParkingCardState extends State<ParkingCard> {
                   child: Container(
                     padding: EdgeInsets.only(bottom: 30),
                     child: Text(
-                      "61A-88888",
+                      widget.vehicleData.licensePlate,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
                       ),
-                      textAlign: TextAlign.center, // Căn giữa dọc
+                      textAlign: TextAlign.center,
                     ),
                   ),
                 ),
-                if (widget.type.contains('Later') && widget.type.contains('Present'))
+                if (widget.type.contains('Later'))
                 Text.rich(
                   TextSpan(
                       children: [
@@ -382,7 +389,7 @@ class _ParkingCardState extends State<ParkingCard> {
                         children: [
                           Container(
                             height: 1,
-                            color: Color(0xffb3abab), // Đường thẳng ngang
+                            color: Color(0xffb3abab),
                           ),
                           TextButton(
                             onPressed: () {
@@ -405,7 +412,7 @@ class _ParkingCardState extends State<ParkingCard> {
                         Container(
                           width: 1,
                           height: 48,
-                          color: Color(0xffb3abab), // Đường thẳng dọc
+                          color: Color(0xffb3abab),
                         ),
                       ],
                     ),
@@ -414,11 +421,18 @@ class _ParkingCardState extends State<ParkingCard> {
                         children: [
                           Container(
                             height: 1,
-                            color: Color(0xffb3abab), // Đường thẳng ngang
+                            color: Color(0xffb3abab),
                           ),
                           TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop(); // Đóng hộp thoại
+                            onPressed: () async{
+                                String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQTDA5MzQzMjg4MTMiLCJyb2xlIjoiUExPIiwiaXNzIjoiaHR0cHM6Ly9lcGFya2luZy5henVyZXdlYnNpdGVzLm5ldC91c2VyL2xvZ2luVXNlciJ9.Etq-tq7gqaBvuWZTowodVXG9xjAX044FySmFp80mvic";
+                                int reservationID = int.parse(widget.vehicleData.reservationID);
+                                try {
+                                  await ParkingAPI.checkoutReservation(token, reservationID);
+                                  setState(() {
+                                  });
+                                } catch (e) {
+                                }
                             },
                             child: Text(
                               'Xác nhận',
