@@ -5,6 +5,7 @@ import 'package:fe_capstone/ui/PLOwnerUI/ParkingScreen.dart';
 import 'package:fe_capstone/ui/components/widgetPLO/ParkingDetailCard.dart';
 import 'package:fe_capstone/ui/helper/my_date_until.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ParkingCard extends StatefulWidget {
   final List<String> type;
@@ -425,14 +426,17 @@ class _ParkingCardState extends State<ParkingCard> {
                           ),
                           TextButton(
                             onPressed: () async{
-                                String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQTDA5MzQzMjg4MTMiLCJyb2xlIjoiUExPIiwiaXNzIjoiaHR0cHM6Ly9lcGFya2luZy5henVyZXdlYnNpdGVzLm5ldC91c2VyL2xvZ2luVXNlciJ9.Etq-tq7gqaBvuWZTowodVXG9xjAX044FySmFp80mvic";
+                              SharedPreferences prefs = await SharedPreferences.getInstance();
+                              String? accessToken = prefs.getString('access_token');
+                              if (accessToken != null) {
                                 int reservationID = int.parse(widget.vehicleData.reservationID);
                                 try {
-                                  await ParkingAPI.checkoutReservation(token, reservationID);
-                                  setState(() {
-                                  });
+                                  await ParkingAPI.checkoutReservation(accessToken, reservationID);
+                                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ParkingScreen()));
                                 } catch (e) {
                                 }
+                              } else {
+                              }
                             },
                             child: Text(
                               'Xác nhận',

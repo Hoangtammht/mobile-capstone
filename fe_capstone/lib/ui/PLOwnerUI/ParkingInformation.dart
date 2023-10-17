@@ -5,6 +5,7 @@ import 'package:fe_capstone/models/RatingModel.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/EditParkingInformation.dart';
 import 'package:fe_capstone/ui/components/widgetCustomer/RatingCard.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ParkingInformation extends StatefulWidget {
   const ParkingInformation({Key? key}) : super(key: key);
@@ -17,13 +18,39 @@ class _ParkingInformationState extends State<ParkingInformation> {
 
   late Future<ParkingInformationModel> parkingInformationFuture;
   late Future<List<RatingModel>> listRatingModelFuture;
-  String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQTDA5MzQzMjg4MTMiLCJyb2xlIjoiUExPIiwiaXNzIjoiaHR0cHM6Ly9lcGFya2luZy5henVyZXdlYnNpdGVzLm5ldC91c2VyL2xvZ2luVXNlciJ9.Etq-tq7gqaBvuWZTowodVXG9xjAX044FySmFp80mvic";
+  late String token;
 
   @override
   void initState() {
     super.initState();
-    parkingInformationFuture = ParkingAPI.getParkingInformation(token);
-    listRatingModelFuture = ParkingAPI.getRatingList(token);
+    parkingInformationFuture = _getParkingInformationFuture();
+    listRatingModelFuture = _getListRating();
+  }
+
+  Future<ParkingInformationModel> _getParkingInformationFuture() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? accessToken = prefs.getString('access_token');
+    if (accessToken != null) {
+      setState(() {
+        token = accessToken;
+      });
+      return ParkingAPI.getParkingInformation(token);
+    } else {
+      throw Exception("Access token not found");
+    }
+  }
+
+  Future<List<RatingModel>> _getListRating() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? accessToken = prefs.getString('access_token');
+    if (accessToken != null) {
+      setState(() {
+        token = accessToken;
+      });
+      return ParkingAPI.getRatingList(token);
+    } else {
+      throw Exception("Access token not found");
+    }
   }
 
 
@@ -68,7 +95,10 @@ class _ParkingInformationState extends State<ParkingInformation> {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        snapshot.connectionState == ConnectionState.waiting ? Text('Đang xử lý...') :
+                        snapshot.connectionState == ConnectionState.waiting ? Text('Đang xử lý...',
+                            style: TextStyle(
+                          fontSize: 18 * fem,
+                        )) :
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 5 * fem, vertical :5 * fem),
                           child: Container(

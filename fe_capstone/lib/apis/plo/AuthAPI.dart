@@ -37,6 +37,12 @@ class AuthPloAPIs{
       String reNewPassword,
       ) async {
     try {
+      final Map<String, dynamic> requestData = {
+        'currentPassword': currentPassword,
+        'newPassword': newPassword,
+        'reNewPassword': reNewPassword,
+      };
+
       final response = await dio.put(
         '$baseUrl/PLO/changePassword',
         options: Options(
@@ -45,11 +51,7 @@ class AuthPloAPIs{
             'Content-Type': 'application/json',
           },
         ),
-        queryParameters: {
-          'currentPassword': currentPassword,
-          'newPassword': newPassword,
-          'reNewPassword': reNewPassword,
-        },
+        data: requestData,
       );
 
       if (response.statusCode == 200) {

@@ -20,12 +20,26 @@ class PloProfileScreen extends StatefulWidget {
 
 class _PloProfileScreenState extends State<PloProfileScreen> {
   late Future<PloProfile> ploProfileFuture;
-  String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQTDA5MzQzMjg4MTMiLCJyb2xlIjoiUExPIiwiaXNzIjoiaHR0cHM6Ly9lcGFya2luZy5henVyZXdlYnNpdGVzLm5ldC91c2VyL2xvZ2luVXNlciJ9.Etq-tq7gqaBvuWZTowodVXG9xjAX044FySmFp80mvic";
+
+  String token = "";
 
   @override
   void initState() {
     super.initState();
-    ploProfileFuture = AuthPloAPIs.getPloProfile(token);
+    ploProfileFuture = _getPloProfileFuture();
+  }
+
+  Future<PloProfile> _getPloProfileFuture() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? accessToken = prefs.getString('access_token');
+    if (accessToken != null) {
+      setState(() {
+        token = accessToken;
+      });
+      return AuthPloAPIs.getPloProfile(token);
+    } else {
+      throw Exception("Access token not found");
+    }
   }
 
 
@@ -292,46 +306,46 @@ class _PloProfileScreenState extends State<PloProfileScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    InkWell(
-                      onTap: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => OwnershipHistoryScreen()));
-                      },
-                      child: Container(
-                        margin:
-                        EdgeInsets.fromLTRB(1 * fem, 0 * fem, 0 * fem, 0 * fem),
-                        width: 362 * fem,
-                        height: 63 * fem,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Color(0xffdcdada)),
-                          color: Color(0xffffffff),
-                          borderRadius: BorderRadius.circular(9 * fem),
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(left: 10 * fem),
-                              child: Icon(Icons.history),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 10 * fem),
-                              child: Text(
-                                'Lịch sử bãi xe đã đăng kí',
-                                style: TextStyle(
-                                  fontSize: 19 * ffem,
-                                  fontWeight: FontWeight.w600,
-                                  height: 1.175 * ffem / fem,
-                                  color: Color(0xff000000),
-                                ),
-                              ),
-                            ),
-
-                          ],
-                        ),
-                      ),
-                    ),
+                    // InkWell(
+                    //   onTap: (){
+                    //     Navigator.push(context, MaterialPageRoute(builder: (context) => OwnershipHistoryScreen()));
+                    //   },
+                    //   child: Container(
+                    //     margin:
+                    //     EdgeInsets.fromLTRB(1 * fem, 0 * fem, 0 * fem, 0 * fem),
+                    //     width: 362 * fem,
+                    //     height: 63 * fem,
+                    //     decoration: BoxDecoration(
+                    //       border: Border.all(color: Color(0xffdcdada)),
+                    //       color: Color(0xffffffff),
+                    //       borderRadius: BorderRadius.circular(9 * fem),
+                    //     ),
+                    //     child: Row(
+                    //       crossAxisAlignment: CrossAxisAlignment.center,
+                    //       children: [
+                    //         Padding(
+                    //           padding: EdgeInsets.only(left: 10 * fem),
+                    //           child: Icon(Icons.history),
+                    //         ),
+                    //         Padding(
+                    //           padding: EdgeInsets.only(left: 10 * fem),
+                    //           child: Text(
+                    //             'Lịch sử bãi xe đã đăng kí',
+                    //             style: TextStyle(
+                    //               fontSize: 19 * ffem,
+                    //               fontWeight: FontWeight.w600,
+                    //               height: 1.175 * ffem / fem,
+                    //               color: Color(0xff000000),
+                    //             ),
+                    //           ),
+                    //         ),
+                    //
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
                     SizedBox(
-                      height: 14 * fem,
+                      height: 84 * fem,
                     ),
                     InkWell(
                       onTap: (){
@@ -357,7 +371,7 @@ class _PloProfileScreenState extends State<PloProfileScreen> {
                             Padding(
                               padding: EdgeInsets.only(left: 10 * fem),
                               child: Text(
-                                'Chuyển dữ liệu bãi xe',
+                                'Cập nhật số điện thoại',
                                 style: TextStyle(
                                   fontSize: 19 * ffem,
                                   fontWeight: FontWeight.w600,

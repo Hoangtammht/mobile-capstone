@@ -7,6 +7,7 @@ import 'package:fe_capstone/models/ParkingInformationModel.dart';
 import 'package:fe_capstone/ui/helper/ConfirmDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'ParkingInformation.dart';
 
@@ -23,21 +24,35 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
   ];
 
   late Future<ParkingInformationModel> parkingInformationFuture;
-  String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQTDA5MzQzMjg4MTMiLCJyb2xlIjoiUExPIiwiaXNzIjoiaHR0cHM6Ly9lcGFya2luZy5henVyZXdlYnNpdGVzLm5ldC91c2VyL2xvZ2luVXNlciJ9.Etq-tq7gqaBvuWZTowodVXG9xjAX044FySmFp80mvic";
   TextEditingController _parkingNameController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
   TextEditingController _slotController = TextEditingController();
 
+  String token = "";
+
   @override
   void initState() {
     super.initState();
-    parkingInformationFuture = ParkingAPI.getParkingInformation(token);
+    parkingInformationFuture = _getParkingInformationFuture();
     parkingInformationFuture.then((data) {
       _parkingNameController.text = data?.parkingName ?? '';
       _descriptionController.text = data?.description ?? '';
       _slotController.text = data?.slot.toString() ?? '0';
       images = data.image.map((imageObject) => imageObject.imageLink).toList();
     });
+  }
+
+  Future<ParkingInformationModel> _getParkingInformationFuture() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? accessToken = prefs.getString('access_token');
+    if (accessToken != null) {
+      setState(() {
+        token = accessToken;
+      });
+      return ParkingAPI.getParkingInformation(token);
+    } else {
+      throw Exception("Access token not found");
+    }
   }
 
 
@@ -212,7 +227,7 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
                         horizontal: 10 * fem, vertical: 15 * fem),
                     child: Container(
                       margin:
-                      EdgeInsets.fromLTRB(1 * fem, 0 * fem, 0 * fem, 16 * fem),
+                      EdgeInsets.fromLTRB(1 * fem, 0 * fem, 0 * fem, 5 * fem),
                       child: Text(
                         'Số chỗ:',
                         style: TextStyle(
@@ -257,11 +272,9 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
                   ),
                   InkWell(
                     onTap: () {
-                      String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQTDA5MzQzMjg4MTMiLCJyb2xlIjoiUExPIiwiaXNzIjoiaHR0cHM6Ly9lcGFya2luZy5henVyZXdlYnNpdGVzLm5ldC91c2VyL2xvZ2luVXNlciJ9.Etq-tq7gqaBvuWZTowodVXG9xjAX044FySmFp80mvic";
                       String newParkingName = _parkingNameController.text;
                       String description = _descriptionController.text;
                       int slot = int.parse(_slotController.text);
-
                       print(slot);
 
                       CustomDialogs.showCustomDialog(

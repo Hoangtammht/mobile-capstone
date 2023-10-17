@@ -15,6 +15,19 @@ class RevenueScreen extends StatefulWidget {
 class _RevenueScreenState extends State<RevenueScreen> {
   TextEditingController _InputMoneyController = TextEditingController();
   final NumberFormat currencyFormat = NumberFormat("#,###");
+
+  TextEditingController _fromDateController = TextEditingController();
+  TextEditingController _toDateController = TextEditingController();
+  DateTime selectedFromDate = DateTime.now();
+  DateTime selectedToDate = DateTime.now();
+
+  @override
+  void initState() {
+    super.initState();
+    _fromDateController.text = DateFormat('dd/MM/yyyy').format(selectedFromDate);
+    _toDateController.text = DateFormat('dd/MM/yyyy').format(selectedToDate);
+  }
+
   List<Withdraw> generateFakeTransactions() {
     return [
       Withdraw(
@@ -79,13 +92,13 @@ class _RevenueScreenState extends State<RevenueScreen> {
           borderRadius: BorderRadius.circular(26 * fem),
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               margin:
-                  EdgeInsets.fromLTRB(0 * fem, 10 * fem, 210 * fem, 0 * fem),
+                  EdgeInsets.fromLTRB(19 * fem, 10 * fem, 0 * fem, 0 * fem),
               child: Text(
-                'Tổng doanh thu',
+                'Ví tiền',
                 style: TextStyle(
                   fontSize: 20 * ffem,
                   fontWeight: FontWeight.w600,
@@ -94,7 +107,7 @@ class _RevenueScreenState extends State<RevenueScreen> {
               ),
             ),
             Container(
-              margin: EdgeInsets.fromLTRB(0 * fem, 5 * fem, 150 * fem, 0 * fem),
+              margin: EdgeInsets.fromLTRB(19 * fem, 5 * fem, 0 * fem, 0 * fem),
               child: Text(
                 '36.000.000đ',
                 style: TextStyle(
@@ -107,10 +120,10 @@ class _RevenueScreenState extends State<RevenueScreen> {
             ),
             Container(
               margin:
-                  EdgeInsets.fromLTRB(19 * fem, 0 * fem, 154 * fem, 5 * fem),
+                  EdgeInsets.fromLTRB(19 * fem, 0 * fem, 19 * fem, 5 * fem),
               padding:
                   EdgeInsets.fromLTRB(24.5 * fem, 14 * fem, 11 * fem, 15 * fem),
-              width: double.infinity,
+              width: 150 * fem,
               decoration: BoxDecoration(
                 color: Theme.of(context).primaryColor,
                 borderRadius: BorderRadius.circular(9 * fem),
@@ -133,7 +146,7 @@ class _RevenueScreenState extends State<RevenueScreen> {
                       ),
                     ),
                     Text(
-                      'Yêu cầu rút tiền',
+                      'Rút tiền',
                       style: TextStyle(
                         fontSize: 19 * ffem,
                         fontWeight: FontWeight.w600,
@@ -159,7 +172,7 @@ class _RevenueScreenState extends State<RevenueScreen> {
                     margin:
                         EdgeInsets.fromLTRB(0 * fem, 0 * fem, 0 * fem, 9 * fem),
                     child: Text(
-                      'Doanh thu chi tiết',
+                      'Thống kê chi tiết',
                       style: TextStyle(
                         fontSize: 19 * ffem,
                         fontWeight: FontWeight.w400,
@@ -187,20 +200,41 @@ class _RevenueScreenState extends State<RevenueScreen> {
                           ),
                         ),
                         Expanded(
-                          child: Container(
-                            margin: EdgeInsets.only(right: 7 * fem),
-                            padding: EdgeInsets.fromLTRB(101 * fem, 7 * fem, 5 * fem, 7 * fem),
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Color(0x4c000000)),
-                              color: Color(0xffffffff),
-                              borderRadius: BorderRadius.circular(10 * fem),
-                            ),
-                            child: Align(
-                              alignment: Alignment.centerRight,
-                              child: SizedBox(
-                                width: 24 * fem,
-                                height: 24 * fem,
-                                child: Icon(Icons.calendar_month_outlined),
+                          child: GestureDetector(
+                            onTap: () {
+                              showDatePicker(
+                                context: context,
+                                initialDate: selectedFromDate,
+                                firstDate: DateTime(2000),
+                                lastDate: DateTime.now(),
+                              ).then((date) {
+                                if (date != null) {
+                                  setState(() {
+                                    selectedFromDate = date;
+                                    _fromDateController.text = DateFormat('dd/MM/yyyy').format(selectedFromDate);
+                                  });
+                                }
+                              });
+                            },
+                            child: Container(
+                              margin: EdgeInsets.only(right: 7 * fem),
+                              padding: EdgeInsets.fromLTRB(12 * fem, 7 * fem, 5 * fem, 7 * fem),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Color(0x4c000000)),
+                                color: Color(0xffffffff),
+                                borderRadius: BorderRadius.circular(10 * fem),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.calendar_month_outlined),
+                                  SizedBox(width: 10 * fem),
+                                  Text(
+                                    _fromDateController.text,
+                                    style: TextStyle(
+                                      fontSize: 16 * ffem,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
@@ -218,27 +252,47 @@ class _RevenueScreenState extends State<RevenueScreen> {
                           ),
                         ),
                         Expanded(
-                          child: Container(
-                            margin: EdgeInsets.only(right: 7 * fem),
-                            padding: EdgeInsets.fromLTRB(101 * fem, 7 * fem, 5 * fem, 7 * fem),
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Color(0x4c000000)),
-                              color: Color(0xffffffff),
-                              borderRadius: BorderRadius.circular(10 * fem),
-                            ),
-                            child: Align(
-                              alignment: Alignment.centerRight,
-                              child: SizedBox(
-                                width: 24 * fem,
-                                height: 24 * fem,
-                                child: Icon(Icons.calendar_month_outlined),
+                          child: GestureDetector(
+                            onTap: () {
+                              showDatePicker(
+                                context: context,
+                                initialDate: selectedToDate,
+                                firstDate: DateTime(2000),
+                                lastDate: DateTime.now(),
+                              ).then((date) {
+                                if (date != null) {
+                                  setState(() {
+                                    selectedToDate = date;
+                                    _toDateController.text = DateFormat('dd/MM/yyyy').format(selectedToDate);
+                                  });
+                                }
+                              });
+                            },
+                            child: Container(
+                              margin: EdgeInsets.only(right: 7 * fem),
+                              padding: EdgeInsets.fromLTRB(12 * fem, 7 * fem, 5 * fem, 7 * fem),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Color(0x4c000000)),
+                                color: Color(0xffffffff),
+                                borderRadius: BorderRadius.circular(10 * fem),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.calendar_month_outlined),
+                                  SizedBox(width: 10 * fem),
+                                  Text(
+                                    _toDateController.text,
+                                    style: TextStyle(
+                                      fontSize: 16 * ffem,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
                         ),
                       ],
-                    )
-
+                    ),
                   ),
                   Container(
                     margin:
@@ -300,7 +354,7 @@ class _RevenueScreenState extends State<RevenueScreen> {
                           child: Text(
                             'Số lượng ',
                             style: TextStyle(
-                              fontSize: 10 * ffem,
+                              fontSize: 12 * ffem,
                               fontWeight: FontWeight.w400,
                               height: 1.175 * ffem / fem,
                               color: Color(0xff5b5b5b),
@@ -341,9 +395,9 @@ class _RevenueScreenState extends State<RevenueScreen> {
                           margin: EdgeInsets.fromLTRB(
                               0 * fem, 0 * fem, 0 * fem, 6 * fem),
                           child: Text(
-                            'Qua đêm',
+                            'Ban ngày',
                             style: TextStyle(
-                              fontSize: 10 * ffem,
+                              fontSize: 12 * ffem,
                               fontWeight: FontWeight.w400,
                               height: 1.175 * ffem / fem,
                               color: Color(0xff5b5b5b),
@@ -371,7 +425,6 @@ class _RevenueScreenState extends State<RevenueScreen> {
                     width: 10 * fem,
                   ),
                   Container(
-                    // frame40a9d (648:922)
                     padding: EdgeInsets.fromLTRB(
                         16 * fem, 15 * fem, 17 * fem, 12 * fem),
                     height: double.infinity,
@@ -382,13 +435,12 @@ class _RevenueScreenState extends State<RevenueScreen> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Container(
-                          // banngyWJB (648:923)
                           margin: EdgeInsets.fromLTRB(
                               0 * fem, 0 * fem, 0 * fem, 8 * fem),
                           child: Text(
-                            'Ban Ngày',
+                            'Ban Tối',
                             style: TextStyle(
-                              fontSize: 10 * ffem,
+                              fontSize: 12 * ffem,
                               fontWeight: FontWeight.w400,
                               height: 1.175 * ffem / fem,
                               color: Color(0xff5b5b5b),
@@ -426,13 +478,12 @@ class _RevenueScreenState extends State<RevenueScreen> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Container(
-                          // theothngHTM (648:920)
                           margin: EdgeInsets.fromLTRB(
                               0 * fem, 0 * fem, 0 * fem, 6 * fem),
                           child: Text(
-                            'Theo tháng',
+                            'Qua đêm',
                             style: TextStyle(
-                              fontSize: 10 * ffem,
+                              fontSize: 12 * ffem,
                               fontWeight: FontWeight.w400,
                               height: 1.175 * ffem / fem,
                               color: Color(0xff5b5b5b),
@@ -460,7 +511,7 @@ class _RevenueScreenState extends State<RevenueScreen> {
               ),
             ),
             Container(
-              margin: EdgeInsets.fromLTRB(0 * fem, 0 * fem, 218 * fem, 6 * fem),
+              margin: EdgeInsets.fromLTRB(19 * fem, 0 * fem, 0 * fem, 8 * fem),
               child: Text(
                 'Lịch sử rút tiền',
                 style: TextStyle(

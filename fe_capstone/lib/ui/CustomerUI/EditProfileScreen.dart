@@ -5,6 +5,7 @@ import 'package:fe_capstone/models/UpdateProfileRequest.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/PloProfileScreen.dart';
 import 'package:fe_capstone/ui/helper/ConfirmDialog.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({Key? key}) : super(key: key);
@@ -15,16 +16,30 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   late Future<PloProfile> ploProfileFuture;
-  String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQTDA5MzQzMjg4MTMiLCJyb2xlIjoiUExPIiwiaXNzIjoiaHR0cHM6Ly9lcGFya2luZy5henVyZXdlYnNpdGVzLm5ldC91c2VyL2xvZ2luVXNlciJ9.Etq-tq7gqaBvuWZTowodVXG9xjAX044FySmFp80mvic";
   TextEditingController _fullNameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
 
+  String token = "";
 
   @override
   void initState() {
     super.initState();
-    ploProfileFuture = AuthPloAPIs.getPloProfile(token);
+    ploProfileFuture = _getPloProfileFuture();
   }
+
+  Future<PloProfile> _getPloProfileFuture() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? accessToken = prefs.getString('access_token');
+    if (accessToken != null) {
+      setState(() {
+        token = accessToken;
+      });
+      return AuthPloAPIs.getPloProfile(token);
+    } else {
+      throw Exception("Access token not found");
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -111,7 +126,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               ),
                               decoration: InputDecoration(
                                 border: InputBorder
-                                    .none, // Loại bỏ viền của TextFormField
+                                    .none,
                               ),
                             ),
                           ),
@@ -187,7 +202,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   "Xác nhận",
                                   Color(0xffff3737),
                                       () async {
-                                        String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQTDA5MzQzMjg4MTMiLCJyb2xlIjoiUExPIiwiaXNzIjoiaHR0cHM6Ly9lcGFya2luZy5henVyZXdlYnNpdGVzLm5ldC91c2VyL2xvZ2luVXNlciJ9.Etq-tq7gqaBvuWZTowodVXG9xjAX044FySmFp80mvic";
                                         await AuthPloAPIs.updateProfile(token, UpdateProfileRequest(
                                           email: newEmail,
                                           fullName: newFullName,

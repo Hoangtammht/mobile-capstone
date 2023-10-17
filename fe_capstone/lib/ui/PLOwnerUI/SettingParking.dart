@@ -23,12 +23,12 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
   TextEditingController _priceOfMethodTwoController = TextEditingController();
   TextEditingController _priceOfMethodThreeController = TextEditingController();
 
-  String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQTDA5MzQzMjg4MTMiLCJyb2xlIjoiUExPIiwiaXNzIjoiaHR0cHM6Ly9lcGFya2luZy5henVyZXdlYnNpdGVzLm5ldC91c2VyL2xvZ2luVXNlciJ9.Etq-tq7gqaBvuWZTowodVXG9xjAX044FySmFp80mvic";
+  String token = "";
 
   @override
   void initState() {
     super.initState();
-    settingParkingFuture = ParkingAPI.getParkingSetting(token);
+    settingParkingFuture = _getSettingParkingFuture();
     settingParkingFuture.then((settingParking) {
       settingParking?.methodList?.forEach((method) {
         if (method.methodID == 1) {
@@ -40,6 +40,19 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
         }
       });
     });
+  }
+
+  Future<ResponseSettingParking> _getSettingParkingFuture() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? accessToken = prefs.getString('access_token');
+    if (accessToken != null) {
+      setState(() {
+        token = accessToken;
+      });
+      return ParkingAPI.getParkingSetting(token);
+    } else {
+      throw Exception("Access token not found");
+    }
   }
 
   @override

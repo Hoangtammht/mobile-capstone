@@ -6,6 +6,7 @@ import 'package:fe_capstone/ui/PLOwnerUI/ParkingPresentScreen.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/SettingParking.dart';
 import 'package:fe_capstone/ui/components/widgetPLO/ConfirmDeleteDialog.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ParkingScreen extends StatefulWidget {
   const ParkingScreen({Key? key}) : super(key: key);
@@ -23,7 +24,7 @@ class _ParkingScreenState extends State<ParkingScreen>
   late List<ListVehicleInParking> list3 = [];
   late List<ListVehicleInParking> list4 = [];
 
-  String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQTDA5MzQzMjg4MTMiLCJyb2xlIjoiUExPIiwiaXNzIjoiaHR0cHM6Ly9lcGFya2luZy5henVyZXdlYnNpdGVzLm5ldC91c2VyL2xvZ2luVXNlciJ9.Etq-tq7gqaBvuWZTowodVXG9xjAX044FySmFp80mvic";
+  String token = "";
 
 
   @override
@@ -36,12 +37,18 @@ class _ParkingScreenState extends State<ParkingScreen>
 
   void fetchData() async {
     try {
-      list1 = await ParkingAPI.fetchListVehicleInParking(token, 1);
-      list2 = await ParkingAPI.fetchListVehicleInParking(token, 2);
-      list3 = await ParkingAPI.fetchListVehicleInParking(token, 3);
-      list4 = await ParkingAPI.fetchListVehicleInParking(token, 4);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? accessToken = prefs.getString('access_token');
+      if (accessToken != null) {
+        setState(() {
+          token = accessToken;
+        });
+        list1 = await ParkingAPI.fetchListVehicleInParking(token, 1);
+        list2 = await ParkingAPI.fetchListVehicleInParking(token, 2);
+        list3 = await ParkingAPI.fetchListVehicleInParking(token, 3);
+        list4 = await ParkingAPI.fetchListVehicleInParking(token, 4);
+      }
       setState(() {
-
       });
     } catch (e) {
       // Xử lý lỗi ở đây
@@ -90,34 +97,34 @@ class _ParkingScreenState extends State<ParkingScreen>
                     ),
                   ),
                 ),
-                PopupMenuItem<String>(
-                  value: 'delete',
-                  child: InkWell(
-                    onTap: () {
-                      showDialog(
-                          context: context,
-                          builder: (context) {
-                            return ConfirmDeleteDialog();
-                          }
-                      );
-                    },
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.delete_forever_outlined,
-                          color: Colors.red,
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(left: 4 * fem),
-                          child: Text(
-                            'Xóa',
-                            style: TextStyle(color: Colors.red),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
+                // PopupMenuItem<String>(
+                //   value: 'delete',
+                //   child: InkWell(
+                //     onTap: () {
+                //       showDialog(
+                //           context: context,
+                //           builder: (context) {
+                //             return ConfirmDeleteDialog();
+                //           }
+                //       );
+                //     },
+                //     child: Row(
+                //       children: [
+                //         Icon(
+                //           Icons.delete_forever_outlined,
+                //           color: Colors.red,
+                //         ),
+                //         Padding(
+                //           padding: EdgeInsets.only(left: 4 * fem),
+                //           child: Text(
+                //             'Xóa',
+                //             style: TextStyle(color: Colors.red),
+                //           ),
+                //         )
+                //       ],
+                //     ),
+                //   ),
+                // ),
                 PopupMenuItem<String>(
                   value: 'information',
                   child: InkWell(

@@ -19,8 +19,21 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool isPasswordVisible = false;
+  String dropdownValue = 'CU';
+
+  void toggleUserRole(){
+    setState(() {
+      dropdownValue = dropdownValue == 'CU' ? 'PL' : 'CU';
+    });
+  }
+
   TextEditingController _userNameController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
+
+  String getFullUserName() {
+    String username = _userNameController.text;
+    return dropdownValue + username;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,6 +94,29 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       child: Row(
                         children: [
+                          GestureDetector(
+                            onTap: toggleUserRole,
+                            child: Container(
+                              margin: EdgeInsets.fromLTRB(0, 0, 14 * fem, 0),
+                              child: Text(
+                                dropdownValue == 'CU' ? 'C' : 'P',
+                                style: TextStyle(
+                                  fontSize: 20 * ffem,
+                                  fontWeight: FontWeight.w600,
+                                  height: 1.175 * ffem / fem,
+                                  color: Color(0xffa3a3a3),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.fromLTRB(0, 0, 11.5 * fem, 0.99 * fem),
+                            width: 2 * fem,
+                            height: 48.01 * fem,
+                            decoration: BoxDecoration(
+                              color: Color(0xff6ec2f7)
+                            ),
+                          ),
                           Expanded(
                             child: TextFormField(
                               controller: _userNameController,
@@ -206,7 +242,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       child: TextButton(
                         onPressed: () {
-                          String username = _userNameController.text;
+                          String username = getFullUserName();
                           String password = _passwordController.text;
                           if (username.isNotEmpty && password.isNotEmpty) {
                             AuthAPIs.loginUser(username, password).then((_) {

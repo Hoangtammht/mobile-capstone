@@ -2,6 +2,7 @@ import 'package:fe_capstone/apis/plo/AuthAPI.dart';
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/ui/CustomerUI/EditProfileScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({Key? key}) : super(key: key);
@@ -273,26 +274,32 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                             ),
                             InkWell(
                               onTap: () async {
-                                String oldPassword =
-                                    _OldPasswordController.text;
-                                String newPassword =
-                                    _NewPasswordController.text;
-                                String reNewPassword =
-                                    _ReNewPasswordController.text;
+                                String oldPassword = _OldPasswordController.text;
+                                String newPassword = _NewPasswordController.text;
+                                String reNewPassword = _ReNewPasswordController.text;
+
                                 if (newPassword != reNewPassword) {
                                   _showFailureDialog(context);
-                                }else{
-                                  String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQTDA5MzQzMjg4MTMiLCJyb2xlIjoiUExPIiwiaXNzIjoiaHR0cHM6Ly9lcGFya2luZy5henVyZXdlYnNpdGVzLm5ldC91c2VyL2xvZ2luVXNlciJ9.Etq-tq7gqaBvuWZTowodVXG9xjAX044FySmFp80mvic";
-                                  await AuthPloAPIs.changePassword(token, oldPassword, newPassword, reNewPassword)
-                                      .then((_) {
-                                    _showSuccessfulDialog(context);
-                                  }).catchError((error) {
-                                    _showFailureDialog(context);
-                                  });
+                                } else {
+                                  SharedPreferences prefs = await SharedPreferences.getInstance();
+                                  String? accessToken = prefs.getString('access_token');
+
+                                  if (accessToken != null) {
+                                    await AuthPloAPIs.changePassword(accessToken, oldPassword, newPassword, reNewPassword)
+                                        .then((_) {
+                                      _showSuccessfulDialog(context);
+                                    }).catchError((error) {
+                                      _showFailureDialog(context);
+                                    });
+                                  } else {
+                                    throw Exception("Access token not found");
+                                  }
                                 }
+
                                 _OldPasswordController.clear();
                                 _NewPasswordController.clear();
                                 _ReNewPasswordController.clear();
+
                               },
                               child: Container(
                                 width: 322 * fem,
