@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:fe_capstone/models/ListVehicleInParking.dart';
 import 'package:fe_capstone/models/ParkingInformationModel.dart';
 import 'package:fe_capstone/models/RatingModel.dart';
+import 'package:fe_capstone/models/ReservationDetail.dart';
 import 'package:fe_capstone/models/ResponseSettingParking.dart';
 
 class ParkingAPI {
@@ -18,7 +19,7 @@ class ParkingAPI {
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
-            'Accept': 'application/json',
+            'Content-Type': 'application/json',
           },
         ),
       );
@@ -61,11 +62,14 @@ class ParkingAPI {
   }
 
   static Future<void> updateParkingInformation(
-    String token,
-    String description,
-    List<String> images,
-    String parkingName,
-  ) async {
+      String token,
+      String description,
+      List<String> images,
+      String parkingName,
+      int slot,
+      Map<String, dynamic> waitingTime,
+      Map<String, dynamic> cancelBookingTime,
+      ) async {
     try {
       final response = await dio.put(
         '$baseUrl/PLO/updateParkingInformation',
@@ -73,6 +77,9 @@ class ParkingAPI {
           "description": description,
           "image": images,
           "parkingName": parkingName,
+          "waitingTime": waitingTime,
+          "slot" : slot,
+          "cancelBookingTime": cancelBookingTime,
         },
         options: Options(
           headers: {
@@ -90,6 +97,7 @@ class ParkingAPI {
       throw Exception('Failed to update parking information: $e');
     }
   }
+
 
   static Future<String?> uploadFile(File file) async {
     try {
@@ -129,11 +137,11 @@ class ParkingAPI {
   }
 
   static Future<List<ListVehicleInParking>> fetchListVehicleInParking(
-      String token, int parkingStatusID) async {
+      String token, int statusID) async {
     try {
       var response = await dio.get(
         '$baseUrl/parking/showListVehicleInParking',
-        queryParameters: {'parkingStatusID': parkingStatusID},
+        queryParameters: {'statusID': statusID},
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -161,7 +169,10 @@ class ParkingAPI {
       var response = await dio.get(
         '$baseUrl/parking/getParkingSetting',
         options: Options(
-          headers: {'Authorization': 'Bearer $token'},
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
         ),
       );
 
@@ -221,5 +232,105 @@ class ParkingAPI {
       throw Exception('Failed to checkout reservation: $e');
     }
   }
+
+  static Future<void> checkInReservation(String token, int reservationID) async {
+    try {
+      var response = await dio.put(
+        '$baseUrl/reservation/checkinReservation',
+        data: {"reservationID": reservationID},
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+      if (response.statusCode == 200) {
+        print("CheckIn successfully");
+      } else {
+        throw Exception('Failed to update parking setting');
+      }
+    } catch (e) {
+      throw Exception('Failed to checkout reservation: $e');
+    }
+  }
+
+  static Future<ReservationDetail> getReservationDetail(
+      String token, int reservationID) async {
+    try {
+      var response = await dio.get(
+        '$baseUrl/parking/getReservationDetail',
+        queryParameters: {'reservationID': reservationID},
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = response.data;
+        ReservationDetail reservationDetail =
+        ReservationDetail.fromJson(data);
+        return reservationDetail;
+      } else {
+        throw Exception('Failed to get reservation detail');
+      }
+    } catch (e) {
+      throw Exception('Failed to get reservation detail: $e');
+    }
+  }
+
+  static Future<void> checkPLOTransfer(String token, String phoneNumber) async {
+    try {
+      final response = await dio.get(
+        '$baseUrl/PLO/checkPLOTransfer',
+        queryParameters: {
+          'phoneNumber': phoneNumber,
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+      if (response.statusCode == 200) {
+        print('Gửi otp để xác nhận số điện thoại');
+      } else {
+        throw Exception('Failed to check PLO transfer');
+      }
+    } catch (e) {
+      throw Exception('Failed to check PLO transfer: $e');
+    }
+  }
+
+  static Future<void> checkOTPcodeTransferParking(String token,
+      String otpCode, String phoneNumber) async {
+    try {
+      final response = await dio.put(
+        '$baseUrl/PLO/checkOTPcodeTransferParking',
+        queryParameters: {
+          'OTPcode': otpCode,
+          'phoneNumber': phoneNumber,
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+      if (response.statusCode == 200) {
+        print('Check OTP code transfer parking success');
+      } else {
+        throw Exception('Failed to check OTP code transfer parking');
+      }
+    } catch (e) {
+      throw Exception('Failed to check OTP code transfer parking: $e');
+    }
+  }
+
+
 
 }

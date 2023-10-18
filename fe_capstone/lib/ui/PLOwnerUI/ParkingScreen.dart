@@ -23,6 +23,9 @@ class _ParkingScreenState extends State<ParkingScreen>
   late List<ListVehicleInParking> list2 = [];
   late List<ListVehicleInParking> list3 = [];
   late List<ListVehicleInParking> list4 = [];
+  late int list1Length = 0;
+  late int list2Length = 0;
+  late int list3Length = 0;
 
   String token = "";
 
@@ -32,7 +35,10 @@ class _ParkingScreenState extends State<ParkingScreen>
     super.initState();
     _controller = TabController(length: 4, vsync: this, initialIndex: 0);
     fetchData();
-    print('Init state called');
+  }
+
+  void updateUI() {
+    fetchData();
   }
 
   void fetchData() async {
@@ -43,12 +49,15 @@ class _ParkingScreenState extends State<ParkingScreen>
         setState(() {
           token = accessToken;
         });
-        list1 = await ParkingAPI.fetchListVehicleInParking(token, 1);
-        list2 = await ParkingAPI.fetchListVehicleInParking(token, 2);
+        list1 = await ParkingAPI.fetchListVehicleInParking(token, 2);
+        list2 = await ParkingAPI.fetchListVehicleInParking(token, 1);
         list3 = await ParkingAPI.fetchListVehicleInParking(token, 3);
         list4 = await ParkingAPI.fetchListVehicleInParking(token, 4);
       }
       setState(() {
+        list1Length = list1.length;
+        list2Length = list2.length;
+        list3Length = list3.length;
       });
     } catch (e) {
       // Xử lý lỗi ở đây
@@ -162,13 +171,13 @@ class _ParkingScreenState extends State<ParkingScreen>
           indicatorColor: Colors.white,
           tabs: [
             Tab(
-              text: 'Hiện tại (2)',
+              text: 'Hiện tại ($list1Length)',
             ),
             Tab(
-              text: 'Đang tới (1)',
+              text: 'Đang tới ($list2Length)',
             ),
             Tab(
-              text: 'Quá giờ (1)',
+              text: 'Quá giờ ($list3Length)',
             ),
             Tab(
               text: 'Lịch sử',
@@ -179,10 +188,10 @@ class _ParkingScreenState extends State<ParkingScreen>
       body: TabBarView(
         controller: _controller,
         children: [
-          ParkingPresent(type: ["Present"], vehicleList: list1),
-          ParkingPresent(type: ["Going"], vehicleList: list2),
-          ParkingPresent(type: ["Later"], vehicleList: list3),
-          ParkingPresent(type: ["Normal"], vehicleList: list4),
+          ParkingPresent(type: ["Present"], vehicleList: list1, updateUI: updateUI,),
+          ParkingPresent(type: ["Going"], vehicleList: list2, updateUI: updateUI),
+          ParkingPresent(type: ["Later"], vehicleList: list3, updateUI: updateUI),
+          ParkingPresent(type: ["History"], vehicleList: list4, updateUI: updateUI),
         ],
       ),
     );

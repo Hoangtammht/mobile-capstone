@@ -5,8 +5,10 @@ import 'package:fe_capstone/apis/plo/ParkingAPI.dart';
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/models/ParkingInformationModel.dart';
 import 'package:fe_capstone/ui/helper/ConfirmDialog.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'ParkingInformation.dart';
@@ -19,14 +21,15 @@ class EditParkingInformation extends StatefulWidget {
 }
 
 class _EditParkingInformationState extends State<EditParkingInformation> {
-
-  List<String> images = [
-  ];
+  List<String> images = [];
 
   late Future<ParkingInformationModel> parkingInformationFuture;
   TextEditingController _parkingNameController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
   TextEditingController _slotController = TextEditingController();
+  TextEditingController _waitingController = TextEditingController();
+  TextEditingController _cancelBookingController = TextEditingController();
+
 
   String token = "";
 
@@ -38,6 +41,8 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
       _parkingNameController.text = data?.parkingName ?? '';
       _descriptionController.text = data?.description ?? '';
       _slotController.text = data?.slot.toString() ?? '0';
+      _waitingController.text = data?.waitingTime ?? '';
+      _cancelBookingController.text = data?.cancelBookingTime ?? '';
       images = data.image.map((imageObject) => imageObject.imageLink).toList();
     });
   }
@@ -54,7 +59,6 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
       throw Exception("Access token not found");
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -100,18 +104,22 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
                         for (var imageUrl in images.asMap().entries)
                           InkWell(
                             onTap: () {
-                              _showConfirmDeleteImageDialog(context, imageUrl.key, imageUrl.value);
+                              _showConfirmDeleteImageDialog(
+                                  context, imageUrl.key, imageUrl.value);
                             },
                             child: Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 5 * fem),
+                              padding:
+                                  EdgeInsets.symmetric(horizontal: 5 * fem),
                               child: Container(
                                 width: 100 * fem,
                                 height: 60 * fem,
                                 child: CachedNetworkImage(
                                   imageUrl: imageUrl.value,
                                   fit: BoxFit.cover,
-                                  placeholder: (context, url) => CircularProgressIndicator(),
-                                  errorWidget: (context, url, error) => Icon(Icons.error),
+                                  placeholder: (context, url) =>
+                                      CircularProgressIndicator(),
+                                  errorWidget: (context, url, error) =>
+                                      Icon(Icons.error),
                                 ),
                               ),
                             ),
@@ -139,8 +147,8 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
                     padding: EdgeInsets.symmetric(
                         horizontal: 10 * fem, vertical: 10 * fem),
                     child: Container(
-                      margin:
-                      EdgeInsets.fromLTRB(1 * fem, 0 * fem, 0 * fem, 5 * fem),
+                      margin: EdgeInsets.fromLTRB(
+                          1 * fem, 0 * fem, 0 * fem, 5 * fem),
                       child: Text(
                         'Tên bãi',
                         style: TextStyle(
@@ -156,8 +164,8 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
                     padding: EdgeInsets.symmetric(
                         horizontal: 10 * fem, vertical: 5 * fem),
                     child: Container(
-                      padding:
-                      EdgeInsets.fromLTRB(18 * fem, 0 * fem, 18 * fem, 0 * fem),
+                      padding: EdgeInsets.fromLTRB(
+                          18 * fem, 0 * fem, 18 * fem, 0 * fem),
                       width: 361 * fem,
                       decoration: BoxDecoration(
                         color: Color(0xfff5f5f5),
@@ -174,7 +182,6 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
                         decoration: InputDecoration(
                           border: InputBorder.none,
                         ),
-
                       ),
                     ),
                   ),
@@ -182,8 +189,8 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
                     padding: EdgeInsets.symmetric(
                         horizontal: 10 * fem, vertical: 10 * fem),
                     child: Container(
-                      margin:
-                      EdgeInsets.fromLTRB(1 * fem, 0 * fem, 0 * fem, 0 * fem),
+                      margin: EdgeInsets.fromLTRB(
+                          1 * fem, 0 * fem, 0 * fem, 0 * fem),
                       child: Text(
                         'Mô tả',
                         style: TextStyle(
@@ -197,10 +204,10 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(
-                        horizontal: 10 * fem, vertical: 15 * fem),
+                        horizontal: 10 * fem, vertical: 5 * fem),
                     child: Container(
-                      padding:
-                      EdgeInsets.fromLTRB(18 * fem, 0 * fem, 18 * fem, 0 * fem),
+                      padding: EdgeInsets.fromLTRB(
+                          18 * fem, 0 * fem, 18 * fem, 0 * fem),
                       width: 361 * fem,
                       decoration: BoxDecoration(
                         color: Color(0xfff5f5f5),
@@ -224,10 +231,10 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(
-                        horizontal: 10 * fem, vertical: 15 * fem),
+                        horizontal: 10 * fem, vertical: 5 * fem),
                     child: Container(
-                      margin:
-                      EdgeInsets.fromLTRB(1 * fem, 0 * fem, 0 * fem, 5 * fem),
+                      margin: EdgeInsets.fromLTRB(
+                          1 * fem, 0 * fem, 0 * fem, 5 * fem),
                       child: Text(
                         'Số chỗ:',
                         style: TextStyle(
@@ -241,10 +248,10 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(
-                        horizontal: 10 * fem, vertical: 15 * fem),
+                        horizontal: 10 * fem, vertical: 5 * fem),
                     child: Container(
-                      padding:
-                      EdgeInsets.fromLTRB(18 * fem, 0 * fem, 18 * fem, 0 * fem),
+                      padding: EdgeInsets.fromLTRB(
+                          18 * fem, 0 * fem, 18 * fem, 0 * fem),
                       width: 361 * fem,
                       decoration: BoxDecoration(
                         color: Color(0xfff5f5f5),
@@ -267,6 +274,102 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
                       ),
                     ),
                   ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 10 * fem, vertical: 5 * fem),
+                    child: Container(
+                      margin: EdgeInsets.fromLTRB(
+                          1 * fem, 0 * fem, 0 * fem, 5 * fem),
+                      child: Text(
+                        'Thời gian chờ:',
+                        style: TextStyle(
+                          fontSize: 19 * ffem,
+                          fontWeight: FontWeight.w600,
+                          height: 1.175 * ffem / fem,
+                          color: Color(0xff000000),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 10 * fem, vertical: 15 * fem),
+                    child: GestureDetector(
+                      onTap: () {
+                        _showIOS_WaitingTime(context);
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(right: 7 * fem),
+                        padding: EdgeInsets.fromLTRB(
+                            12 * fem, 7 * fem, 5 * fem, 7 * fem),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Color(0x4c000000)),
+                          color: Color(0xffffffff),
+                          borderRadius: BorderRadius.circular(10 * fem),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.calendar_month_outlined),
+                            SizedBox(width: 10 * fem),
+                            Text(
+                              _waitingController.text,
+                              style: TextStyle(
+                                fontSize: 16 * ffem,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 10 * fem, vertical: 5 * fem),
+                    child: Container(
+                      margin: EdgeInsets.fromLTRB(
+                          1 * fem, 0 * fem, 0 * fem, 5 * fem),
+                      child: Text(
+                        'Thời gian hủy đặt chỗ:',
+                        style: TextStyle(
+                          fontSize: 19 * ffem,
+                          fontWeight: FontWeight.w600,
+                          height: 1.175 * ffem / fem,
+                          color: Color(0xff000000),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 10 * fem, vertical: 15 * fem),
+                    child: GestureDetector(
+                      onTap: () {
+                        _showIOS_CancelBooking(context);
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(right: 7 * fem),
+                        padding: EdgeInsets.fromLTRB(
+                            12 * fem, 7 * fem, 5 * fem, 7 * fem),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Color(0x4c000000)),
+                          color: Color(0xffffffff),
+                          borderRadius: BorderRadius.circular(10 * fem),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.calendar_month_outlined),
+                            SizedBox(width: 10 * fem),
+                            Text(
+                              _cancelBookingController.text,
+                              style: TextStyle(
+                                fontSize: 16 * ffem,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                   SizedBox(
                     height: 30 * fem,
                   ),
@@ -275,26 +378,55 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
                       String newParkingName = _parkingNameController.text;
                       String description = _descriptionController.text;
                       int slot = int.parse(_slotController.text);
-                      print(slot);
+                      List<String> waitingTimeComponents = _waitingController.text.split(':');
+                      List<String> cancelBookingComponents = _cancelBookingController.text.split(':');
+                      int waitingHours = int.parse(waitingTimeComponents[0]);
+                      int waitingMinutes = int.parse(waitingTimeComponents[1]);
+                      int waitingSeconds = int.parse(waitingTimeComponents[2]);
+
+                      int cancelHours = int.parse(cancelBookingComponents[0]);
+                      int cancelMinutes = int.parse(cancelBookingComponents[1]);
+                      int cancelSeconds = int.parse(cancelBookingComponents[2]);
+
+                      Map<String, dynamic> waitingTime = {
+                        "hours": waitingHours,
+                        "minutes": waitingMinutes,
+                        "seconds": waitingSeconds,
+                      };
+
+                      Map<String, dynamic> cancelBookingTime = {
+                        "hours": cancelHours,
+                        "minutes": cancelMinutes,
+                        "seconds": cancelSeconds,
+                      };
+
 
                       CustomDialogs.showCustomDialog(
                         context,
                         "Thay đổi thông tin bãi xe",
                         "Xác nhận",
                         Color(0xffff3737),
-                            () async {
-                              try {
-                                await ParkingAPI.updateParkingInformation(token, description, images, newParkingName);
-                              } catch (e) {
-                                print("Error: $e");
-                              }
-                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ParkingInformation()));
+                        () async {
+                          try {
+                            await ParkingAPI.updateParkingInformation(
+                              token,
+                              description,
+                              images,
+                              newParkingName,
+                              slot,
+                              waitingTime,
+                              cancelBookingTime,
+                            );
+                          } catch (e) {
+                            print("Error: $e");
+                          }
+                          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => ParkingInformation()), (route) => false);
                         },
                       );
                     },
                     child: Container(
-                      margin:
-                      EdgeInsets.fromLTRB(10 * fem, 0 * fem, 10 * fem, 0 * fem),
+                      margin: EdgeInsets.fromLTRB(
+                          10 * fem, 0 * fem, 10 * fem, 0 * fem),
                       height: 50 * fem,
                       decoration: BoxDecoration(
                         color: Theme.of(context).primaryColor,
@@ -321,6 +453,87 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
       ),
     );
   }
+
+  void _showIOS_WaitingTime(BuildContext context) {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 190,
+          color: Color.fromARGB(255, 255, 255, 255),
+          child: Column(
+            children: [
+              Container(
+                height: 180,
+                child: CupertinoTimerPicker(
+                  initialTimerDuration: _parseTime(_waitingController.text),
+                  onTimerDurationChanged: (Duration newDuration) {
+                    setState(() {
+                      _waitingController.text = _formatTime(newDuration);
+                    });
+                  },
+                  mode: CupertinoTimerPickerMode.hms,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showIOS_CancelBooking(BuildContext context) {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 190,
+          color: Color.fromARGB(255, 255, 255, 255),
+          child: Column(
+            children: [
+              Container(
+                height: 180,
+                child: CupertinoTimerPicker(
+                  initialTimerDuration: _parseTime(_cancelBookingController.text),
+                  onTimerDurationChanged: (Duration newDuration) {
+                    setState(() {
+                      _cancelBookingController.text = _formatTime(newDuration);
+                    });
+                  },
+                  mode: CupertinoTimerPickerMode.hms,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+
+  Duration _parseTime(String time) {
+    try {
+      if (time.isEmpty) {
+        return Duration.zero;
+      } else {
+        List<String> parts = time.split(':');
+        int hours = int.parse(parts[0]);
+        int minutes = int.parse(parts[1]);
+        int seconds = int.parse(parts[2]);
+        return Duration(hours: hours, minutes: minutes, seconds: seconds);
+      }
+    } catch (e) {
+      return Duration.zero;
+    }
+  }
+
+  String _formatTime(Duration duration) {
+    return '${duration.inHours.remainder(60).toString().padLeft(2, '0')}:${duration.inMinutes.remainder(60).toString().padLeft(2, '0')}:${duration.inSeconds.remainder(60).toString().padLeft(2, '0')}';
+  }
+
+
+
+
 
   void _showBottomSheet() {
     showModalBottomSheet(
@@ -368,9 +581,10 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
                         onPressed: () async {
                           final ImagePicker picker = ImagePicker();
                           final List<XFile> imageFiles =
-                          await picker.pickMultiImage(imageQuality: 70);
+                              await picker.pickMultiImage(imageQuality: 70);
                           for (var i in imageFiles) {
-                            String? image = await ParkingAPI.uploadFile(File(i.path!));
+                            String? image =
+                                await ParkingAPI.uploadFile(File(i.path!));
                             setState(() {
                               images.add(image!);
                             });
@@ -394,10 +608,11 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
                           ),
                           onPressed: () async {
                             final ImagePicker picker = ImagePicker();
-                            final XFile? imageFile =
-                            await picker.pickImage(source: ImageSource.camera, imageQuality: 80);
+                            final XFile? imageFile = await picker.pickImage(
+                                source: ImageSource.camera, imageQuality: 80);
                             if (imageFile != null) {
-                              String? image = await ParkingAPI.uploadFile(File(imageFile.path!));
+                              String? image = await ParkingAPI.uploadFile(
+                                  File(imageFile.path!));
                               setState(() {
                                 images.add(image!);
                               });
@@ -414,7 +629,8 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
         });
   }
 
-  Future<void> _showConfirmDeleteImageDialog(BuildContext context, int index, String imgLink) async {
+  Future<void> _showConfirmDeleteImageDialog(
+      BuildContext context, int index, String imgLink) async {
     await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -496,8 +712,8 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
                           ),
                           TextButton(
                             onPressed: () {
-                                images.removeAt(index);
-                                Navigator.of(context).pop();
+                              images.removeAt(index);
+                              Navigator.of(context).pop();
                             },
                             child: Text(
                               'Xác nhận',

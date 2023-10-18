@@ -295,6 +295,65 @@ class _ParkingInformationState extends State<ParkingInformation> {
                             ],
                           ),
                         ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10 * fem, vertical :15 * fem),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Text.rich(
+                                  TextSpan(
+                                      children: [
+                                        TextSpan(
+                                            text: 'Thời gian chờ: ',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 18 * fem
+                                            )
+                                        ),
+                                        TextSpan(
+                                            text: snapshot.connectionState == ConnectionState.waiting ? 'Đang tải...' : (parkingInformation?.waitingTime ?? '').toString(),
+                                            style: TextStyle(
+                                              fontSize: 18 * fem,
+                                            )
+                                        )
+                                      ]
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10 * fem, vertical :15 * fem),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Text.rich(
+                                  TextSpan(
+                                      children: [
+                                        TextSpan(
+                                            text: 'Thời gian hủy đặt chỗ: ',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 18 * fem
+                                            )
+                                        ),
+                                        TextSpan(
+                                            text: snapshot.connectionState == ConnectionState.waiting ? 'Đang tải...' : (parkingInformation?.cancelBookingTime ?? '').toString(),
+                                            style: TextStyle(
+                                              fontSize: 18 * fem,
+                                            )
+                                        )
+                                      ]
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
                       ],
                     );
                   }

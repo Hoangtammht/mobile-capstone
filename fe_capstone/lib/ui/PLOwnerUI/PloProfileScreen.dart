@@ -264,7 +264,7 @@ class _PloProfileScreenState extends State<PloProfileScreen> {
                       onTap: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => EditProfileScreen(), // Thay thế EditPloProfileScreen bằng màn hình chỉnh sửa của bạn
+                            builder: (context) => EditProfileScreen(),
                           ),
                         );
                       },

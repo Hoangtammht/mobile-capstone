@@ -25,6 +25,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   void initState() {
     super.initState();
     ploProfileFuture = _getPloProfileFuture();
+    ploProfileFuture.then((data) {
+      _fullNameController.text = data?.fullName ?? '';
+      _emailController.text = data?.email ?? '';
+    });
   }
 
   Future<PloProfile> _getPloProfileFuture() async {
@@ -79,10 +83,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 return Text('Error: ${snapshot.error}');
               } else {
                 final ploProfile = snapshot.data;
-                if (snapshot.connectionState == ConnectionState.done) {
-                  _fullNameController.text = ploProfile?.fullName ?? '';
-                  _emailController.text = ploProfile?.email ?? '';
-                }
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -206,7 +206,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                           email: newEmail,
                                           fullName: newFullName,
                                         ));
-                                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => PloProfileScreen()));
+                                        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => PloProfileScreen()), (route) => false);
                                     },
                                 );
                               },

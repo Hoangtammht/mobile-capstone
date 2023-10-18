@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 class ParkingPresent extends StatefulWidget {
   final List<String> type;
   final List<ListVehicleInParking> vehicleList;
-  const ParkingPresent({Key? key, required this.type, required this.vehicleList}) : super(key: key);
+  final void Function() updateUI;
+  const ParkingPresent({Key? key, required this.type, required this.vehicleList, required this.updateUI}) : super(key: key);
 
   @override
   State<ParkingPresent> createState() => _ParkingPresentState();
@@ -16,7 +17,6 @@ class _ParkingPresentState extends State<ParkingPresent> {
   @override
   void initState() {
     super.initState();
-    print(widget.vehicleList);
   }
 
   @override
@@ -25,7 +25,7 @@ class _ParkingPresentState extends State<ParkingPresent> {
       body: ListView.builder(
         itemCount: widget.vehicleList.length,
         itemBuilder: (BuildContext context, int index) {
-          return ParkingCard(type: widget.type, vehicleData: widget.vehicleList[index]);
+          return ParkingCard(type: widget.type, vehicleData: widget.vehicleList[index], updateUI: widget.updateUI);
         },
       ),
     );

@@ -10,7 +10,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ParkingCard extends StatefulWidget {
   final List<String> type;
   final ListVehicleInParking vehicleData;
-  const ParkingCard({Key? key, required this.type, required this.vehicleData}) : super(key: key);
+  final void Function() updateUI;
+  const ParkingCard({Key? key, required this.type, required this.vehicleData, required this.updateUI}) : super(key: key);
 
   @override
   State<ParkingCard> createState() => _ParkingCardState();
@@ -21,7 +22,7 @@ class _ParkingCardState extends State<ParkingCard> {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context) => ParkingDetailCard(type: widget.type,)));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => ParkingDetailCard(type: widget.type, licensePlate: widget.vehicleData.licensePlate, reservationID: int.parse(widget.vehicleData.reservationID),)));
       },
       child: Container(
         margin:  EdgeInsets.fromLTRB(5*fem, 3*fem, 5*fem, 5*fem),
@@ -123,10 +124,9 @@ class _ParkingCardState extends State<ParkingCard> {
                         ),
                       ),
                     )
-                    else if (widget.type.contains("Present"))
+                    else if (widget.type.contains("Present") || widget.type.contains("Later"))
                     InkWell(
                       onTap: (){
-                        print('Chuẩn bị rời bãi');
                         _showUpdateVehicleExitDialog(context);
                       },
                       child: Container(
@@ -232,7 +232,7 @@ class _ParkingCardState extends State<ParkingCard> {
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
                       ),
-                      textAlign: TextAlign.center, // Căn giữa dọc
+                      textAlign: TextAlign.center,
                     ),
                   ),
                 ),
@@ -271,31 +271,38 @@ class _ParkingCardState extends State<ParkingCard> {
                         ),
                       ],
                     ),
-                    InkWell(
-                      onTap: () async {
-                      },
-                      child: Expanded(
-                        child: Column(
-                          children: [
-                            Container(
-                              height: 1,
-                              color: Color(0xffb3abab),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: Text(
-                                'Xác nhận',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xffff3737),
-                                ),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Container(
+                            height: 1,
+                            color: Color(0xffb3abab),
+                          ),
+                          TextButton(
+                            onPressed: () async {
+                              SharedPreferences prefs = await SharedPreferences.getInstance();
+                              String? accessToken = prefs.getString('access_token');
+                              if (accessToken != null) {
+                                int reservationID = int.parse(widget.vehicleData.reservationID);
+                                try {
+                                  await ParkingAPI.checkInReservation(accessToken, reservationID);
+                                  Navigator.popUntil(context, (route) => route.isFirst);
+                                  widget.updateUI();
+                                } catch (e) {
+                                }
+                              } else {
+                              }
+                            },
+                            child: Text(
+                              'Xác nhận',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xffff3737),
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
@@ -432,7 +439,8 @@ class _ParkingCardState extends State<ParkingCard> {
                                 int reservationID = int.parse(widget.vehicleData.reservationID);
                                 try {
                                   await ParkingAPI.checkoutReservation(accessToken, reservationID);
-                                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ParkingScreen()));
+                                  Navigator.popUntil(context, (route) => route.isFirst);
+                                  widget.updateUI();
                                 } catch (e) {
                                 }
                               } else {

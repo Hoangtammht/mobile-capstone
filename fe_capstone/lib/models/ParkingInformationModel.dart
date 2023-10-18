@@ -8,6 +8,8 @@ class ParkingInformationModel {
     required this.length,
     required this.width,
     required this.image,
+    required this.waitingTime,
+    required this.cancelBookingTime,
   });
   late final String ploID;
   late final String parkingName;
@@ -17,6 +19,8 @@ class ParkingInformationModel {
   late final double length;
   late final double width;
   late final List<ParkingImage> image;
+  late final String waitingTime;
+  late final String cancelBookingTime;
 
   ParkingInformationModel.fromJson(Map<String, dynamic> json){
     ploID = json['ploID'] ?? '';
@@ -26,6 +30,8 @@ class ParkingInformationModel {
     slot = json['slot'] != null ? json['slot'] : 0;
     length = json['length'] != null ? json['length'] : 0.0;
     width = json['width'] != null ? json['width'] : 0.0;
+    waitingTime = json['waitingTime'] ?? '';
+    cancelBookingTime = json['cancelBookingTime'] ?? '';
     if (json['image'] is List) {
       image = List.from(json['image']).map((e) => ParkingImage.fromJson(e)).toList();
     } else {
@@ -42,6 +48,8 @@ class ParkingInformationModel {
     _data['slot'] = slot;
     _data['length'] = length;
     _data['width'] = width;
+    _data['waitingTime'] = waitingTime;
+    _data['cancelBookingTime'] = cancelBookingTime;
     _data['image'] = image.map((e)=>e.toJson()).toList();
     return _data;
   }
