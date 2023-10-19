@@ -1,12 +1,16 @@
+import 'package:fe_capstone/apis/plo/ParkingAPI.dart';
+import 'package:fe_capstone/models/ParkingStatusInformation.dart';
+import 'package:fe_capstone/ui/PLOwnerUI/ContractExpiredScreen.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/NotRegisterParkingHomeScreen.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/NotificationScreen.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/ParkingScreen.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/PloHomeScreen.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/PloProfileScreen.dart';
-import 'package:fe_capstone/ui/PLOwnerUI/RegisterParking.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/RevenueScreen.dart';
+import 'package:fe_capstone/ui/PLOwnerUI/WaitingApprovalScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class BottomTabNavPlo extends StatefulWidget {
   @override
@@ -17,13 +21,80 @@ class _BottomTabNavPloState extends State<BottomTabNavPlo> {
   final PersistentTabController _controller =
   PersistentTabController(initialIndex: 0);
 
+  String token = "";
+
+  late Future<ParkingStatusInformation> statusParkingFuture;
+  int parkingStatusID = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    statusParkingFuture = _getParkingInformationFuture();
+  }
+
+  Future<ParkingStatusInformation> _getParkingInformationFuture() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? accessToken = prefs.getString('access_token');
+    if (accessToken != null) {
+      setState(() {
+        token = accessToken;
+      });
+      return ParkingAPI.getParkingStatusID(token);
+    } else {
+      throw Exception("Access token not found");
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<ParkingStatusInformation>(
+      future: statusParkingFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        } else if (snapshot.hasError) {
+          return Scaffold(
+            body: Center(
+              child: Text('Error: ${snapshot.error}'),
+            ),
+          );
+        } else {
+          parkingStatusID = snapshot.data?.parkingStatusID ?? 0;
+          return PersistentTabView(
+            context,
+            controller: _controller,
+            screens: _buildScreens(),
+            items: _navBarsItems(),
+            confineInSafeArea: true,
+            backgroundColor: Colors.white,
+            handleAndroidBackButtonPress: true,
+            resizeToAvoidBottomInset: true,
+            stateManagement: true,
+            navBarStyle: NavBarStyle.style3,
+          );
+        }
+      },
+    );
+  }
+
   List<Widget> _buildScreens() {
     return [
-      PloHomeScreen(),
+      if (parkingStatusID == 1)
+        NotRegisterParkingHomeScreen()
+      else if (parkingStatusID == 2)
+        WaitingApprovalScreen()
+      else if (parkingStatusID == 6)
+          ContractExpiredScreen()
+        else
+          PloHomeScreen(),
       ParkingScreen(),
       RevenueScreen(),
       PloProfileScreen(),
-      NotificationScreen()
+      NotificationScreen(),
     ];
   }
 
@@ -62,19 +133,20 @@ class _BottomTabNavPloState extends State<BottomTabNavPlo> {
     ];
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return PersistentTabView(
-      context,
-      controller: _controller,
-      screens: _buildScreens(),
-      items: _navBarsItems(),
-      confineInSafeArea: true,
-      backgroundColor: Colors.white,
-      handleAndroidBackButtonPress: true,
-      resizeToAvoidBottomInset: true,
-      stateManagement: true,
-      navBarStyle: NavBarStyle.style3,
-    );
-  }
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   return PersistentTabView(
+  //     context,
+  //     controller: _controller,
+  //     screens: _buildScreens(),
+  //     items: _navBarsItems(),
+  //     confineInSafeArea: true,
+  //     backgroundColor: Colors.white,
+  //     handleAndroidBackButtonPress: true,
+  //     resizeToAvoidBottomInset: true,
+  //     stateManagement: true,
+  //     navBarStyle: NavBarStyle.style3,
+  //   );
+  // }
 }

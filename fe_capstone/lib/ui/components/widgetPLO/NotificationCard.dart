@@ -1,9 +1,10 @@
 import 'package:fe_capstone/main.dart';
-import 'package:fe_capstone/models/PloNotification.dart';
+import 'package:fe_capstone/models/PLONotification.dart';
+import 'package:fe_capstone/ui/helper/my_date_until.dart';
 import 'package:flutter/material.dart';
 
 class NotificationCard extends StatelessWidget {
-  final PloNotification notification;
+  final PLONotification notification;
   const NotificationCard({Key? key, required this.notification}) : super(key: key);
 
   @override
@@ -17,7 +18,7 @@ class NotificationCard extends StatelessWidget {
               title: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Từ: ${notification.fromBy}', style: TextStyle(
+                  Text('Từ: ${notification.senderName}', style: TextStyle(
                     fontSize: 16 * fem,
                     fontWeight: FontWeight.bold
                   ),),
@@ -28,7 +29,7 @@ class NotificationCard extends StatelessWidget {
                   ),),
                   Align(
                     alignment: Alignment.bottomRight,
-                      child: Text(notification.date, style: TextStyle(
+                      child: Text(MyDateUtil.formatCheckInAndCheckOutDate(notification.createdAt), style: TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 15 * fem,
                           color: Colors.grey

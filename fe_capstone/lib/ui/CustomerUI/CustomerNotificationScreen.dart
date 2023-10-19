@@ -1,6 +1,6 @@
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/models/CustomerNotification.dart';
-import 'package:fe_capstone/models/PloNotification.dart';
+import 'package:fe_capstone/models/PLONotification.dart';
 import 'package:fe_capstone/ui/components/widgetCustomer/CustomerNotificationCard.dart';
 import 'package:fe_capstone/ui/components/widgetPLO/NotificationCard.dart';
 import 'package:flutter/material.dart';
