@@ -479,5 +479,51 @@ class ParkingAPI {
     }
   }
 
+  static Future<void> checkinReservationWithLicensePlate(String token,
+      String licensePlate) async {
+    try {
+      final response = await dio.put(
+        '$baseUrl/reservation/checkinReservationWithLicensePlate',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+        data: {"licensePlate": licensePlate},
+      );
+      if (response.statusCode == 200) {
+        print("Check-in successful");
+      } else {
+        throw Exception('Failed to check-in reservation by license plate');
+      }
+    } catch (e) {
+      throw Exception('Failed to check-in reservation by license plate: $e');
+    }
+  }
+
+  static Future<void> checkoutReservationWithLicensePlate(
+      String accessToken, String licensePlate) async {
+    try {
+      final response = await dio.put(
+        '$baseUrl/reservation/checkoutReservationWithLicensePlate',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $accessToken',
+            'Content-Type': 'application/json',
+          },
+        ),
+        data: {"licensePlate": licensePlate},
+      );
+      if (response.statusCode == 200) {
+        print("Check-out successful");
+      } else {
+        throw Exception('Failed to check-out reservation');
+      }
+    } catch (e) {
+      throw Exception('Failed to check-out reservation: $e');
+    }
+  }
+
 
 }

@@ -57,9 +57,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
         future: listNotificationFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator(); // Placeholder for loading state
+            return CircularProgressIndicator();
           } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}'); // Placeholder for error state
+            return Text('Error: ${snapshot.error}');
           } else {
             return ListView.builder(
               shrinkWrap: true,

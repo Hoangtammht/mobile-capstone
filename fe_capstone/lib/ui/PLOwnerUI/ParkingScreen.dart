@@ -3,6 +3,7 @@ import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/models/ListVehicleInParking.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/ParkingInformation.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/ParkingPresentScreen.dart';
+import 'package:fe_capstone/ui/PLOwnerUI/ScanLicensePlate.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/SettingParking.dart';
 import 'package:fe_capstone/ui/components/widgetPLO/ConfirmDeleteDialog.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +29,6 @@ class _ParkingScreenState extends State<ParkingScreen>
   late int list3Length = 0;
 
   String token = "";
-
 
   @override
   void initState() {
@@ -80,8 +80,13 @@ class _ParkingScreenState extends State<ParkingScreen>
           ),
         ),
         actions: [
-
-
+          IconButton(
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => ScanLicensePlate()));
+            },
+            icon: Icon(Icons.qr_code),
+          ),
           PopupMenuButton<String>(
             itemBuilder: (BuildContext context) {
               return [
@@ -163,8 +168,7 @@ class _ParkingScreenState extends State<ParkingScreen>
             },
             onSelected: (String value) {
               if (value == 'settings') {
-              } else if (value == 'delete') {
-              }
+              } else if (value == 'delete') {}
             },
           ),
         ],
@@ -190,13 +194,19 @@ class _ParkingScreenState extends State<ParkingScreen>
       body: TabBarView(
         controller: _controller,
         children: [
-          ParkingPresent(type: ["Present"], vehicleList: list1, updateUI: updateUI,),
-          ParkingPresent(type: ["Going"], vehicleList: list2, updateUI: updateUI),
-          ParkingPresent(type: ["Later"], vehicleList: list3, updateUI: updateUI),
-          ParkingPresent(type: ["History"], vehicleList: list4, updateUI: updateUI),
+          ParkingPresent(
+            type: ["Present"],
+            vehicleList: list1,
+            updateUI: updateUI,
+          ),
+          ParkingPresent(
+              type: ["Going"], vehicleList: list2, updateUI: updateUI),
+          ParkingPresent(
+              type: ["Later"], vehicleList: list3, updateUI: updateUI),
+          ParkingPresent(
+              type: ["History"], vehicleList: list4, updateUI: updateUI),
         ],
       ),
     );
   }
-
 }

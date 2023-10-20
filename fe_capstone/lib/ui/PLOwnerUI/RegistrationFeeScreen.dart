@@ -18,13 +18,11 @@ class RegistrationFeeScreen extends StatefulWidget {
 }
 
 class _RegistrationFeeScreenState extends State<RegistrationFeeScreen> {
-  String? _image;
-  late String UUID;
+  late RequestRegisterParking request;
 
   @override
   void initState() {
     super.initState();
-    UUID = widget.requestRegisterParking.uuid;
   }
 
   @override
@@ -77,7 +75,16 @@ class _RegistrationFeeScreenState extends State<RegistrationFeeScreen> {
                     try {
                       String newUUID = await ParkingAPI.makePayment(accessToken);
                       setState(() {
-                        UUID = newUUID;
+                        request = RequestRegisterParking(
+                            address: widget.requestRegisterParking.address,
+                            description: widget.requestRegisterParking.description,
+                            images: widget.requestRegisterParking.images,
+                            length: widget.requestRegisterParking.length,
+                            parkingName: widget.requestRegisterParking.parkingName,
+                            slot: widget.requestRegisterParking.slot,
+                            uuid: newUUID,
+                            width: widget.requestRegisterParking.width
+                        );
                       });
                     } catch (e) {
                       print('Error: $e');
@@ -160,7 +167,8 @@ class _RegistrationFeeScreenState extends State<RegistrationFeeScreen> {
                   String? accessToken = prefs.getString('access_token');
                   if (accessToken != null) {
                     try {
-                      await ParkingAPI.registerParking(accessToken, widget.requestRegisterParking);
+                      print(request.toJson());
+                      await ParkingAPI.registerParking(accessToken, request);
                       PersistentNavBarNavigator.pushNewScreen(
                         context,
                         screen: BottomTabNavPlo(),

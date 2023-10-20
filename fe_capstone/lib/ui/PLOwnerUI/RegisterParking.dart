@@ -406,7 +406,6 @@ class _RegisterParkingState extends State<RegisterParking> {
                           images: images,
                           length: length,
                           parkingName: parkingName,
-                          ploID: "PL0946219139",
                           slot: slot,
                           uuid: "",
                           width: width,

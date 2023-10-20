@@ -4,7 +4,6 @@ class RequestRegisterParking {
   final List<String> images;
   final double length;
   final String parkingName;
-  final String ploID;
   final int slot;
   final String uuid;
   final double width;
@@ -15,7 +14,6 @@ class RequestRegisterParking {
     required this.images,
     required this.length,
     required this.parkingName,
-    required this.ploID,
     required this.slot,
     required this.uuid,
     required this.width,
@@ -28,7 +26,6 @@ class RequestRegisterParking {
       "images": images,
       "length": length,
       "parkingName": parkingName,
-      "ploID": ploID,
       "slot": slot,
       "uuid": uuid,
       "width": width,

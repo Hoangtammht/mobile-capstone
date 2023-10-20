@@ -8,12 +8,17 @@ class AuthAPIs{
 
   static Future<void> loginUser(String id, String password) async {
     try {
-      Response response = await dio.post(
+      var response = await dio.post(
         '$baseUrl/user/loginUser',
         data: {
           "id": id,
           "password": password,
         },
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        ),
       );
 
       if (response.statusCode == 200) {
