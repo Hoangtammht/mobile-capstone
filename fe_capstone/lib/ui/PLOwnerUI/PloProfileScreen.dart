@@ -1,12 +1,13 @@
+import 'package:fe_capstone/apis/plo/AuthAPI.dart';
 import 'package:fe_capstone/main.dart';
+import 'package:fe_capstone/models/PloDetail.dart';
 import 'package:fe_capstone/ui/screens/ChangePasswordScreen.dart';
 import 'package:fe_capstone/ui/CustomerUI/EditProfileScreen.dart';
-import 'package:fe_capstone/ui/CustomerUI/VechicleScreen.dart';
-import 'package:fe_capstone/ui/PLOwnerUI/OwnershipHistoryScreen.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/TransferParking.dart';
 import 'package:fe_capstone/ui/screens/LoginScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PloProfileScreen extends StatefulWidget {
   const PloProfileScreen({Key? key}) : super(key: key);
@@ -16,6 +17,30 @@ class PloProfileScreen extends StatefulWidget {
 }
 
 class _PloProfileScreenState extends State<PloProfileScreen> {
+  late Future<PloProfile> ploProfileFuture;
+
+  String token = "";
+
+  @override
+  void initState() {
+    super.initState();
+    ploProfileFuture = _getPloProfileFuture();
+  }
+
+  Future<PloProfile> _getPloProfileFuture() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? accessToken = prefs.getString('access_token');
+    if (accessToken != null) {
+      setState(() {
+        token = accessToken;
+      });
+      return AuthPloAPIs.getPloProfile(token);
+    } else {
+      throw Exception("Access token not found");
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,144 +103,154 @@ class _PloProfileScreenState extends State<PloProfileScreen> {
                           ),
                         ],
                       ),
-                      child: Column(
-                        children: [
-                          Container(
-                            margin: EdgeInsets.symmetric(vertical: 15 * fem),
-                            padding: EdgeInsets.symmetric(horizontal: 10* fem),
-                            height: 30 * fem,
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
+                      child:  FutureBuilder<PloProfile>(
+                        future: ploProfileFuture,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          } else {
+                            final ploProfile = snapshot.data;
+                            return Column(
                               children: [
                                 Container(
-                                    margin: EdgeInsets.fromLTRB(0 * fem,
-                                        1.21 * fem, 4.63 * fem, 0 * fem),
-                                    width: 21.75 * fem,
-                                    height: 22.96 * fem,
-                                    child: const Icon(Icons.person)),
-                                Text(
-                                  'Thông tin cá nhân',
-                                  style: TextStyle(
-                                    fontSize: 26 * ffem,
-                                    fontWeight: FontWeight.w600,
-                                    height: 1.175 * ffem / fem,
-                                    color: Color(0xff000000),
+                                  margin: EdgeInsets.symmetric(vertical: 15 * fem),
+                                  padding: EdgeInsets.symmetric(horizontal: 10* fem),
+                                  height: 30 * fem,
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                          margin: EdgeInsets.fromLTRB(0 * fem,
+                                              1.21 * fem, 4.63 * fem, 0 * fem),
+                                          width: 21.75 * fem,
+                                          height: 22.96 * fem,
+                                          child: const Icon(Icons.person)),
+                                      Text(
+                                        'Thông tin cá nhân',
+                                        style: TextStyle(
+                                          fontSize: 26 * ffem,
+                                          fontWeight: FontWeight.w600,
+                                          height: 1.175 * ffem / fem,
+                                          color: Color(0xff000000),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                    margin: EdgeInsets.symmetric(vertical: 15 * fem),
+                                    padding: EdgeInsets.symmetric(horizontal: 10* fem),
+                                    height: 20 * fem,
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          child: Text(
+                                            'Họ và tên',
+                                            style: TextStyle(
+                                              fontSize: 16 * ffem,
+                                              fontWeight: FontWeight.w400,
+                                              height: 1.175 * ffem / fem,
+                                              color: Color(0xff5b5b5b),
+                                            ),
+                                          ),
+                                        ),
+                                        Spacer(),
+                                        Text(
+                                          snapshot.connectionState == ConnectionState.waiting ? 'Đang tải...' : ploProfile?.fullName ?? '',
+                                          style: TextStyle(
+                                            fontSize: 16 * ffem,
+                                            fontWeight: FontWeight.w600,
+                                            height: 1.175 * ffem / fem,
+                                            color: Color(0xff000000),
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                ),
+                                Align(
+                                  child: SizedBox(
+                                    width: 390 * fem,
+                                    height: 1.01 * fem,
+                                    child: Divider(
+                                      thickness: 1,
+                                      color: Colors.grey[300],
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                    margin: EdgeInsets.symmetric(vertical: 15 * fem),
+                                    padding: EdgeInsets.symmetric(horizontal: 10* fem),
+                                    height: 20 * fem,
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          child: Text(
+                                            'Số điện thoại',
+                                            style: TextStyle(
+                                              fontSize: 16 * ffem,
+                                              fontWeight: FontWeight.bold,
+                                              height: 1.175 * ffem / fem,
+                                              color: Color(0xff5b5b5b),
+                                            ),
+                                          ),
+                                        ),
+                                        Spacer(),
+                                        Text(
+                                          snapshot.connectionState == ConnectionState.waiting ? 'Đang tải...' : ploProfile?.phoneNumber ?? '',
+                                          style: TextStyle(
+                                            fontSize: 16 * ffem,
+                                            fontWeight: FontWeight.w500,
+                                            height: 1.2175 * ffem / fem,
+                                            color: Color(0xff000000),
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                ),
+                                Align(
+                                  child: SizedBox(
+                                    width: 390 * fem,
+                                    height: 1.01 * fem,
+                                    child: Divider(
+                                      thickness: 1,
+                                      color: Colors.grey[300],
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  margin: EdgeInsets.symmetric(vertical: 15 * fem),
+                                  padding: EdgeInsets.symmetric(horizontal: 10* fem),
+                                  height: 20 * fem,
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        child: Text(
+                                          'Email',
+                                          style: TextStyle(
+                                            fontSize: 16 * ffem,
+                                            fontWeight: FontWeight.w400,
+                                            height: 1.175 * ffem / fem,
+                                            color: Color(0xff5b5b5b),
+                                          ),
+                                        ),
+                                      ),
+                                      Spacer(),
+                                      Text(
+                                        snapshot.connectionState == ConnectionState.waiting ? 'Đang tải...' : ploProfile?.email ?? '',
+                                        style: TextStyle(
+                                          fontSize: 16 * ffem,
+                                          fontWeight: FontWeight.w600,
+                                          height: 1.175 * ffem / fem,
+                                          color: Color(0xff000000),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
-                            ),
-                          ),
-                          Container(
-                              margin: EdgeInsets.symmetric(vertical: 15 * fem),
-                              padding: EdgeInsets.symmetric(horizontal: 10* fem),
-                              height: 20 * fem,
-                              child: Row(
-                                children: [
-                                  Container(
-                                    child: Text(
-                                      'Họ và tên',
-                                      style: TextStyle(
-                                        fontSize: 16 * ffem,
-                                        fontWeight: FontWeight.w400,
-                                        height: 1.175 * ffem / fem,
-                                        color: Color(0xff5b5b5b),
-                                      ),
-                                    ),
-                                  ),
-                                  Spacer(), // Sử dụng Spacer ở đây
-                                  Text(
-                                    'Huỳnh Bá Quốc',
-                                    style: TextStyle(
-                                      fontSize: 16 * ffem,
-                                      fontWeight: FontWeight.w600,
-                                      height: 1.175 * ffem / fem,
-                                      color: Color(0xff000000),
-                                    ),
-                                  ),
-                                ],
-                              )
-                          ),
-                          Align(
-                            child: SizedBox(
-                              width: 390 * fem,
-                              height: 1.01 * fem,
-                              child: Divider(
-                                thickness: 1,
-                                color: Colors.grey[300], // Đặt màu của Divider thành trong suốt
-                              ),
-                            ),
-                          ),
-                          Container(
-                              margin: EdgeInsets.symmetric(vertical: 15 * fem),
-                              padding: EdgeInsets.symmetric(horizontal: 10* fem),
-                              height: 20 * fem,
-                              child: Row(
-                                children: [
-                                  Container(
-                                    child: Text(
-                                      'Số điện thoại',
-                                      style: TextStyle(
-                                        fontSize: 16 * ffem,
-                                        fontWeight: FontWeight.w400,
-                                        height: 1.175 * ffem / fem,
-                                        color: Color(0xff5b5b5b),
-                                      ),
-                                    ),
-                                  ),
-                                  Spacer(), // Sử dụng Spacer ở đây
-                                  Text(
-                                    '0357280618',
-                                    style: TextStyle(
-                                      fontSize: 16 * ffem,
-                                      fontWeight: FontWeight.w500,
-                                      height: 1.2175 * ffem / fem,
-                                      color: Color(0xff000000),
-                                    ),
-                                  ),
-                                ],
-                              )
-                          ),
-                          Align(
-                            child: SizedBox(
-                              width: 390 * fem,
-                              height: 1.01 * fem,
-                              child: Divider(
-                                thickness: 1,
-                                color: Colors.grey[300], // Đặt màu của Divider thành trong suốt
-                              ),
-                            ),
-                          ),
-                          Container(
-                            margin: EdgeInsets.symmetric(vertical: 15 * fem),
-                            padding: EdgeInsets.symmetric(horizontal: 10* fem),
-                            height: 20 * fem,
-                            child: Row(
-                              children: [
-                                Container(
-                                  child: Text(
-                                    'Email',
-                                    style: TextStyle(
-                                      fontSize: 16 * ffem,
-                                      fontWeight: FontWeight.w400,
-                                      height: 1.175 * ffem / fem,
-                                      color: Color(0xff5b5b5b),
-                                    ),
-                                  ),
-                                ),
-                                Spacer(), // Sử dụng Spacer ở đây
-                                Text(
-                                  'quocbahuynh@gmail.com',
-                                  style: TextStyle(
-                                    fontSize: 16 * ffem,
-                                    fontWeight: FontWeight.w600,
-                                    height: 1.175 * ffem / fem,
-                                    color: Color(0xff000000),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+                            );
+                          }
+                        },
                       ),
                     ),
                   ),
@@ -227,7 +262,7 @@ class _PloProfileScreenState extends State<PloProfileScreen> {
                       onTap: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => EditProfileScreen(), // Thay thế EditPloProfileScreen bằng màn hình chỉnh sửa của bạn
+                            builder: (context) => EditProfileScreen(),
                           ),
                         );
                       },
@@ -269,46 +304,46 @@ class _PloProfileScreenState extends State<PloProfileScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    InkWell(
-                      onTap: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => OwnershipHistoryScreen()));
-                      },
-                      child: Container(
-                        margin:
-                        EdgeInsets.fromLTRB(1 * fem, 0 * fem, 0 * fem, 0 * fem),
-                        width: 362 * fem,
-                        height: 63 * fem,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Color(0xffdcdada)),
-                          color: Color(0xffffffff),
-                          borderRadius: BorderRadius.circular(9 * fem),
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(left: 10 * fem),
-                              child: Icon(Icons.history),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 10 * fem),
-                              child: Text(
-                                'Lịch sử bãi xe đã đăng kí',
-                                style: TextStyle(
-                                  fontSize: 19 * ffem,
-                                  fontWeight: FontWeight.w600,
-                                  height: 1.175 * ffem / fem,
-                                  color: Color(0xff000000),
-                                ),
-                              ),
-                            ),
-
-                          ],
-                        ),
-                      ),
-                    ),
+                    // InkWell(
+                    //   onTap: (){
+                    //     Navigator.push(context, MaterialPageRoute(builder: (context) => OwnershipHistoryScreen()));
+                    //   },
+                    //   child: Container(
+                    //     margin:
+                    //     EdgeInsets.fromLTRB(1 * fem, 0 * fem, 0 * fem, 0 * fem),
+                    //     width: 362 * fem,
+                    //     height: 63 * fem,
+                    //     decoration: BoxDecoration(
+                    //       border: Border.all(color: Color(0xffdcdada)),
+                    //       color: Color(0xffffffff),
+                    //       borderRadius: BorderRadius.circular(9 * fem),
+                    //     ),
+                    //     child: Row(
+                    //       crossAxisAlignment: CrossAxisAlignment.center,
+                    //       children: [
+                    //         Padding(
+                    //           padding: EdgeInsets.only(left: 10 * fem),
+                    //           child: Icon(Icons.history),
+                    //         ),
+                    //         Padding(
+                    //           padding: EdgeInsets.only(left: 10 * fem),
+                    //           child: Text(
+                    //             'Lịch sử bãi xe đã đăng kí',
+                    //             style: TextStyle(
+                    //               fontSize: 19 * ffem,
+                    //               fontWeight: FontWeight.w600,
+                    //               height: 1.175 * ffem / fem,
+                    //               color: Color(0xff000000),
+                    //             ),
+                    //           ),
+                    //         ),
+                    //
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
                     SizedBox(
-                      height: 14 * fem,
+                      height: 84 * fem,
                     ),
                     InkWell(
                       onTap: (){
@@ -334,7 +369,7 @@ class _PloProfileScreenState extends State<PloProfileScreen> {
                             Padding(
                               padding: EdgeInsets.only(left: 10 * fem),
                               child: Text(
-                                'Chuyển dữ liệu bãi xe',
+                                'Cập nhật số điện thoại',
                                 style: TextStyle(
                                   fontSize: 19 * ffem,
                                   fontWeight: FontWeight.w600,
@@ -394,7 +429,9 @@ class _PloProfileScreenState extends State<PloProfileScreen> {
                       height: 14 * fem,
                     ),
                     InkWell(
-                      onTap: (){
+                      onTap: () async {
+                        SharedPreferences prefs = await SharedPreferences.getInstance();
+                        prefs.remove('access_token');
                         PersistentNavBarNavigator.pushNewScreen( context, screen: LoginScreen(), withNavBar: false, pageTransitionAnimation: PageTransitionAnimation.cupertino, );
                       },
                       child: Container(

@@ -37,7 +37,7 @@ class RatingScreen extends StatelessWidget {
             scrollDirection: Axis.vertical,
             itemCount: 4,
             itemBuilder: (context, index){
-          return RatingCard();
+          return RatingCard(fromBy: "Mai Hoàng Tâm",star: 5,content: "Thoái mái, sạch sẽ",);
         }),
       ),
     );

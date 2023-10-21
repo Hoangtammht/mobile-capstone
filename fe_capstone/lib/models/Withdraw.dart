@@ -4,7 +4,7 @@ class Withdraw {
   final IconData icon;
   final String title;
   final String time;
-  final String amount;
+  final double amount;
 
   Withdraw({
     required this.icon,

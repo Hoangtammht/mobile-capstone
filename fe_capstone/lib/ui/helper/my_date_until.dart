@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class MyDateUtil{
 
@@ -31,7 +32,6 @@ class MyDateUtil{
       {required BuildContext context, required String lastActive}) {
     final int i = int.tryParse(lastActive) ?? -1;
 
-    //if time is not available then return below statement
     if (i == -1) return 'Last seen not available';
 
     DateTime time = DateTime.fromMillisecondsSinceEpoch(i);
@@ -99,4 +99,23 @@ class MyDateUtil{
     }
     return 'NA';
   }
+
+  static String formatDateTime(String dateTimeString) {
+    DateTime dateTime = DateTime.parse(dateTimeString);
+    return DateFormat('MM/dd/yyyy').format(dateTime);
+  }
+
+  static String formatCheckInAndCheckOutDate(String? dateTimeString) {
+    if (dateTimeString == null) return '';
+    final extractedDateTimeString = dateTimeString.length >= 19 ? dateTimeString.substring(0, 19) : dateTimeString;
+    try {
+      final dateTime = DateTime.parse(extractedDateTimeString);
+      final formattedTime = DateFormat.Hms().format(dateTime);
+      final formattedDate = DateFormat('dd/MM/yyyy').format(dateTime);
+      return '$formattedTime - $formattedDate';
+    } catch (e) {
+      return '';
+    }
+  }
+
 }

@@ -1,7 +1,9 @@
+import 'package:fe_capstone/apis/plo/ParkingAPI.dart';
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/OTPConfirmScreen.dart';
 import 'package:fe_capstone/ui/screens/OTPScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TransferParking extends StatefulWidget {
   const TransferParking({Key? key}) : super(key: key);
@@ -11,6 +13,8 @@ class TransferParking extends StatefulWidget {
 }
 
 class _TransferParkingState extends State<TransferParking> {
+  TextEditingController _phoneNumberController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,7 +31,7 @@ class _TransferParkingState extends State<TransferParking> {
           },
         ),
         title: Text(
-          'CHUYỂN DỮ LIỆU BÃI XE',
+          'CẬP NHẬT SỐ ĐIỆN THOẠI',
           style: TextStyle(
             fontSize: 26 * ffem,
             fontWeight: FontWeight.w700,
@@ -127,6 +131,7 @@ class _TransferParkingState extends State<TransferParking> {
                                 borderRadius: BorderRadius.circular(30 * fem),
                               ),
                               child: TextFormField(
+                                controller: _phoneNumberController,
                                 style: TextStyle(
                                   fontSize: 20 * ffem,
                                   fontWeight: FontWeight.w600,
@@ -134,10 +139,8 @@ class _TransferParkingState extends State<TransferParking> {
                                   color: Color(0xff000000),
                                 ),
                                 decoration: InputDecoration(
-                                  border: InputBorder
-                                      .none, // Loại bỏ viền của TextFormField
-                                  hintText:
-                                      'Số điện thoại', // Gợi ý cho người dùng
+                                  border: InputBorder.none,
+                                  hintText: 'Số điện thoại',
                                   hintStyle: TextStyle(
                                     fontSize: 20 * ffem,
                                     fontWeight: FontWeight.w600,
@@ -148,11 +151,26 @@ class _TransferParkingState extends State<TransferParking> {
                               ),
                             ),
                             InkWell(
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => OTPConfirmScreen()));
+                              onTap: () async {
+                                SharedPreferences prefs =
+                                    await SharedPreferences.getInstance();
+                                String? token = prefs.getString('access_token');
+                                String phoneNumber =
+                                    _phoneNumberController.text;
+                                if (token != null) {
+                                  try {
+                                    await ParkingAPI.checkPLOTransfer(
+                                        token, phoneNumber);
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              OTPConfirmScreen(phoneNumber: phoneNumber,)),
+                                    );
+                                  } catch (e) {
+                                    print('Error: $e');
+                                  }
+                                }
                               },
                               child: Container(
                                 height: 42 * fem,

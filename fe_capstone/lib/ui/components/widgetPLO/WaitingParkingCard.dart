@@ -1,8 +1,10 @@
 import 'package:fe_capstone/main.dart';
+import 'package:fe_capstone/models/ParkingStatusInformation.dart';
 import 'package:flutter/material.dart';
 
 class WaitingParkingCard extends StatelessWidget {
-  const WaitingParkingCard({Key? key}) : super(key: key);
+  final TotalComing listVehicleComing;
+  WaitingParkingCard({Key? key, required this.listVehicleComing}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +14,7 @@ class WaitingParkingCard extends StatelessWidget {
         Padding(
           padding: EdgeInsets.only(left: 3 * fem, top: 3 * fem, bottom: 3 * fem),
           child: Text(
-            '61A-999999',
+            listVehicleComing.licensePlate,
             style: TextStyle(
                 color: Colors.black,
                 fontSize: 16 * fem,
@@ -22,7 +24,7 @@ class WaitingParkingCard extends StatelessWidget {
         Padding(
           padding: EdgeInsets.only(left: 3 * fem, top: 3 * fem, bottom: 3 * fem),
           child: Text(
-            'Mai Hoàng Tâm',
+            listVehicleComing.fullName,
             style: TextStyle(
                 color: Colors.grey,
                 fontSize: 12 * fem,
@@ -43,7 +45,7 @@ class WaitingParkingCard extends StatelessWidget {
                 child: Align(
                   alignment: Alignment.center,
                   child: Text(
-                    'Ban ngày',
+                    listVehicleComing.methodName,
                     style: TextStyle(
                       fontSize: 11 * ffem,
                       fontWeight: FontWeight.w400,

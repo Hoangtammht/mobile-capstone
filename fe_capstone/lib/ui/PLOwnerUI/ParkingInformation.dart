@@ -1,7 +1,11 @@
+import 'package:fe_capstone/apis/plo/ParkingAPI.dart';
 import 'package:fe_capstone/main.dart';
+import 'package:fe_capstone/models/ParkingInformationModel.dart';
+import 'package:fe_capstone/models/RatingModel.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/EditParkingInformation.dart';
 import 'package:fe_capstone/ui/components/widgetCustomer/RatingCard.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ParkingInformation extends StatefulWidget {
   const ParkingInformation({Key? key}) : super(key: key);
@@ -11,6 +15,45 @@ class ParkingInformation extends StatefulWidget {
 }
 
 class _ParkingInformationState extends State<ParkingInformation> {
+
+  late Future<ParkingInformationModel> parkingInformationFuture;
+  late Future<List<RatingModel>> listRatingModelFuture;
+  late String token;
+
+  @override
+  void initState() {
+    super.initState();
+    parkingInformationFuture = _getParkingInformationFuture();
+    listRatingModelFuture = _getListRating();
+  }
+
+  Future<ParkingInformationModel> _getParkingInformationFuture() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? accessToken = prefs.getString('access_token');
+    if (accessToken != null) {
+      setState(() {
+        token = accessToken;
+      });
+      return ParkingAPI.getParkingInformation(token);
+    } else {
+      throw Exception("Access token not found");
+    }
+  }
+
+  Future<List<RatingModel>> _getListRating() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? accessToken = prefs.getString('access_token');
+    if (accessToken != null) {
+      setState(() {
+        token = accessToken;
+      });
+      return ParkingAPI.getRatingList(token);
+    } else {
+      throw Exception("Access token not found");
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,217 +85,279 @@ class _ParkingInformationState extends State<ParkingInformation> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 5 * fem, vertical :5 * fem),
-                child: Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        width: 100 * fem,
-                        height: 60 * fem,
-                        child: Image.network(
-                          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTeET9OkThGxXQWnPrfXR_2NY45Xn1cqtKJwXhtNx2bjjW8rM8fUwW-ChoZM-3FyzI0MmQ&usqp=CAU',
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        width: 100 * fem,
-                        height: 60 * fem,
-                        child: Image.network(
-                          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTeET9OkThGxXQWnPrfXR_2NY45Xn1cqtKJwXhtNx2bjjW8rM8fUwW-ChoZM-3FyzI0MmQ&usqp=CAU',
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        width: 100 * fem,
-                        height: 60 * fem,
-                        child: Image.network(
-                          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTeET9OkThGxXQWnPrfXR_2NY45Xn1cqtKJwXhtNx2bjjW8rM8fUwW-ChoZM-3FyzI0MmQ&usqp=CAU',
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10 * fem, vertical :15 * fem),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text.rich(
-                      TextSpan(
-                          children: [
-                            TextSpan(
-                                text: 'Tên bãi: ',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18 * fem
-                                )
+              FutureBuilder<ParkingInformationModel>(
+                future: parkingInformationFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    final parkingInformation = snapshot.data;
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        snapshot.connectionState == ConnectionState.waiting ? Text('Đang xử lý...',
+                            style: TextStyle(
+                          fontSize: 18 * fem,
+                        )) :
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 5 * fem, vertical :5 * fem),
+                          child: Container(
+                            height: 60 * fem,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: parkingInformation!.image.length,
+                              itemBuilder: (context, index) {
+                                final image = parkingInformation!.image[index];
+                                return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Container(
+                                    width: 100 * fem,
+                                    height: 60 * fem,
+                                    child: Image.network(
+                                      image.imageLink,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
-                            TextSpan(
-                                text: 'Nguyễn Văn Thám',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                )
-                            )
-                          ]
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10 * fem, vertical :15 * fem),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Text.rich(
-                        TextSpan(
-                            children: [
-                              TextSpan(
-                                  text: 'Địa chỉ: ',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18 * fem
-                                  )
-                              ),
-                              TextSpan(
-                                  text: '681A Đ. Nguyễn Huệ, Bến Nghé, Quận 1, TP HCM',
-                                  style: TextStyle(
-                                    fontSize: 18 * fem,
-                                  )
-                              )
-                            ]
+                          ),
                         ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10 * fem, vertical :15 * fem),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Text.rich(
-                        TextSpan(
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10 * fem, vertical :15 * fem),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TextSpan(
-                                  text: 'Số chỗ đậu xe: ',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18 * fem
-                                  )
+                              Text.rich(
+                                TextSpan(
+                                    children: [
+                                      TextSpan(
+                                          text: 'Tên bãi: ',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 18 * fem
+                                          )
+                                      ),
+                                      TextSpan(
+                                          text: snapshot.connectionState == ConnectionState.waiting ? 'Đang tải...' : parkingInformation?.parkingName ?? '',
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                          )
+                                      )
+                                    ]
+                                ),
                               ),
-                              TextSpan(
-                                  text: '20 chỗ',
-                                  style: TextStyle(
-                                    fontSize: 18 * fem,
-                                  )
-                              )
-                            ]
+                            ],
+                          ),
                         ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10 * fem, vertical :15 * fem),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Text.rich(
-                        TextSpan(
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10 * fem, vertical :15 * fem),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TextSpan(
-                                  text: 'Chiều rộng (m): ',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18 * fem
-                                  )
+                              Expanded(
+                                child: Text.rich(
+                                  TextSpan(
+                                      children: [
+                                        TextSpan(
+                                            text: 'Địa chỉ: ',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 18 * fem
+                                            )
+                                        ),
+                                        TextSpan(
+                                            text: snapshot.connectionState == ConnectionState.waiting ? 'Đang tải...' : parkingInformation?.address ?? '',
+                                            style: TextStyle(
+                                              fontSize: 18 * fem,
+                                            )
+                                        )
+                                      ]
+                                  ),
+                                ),
                               ),
-                              TextSpan(
-                                  text: '50 m',
-                                  style: TextStyle(
-                                    fontSize: 18 * fem,
-                                  )
-                              )
-                            ]
+                            ],
+                          ),
                         ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10 * fem, vertical :15 * fem),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Text.rich(
-                        TextSpan(
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10 * fem, vertical :15 * fem),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TextSpan(
-                                  text: 'Chiều dài (m): ',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18 * fem
-                                  )
+                              Expanded(
+                                child: Text.rich(
+                                  TextSpan(
+                                      children: [
+                                        TextSpan(
+                                            text: 'Số chỗ đậu xe: ',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 18 * fem
+                                            )
+                                        ),
+                                        TextSpan(
+                                            text: snapshot.connectionState == ConnectionState.waiting ? 'Đang tải...' : (parkingInformation?.slot ?? '').toString(),
+                                            style: TextStyle(
+                                              fontSize: 18 * fem,
+                                            )
+                                        )
+                                      ]
+                                  ),
+                                ),
                               ),
-                              TextSpan(
-                                  text: '50 m',
-                                  style: TextStyle(
-                                    fontSize: 18 * fem,
-                                  )
-                              )
-                            ]
+                            ],
+                          ),
                         ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10 * fem, vertical :15 * fem),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Text.rich(
-                        TextSpan(
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10 * fem, vertical :15 * fem),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TextSpan(
-                                  text: 'Mô tả: ',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18 * fem
-                                  )
+                              Expanded(
+                                child: Text.rich(
+                                  TextSpan(
+                                      children: [
+                                        TextSpan(
+                                            text: 'Chiều rộng (m): ',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 18 * fem
+                                            )
+                                        ),
+                                        TextSpan(
+                                            text: snapshot.connectionState == ConnectionState.waiting ? 'Đang tải...' : (parkingInformation?.width ?? '').toString(),
+                                            style: TextStyle(
+                                              fontSize: 18 * fem,
+                                            )
+                                        )
+                                      ]
+                                  ),
+                                ),
                               ),
-                              TextSpan(
-                                  text: 'bãi xe dành cho xe máy với nhiều chỗ trống và coi xe 24/24',
-                                  style: TextStyle(
-                                    fontSize: 18 * fem,
-                                  )
-                              )
-                            ]
+                            ],
+                          ),
                         ),
-                      ),
-                    ),
-                  ],
-                ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10 * fem, vertical :15 * fem),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Text.rich(
+                                  TextSpan(
+                                      children: [
+                                        TextSpan(
+                                            text: 'Chiều dài (m): ',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 18 * fem
+                                            )
+                                        ),
+                                        TextSpan(
+                                            text: snapshot.connectionState == ConnectionState.waiting ? 'Đang tải...' : (parkingInformation?.length ?? '').toString(),
+                                            style: TextStyle(
+                                              fontSize: 18 * fem,
+                                            )
+                                        )
+                                      ]
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10 * fem, vertical :15 * fem),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Text.rich(
+                                  TextSpan(
+                                      children: [
+                                        TextSpan(
+                                            text: 'Mô tả: ',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 18 * fem
+                                            )
+                                        ),
+                                        TextSpan(
+                                            text: snapshot.connectionState == ConnectionState.waiting ? 'Đang tải...' : (parkingInformation?.description ?? '').toString(),
+                                            style: TextStyle(
+                                              fontSize: 18 * fem,
+                                            )
+                                        )
+                                      ]
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10 * fem, vertical :15 * fem),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Text.rich(
+                                  TextSpan(
+                                      children: [
+                                        TextSpan(
+                                            text: 'Thời gian chờ: ',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 18 * fem
+                                            )
+                                        ),
+                                        TextSpan(
+                                            text: snapshot.connectionState == ConnectionState.waiting ? 'Đang tải...' : (parkingInformation?.waitingTime ?? '').toString(),
+                                            style: TextStyle(
+                                              fontSize: 18 * fem,
+                                            )
+                                        )
+                                      ]
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10 * fem, vertical :15 * fem),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Text.rich(
+                                  TextSpan(
+                                      children: [
+                                        TextSpan(
+                                            text: 'Thời gian hủy đặt chỗ: ',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 18 * fem
+                                            )
+                                        ),
+                                        TextSpan(
+                                            text: snapshot.connectionState == ConnectionState.waiting ? 'Đang tải...' : (parkingInformation?.cancelBookingTime ?? '').toString(),
+                                            style: TextStyle(
+                                              fontSize: 18 * fem,
+                                            )
+                                        )
+                                      ]
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                      ],
+                    );
+                  }
+                },
               ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 10 * fem, vertical: 15 * fem),
@@ -266,28 +371,47 @@ class _ParkingInformationState extends State<ParkingInformation> {
                         fontSize: 22 * fem,
                       ),
                     ),
-                    SizedBox(height: 10 * fem), // Khoảng cách giữa Text và ListView
+                    SizedBox(height: 10 * fem),
                     Container(
-                      height: 400 * fem, // Đặt giới hạn cao cho ListView
-                      child: ListView.builder(
-                        scrollDirection: Axis.vertical,
-                        itemCount: 4,
-                        itemBuilder: (context, index) {
-                          return RatingCard();
+                      height: 300 * fem,
+                      child: FutureBuilder<List<RatingModel>>(
+                        future: listRatingModelFuture,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          } else if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          } else {
+                            final listRating = snapshot.data;
+                            return ListView.builder(
+                              scrollDirection: Axis.vertical,
+                              itemCount: listRating!.length,
+                              itemBuilder: (context, index) {
+                                return RatingCard(
+                                  fromBy: listRating[index].fullName,
+                                  star: listRating[index].star,
+                                  content: listRating[index].content,
+                                );
+                              },
+                            );
+                          }
                         },
                       ),
-                    ),
+                    )
+
                   ],
                 ),
               ),
-              SizedBox(height: 40 * fem,),
+              SizedBox(height: 20 * fem,),
               InkWell(
                 onTap: () {
                    Navigator.push(context, MaterialPageRoute(builder: (context) => EditParkingInformation()));
                 },
                 child: Container(
                   margin: EdgeInsets.fromLTRB(
-                      10 * fem, 0 * fem, 10 * fem, 10 * fem),
+                      10 * fem, 0 * fem, 10 * fem, 20 * fem),
                   height: 50 * fem,
                   decoration: BoxDecoration(
                     color: Theme.of(context).primaryColor,

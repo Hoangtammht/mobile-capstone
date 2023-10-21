@@ -1,4 +1,9 @@
+import 'dart:io';
+
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:fe_capstone/apis/plo/ParkingAPI.dart';
 import 'package:fe_capstone/main.dart';
+import 'package:fe_capstone/models/RequestResgisterParking.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/RegistrationFeeScreen.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/WaitingApprovalScreen.dart';
 import 'package:fe_capstone/ui/helper/ConfirmDialog.dart';
@@ -17,12 +22,15 @@ class _RegisterParkingState extends State<RegisterParking> {
   bool isCheckOne = false;
   bool isCheckTwo = false;
   bool canSubmit = false;
-  List<String> images = [
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTeET9OkThGxXQWnPrfXR_2NY45Xn1cqtKJwXhtNx2bjjW8rM8fUwW-ChoZM-3FyzI0MmQ&usqp=CAU",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTeET9OkThGxXQWnPrfXR_2NY45Xn1cqtKJwXhtNx2bjjW8rM8fUwW-ChoZM-3FyzI0MmQ&usqp=CAU",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTeET9OkThGxXQWnPrfXR_2NY45Xn1cqtKJwXhtNx2bjjW8rM8fUwW-ChoZM-3FyzI0MmQ&usqp=CAU"
-  ];
+  List<String> images = [];
+
   String? _image;
+  TextEditingController _parkingNameController = TextEditingController();
+  TextEditingController _widthController = TextEditingController();
+  TextEditingController _lenthController = TextEditingController();
+  TextEditingController _slotController = TextEditingController();
+  TextEditingController _addressController = TextEditingController();
+  TextEditingController _descriptionController = TextEditingController();
 
   void _updateCheckboxState() {
     setState(() {
@@ -85,6 +93,7 @@ class _RegisterParkingState extends State<RegisterParking> {
                 child: TextFormField(
                   minLines: 1,
                   maxLines: null,
+                  controller: _parkingNameController,
                   style: TextStyle(
                     fontSize: 16 * ffem,
                     fontWeight: FontWeight.w400,
@@ -133,19 +142,25 @@ class _RegisterParkingState extends State<RegisterParking> {
                 child: ListView(
                   scrollDirection: Axis.horizontal,
                   children: [
-                    for (var imageUrl in images)
+                    for (var imageUrl in images.asMap().entries)
                       InkWell(
                         onTap: () {
-                          _showConfirmDeleteImageDialog(context);
+                          _showConfirmDeleteImageDialog(
+                              context, imageUrl.key, imageUrl.value);
                         },
                         child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 5 * fem),
+                          padding:
+                          EdgeInsets.symmetric(horizontal: 5 * fem),
                           child: Container(
                             width: 100 * fem,
                             height: 60 * fem,
-                            child: Image.network(
-                              imageUrl,
+                            child: CachedNetworkImage(
+                              imageUrl: imageUrl.value,
                               fit: BoxFit.cover,
+                              placeholder: (context, url) =>
+                                  CircularProgressIndicator(),
+                              errorWidget: (context, url, error) =>
+                                  Icon(Icons.error),
                             ),
                           ),
                         ),
@@ -188,6 +203,8 @@ class _RegisterParkingState extends State<RegisterParking> {
                 child: TextFormField(
                   minLines: 1,
                   maxLines: null,
+                  controller: _widthController,
+                  keyboardType: TextInputType.number,
                   style: TextStyle(
                     fontSize: 16 * ffem,
                     fontWeight: FontWeight.w400,
@@ -198,9 +215,6 @@ class _RegisterParkingState extends State<RegisterParking> {
                     border: InputBorder.none,
                     hintText: 'Nhập chiều rộng',
                   ),
-                  onChanged: (newValue) {
-                    // Xử lý khi giá trị thay đổi
-                  },
                 ),
               ),
               Padding(
@@ -222,6 +236,8 @@ class _RegisterParkingState extends State<RegisterParking> {
                 child: TextFormField(
                   minLines: 1,
                   maxLines: null,
+                  controller: _lenthController,
+                  keyboardType: TextInputType.number,
                   style: TextStyle(
                     fontSize: 16 * ffem,
                     fontWeight: FontWeight.w400,
@@ -232,9 +248,6 @@ class _RegisterParkingState extends State<RegisterParking> {
                     border: InputBorder.none,
                     hintText: 'Nhập chiều dài',
                   ),
-                  onChanged: (newValue) {
-                    // Xử lý khi giá trị thay đổi
-                  },
                 ),
               ),
               Padding(
@@ -256,6 +269,8 @@ class _RegisterParkingState extends State<RegisterParking> {
                 child: TextFormField(
                   minLines: 1,
                   maxLines: null,
+                  controller: _slotController,
+                  keyboardType: TextInputType.number,
                   style: TextStyle(
                     fontSize: 16 * ffem,
                     fontWeight: FontWeight.w400,
@@ -266,9 +281,6 @@ class _RegisterParkingState extends State<RegisterParking> {
                     border: InputBorder.none,
                     hintText: 'Nhập số chỗ',
                   ),
-                  onChanged: (newValue) {
-                    // Xử lý khi giá trị thay đổi
-                  },
                 ),
               ),
               Padding(
@@ -290,6 +302,7 @@ class _RegisterParkingState extends State<RegisterParking> {
                 child: TextFormField(
                   minLines: 1,
                   maxLines: null,
+                  controller: _addressController,
                   style: TextStyle(
                     fontSize: 16 * ffem,
                     fontWeight: FontWeight.w400,
@@ -300,9 +313,6 @@ class _RegisterParkingState extends State<RegisterParking> {
                     border: InputBorder.none,
                     hintText: 'Nhập địa chỉ',
                   ),
-                  onChanged: (newValue) {
-                    // Xử lý khi giá trị thay đổi
-                  },
                 ),
               ),
               Padding(
@@ -324,6 +334,7 @@ class _RegisterParkingState extends State<RegisterParking> {
                 child: TextFormField(
                   minLines: 1,
                   maxLines: null,
+                  controller: _descriptionController,
                   style: TextStyle(
                     fontSize: 16 * ffem,
                     fontWeight: FontWeight.w400,
@@ -383,8 +394,27 @@ class _RegisterParkingState extends State<RegisterParking> {
               InkWell(
                 onTap: canSubmit
                     ? () {
-                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => RegistrationFeeScreen()));
-                          }
+                        String parkingName = _parkingNameController.text;
+                        double length = double.parse(_lenthController.text);
+                        double width = double.parse(_widthController.text);
+                        int slot = int.parse(_slotController.text);
+                        String address = _addressController.text;
+                        String description = _descriptionController.text;
+                        RequestRegisterParking request = RequestRegisterParking(
+                          address: address,
+                          description: description,
+                          images: images,
+                          length: length,
+                          parkingName: parkingName,
+                          slot: slot,
+                          uuid: "",
+                          width: width,
+                        );
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => RegistrationFeeScreen(requestRegisterParking: request,)));
+                      }
                     : null,
                 child: Container(
                   padding: EdgeInsets.all(8 * fem),
@@ -462,17 +492,16 @@ class _RegisterParkingState extends State<RegisterParking> {
                         ),
                         onPressed: () async {
                           final ImagePicker picker = ImagePicker();
-                          final XFile? image =
-                          await picker.pickImage(source: ImageSource.gallery, imageQuality: 80);
-                          if (image != null) {
-                            print(
-                                'Image Path: ${image.path} -- MimeType: ${image.mimeType}');
+                          final List<XFile> imageFiles =
+                              await picker.pickMultiImage(imageQuality: 70);
+                          for (var i in imageFiles) {
+                            String? image =
+                                await ParkingAPI.uploadFile(File(i.path!));
                             setState(() {
-                              _image = image.path;
+                              images.add(image!);
                             });
-                            //APIs image parking
-                            Navigator.pop(context);
                           }
+                          Navigator.pop(context);
                         },
                         child: Image.asset('assets/images/file.png'),
                       ),
@@ -491,14 +520,14 @@ class _RegisterParkingState extends State<RegisterParking> {
                           ),
                           onPressed: () async {
                             final ImagePicker picker = ImagePicker();
-                            final XFile? image =
-                            await picker.pickImage(source: ImageSource.camera, imageQuality: 80);
-                            if (image != null) {
-                              print('Image Path: ${image.path}');
+                            final XFile? imageFile = await picker.pickImage(
+                                source: ImageSource.camera, imageQuality: 80);
+                            if (imageFile != null) {
+                              String? image = await ParkingAPI.uploadFile(
+                                  File(imageFile.path!));
                               setState(() {
-                                _image = image.path;
+                                images.add(image!);
                               });
-                              //APIs image parking
                               Navigator.pop(context);
                             }
                           },
@@ -512,7 +541,7 @@ class _RegisterParkingState extends State<RegisterParking> {
         });
   }
 
-  Future<void> _showConfirmDeleteImageDialog(BuildContext context) async {
+  Future<void> _showConfirmDeleteImageDialog(BuildContext context, int index, String imgLink) async {
     await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -545,7 +574,7 @@ class _RegisterParkingState extends State<RegisterParking> {
                     width: 100 * fem,
                     height: 60 * fem,
                     child: Image.network(
-                      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTeET9OkThGxXQWnPrfXR_2NY45Xn1cqtKJwXhtNx2bjjW8rM8fUwW-ChoZM-3FyzI0MmQ&usqp=CAU',
+                      imgLink,
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -594,6 +623,7 @@ class _RegisterParkingState extends State<RegisterParking> {
                           ),
                           TextButton(
                             onPressed: () {
+                              images.removeAt(index);
                               Navigator.of(context).pop();
                             },
                             child: Text(
@@ -617,5 +647,4 @@ class _RegisterParkingState extends State<RegisterParking> {
       },
     );
   }
-
 }

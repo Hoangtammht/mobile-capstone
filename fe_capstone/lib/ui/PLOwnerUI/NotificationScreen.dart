@@ -1,7 +1,9 @@
+import 'package:fe_capstone/apis/plo/ParkingAPI.dart';
 import 'package:fe_capstone/main.dart';
-import 'package:fe_capstone/models/PloNotification.dart';
+import 'package:fe_capstone/models/PLONotification.dart';
 import 'package:fe_capstone/ui/components/widgetPLO/NotificationCard.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({Key? key}) : super(key: key);
@@ -12,26 +14,28 @@ class NotificationScreen extends StatefulWidget {
 
 class _NotificationScreenState extends State<NotificationScreen> {
 
-  List<PloNotification> getNotifications() {
-    return [
-      PloNotification(
-        fromBy: 'Admin',
-        content: 'Còn 1 tuần nữa là bãi xe của bạn sẽ đóng do hết hợp đồng. Chúng tôi sẽ liên hệ một cách sớm nhất để gia hạn hợp đồng.',
-        date: '3 tiếng trước',
-      ),
-      PloNotification(
-        fromBy: 'Admin',
-        content: 'Còn 1 tuần nữa là bãi xe của bạn sẽ đóng do hết hợp đồng. Chúng tôi sẽ liên hệ một cách sớm nhất để gia hạn hợp đồng.',
-        date: '3 tiếng trước',
-      ), PloNotification(
-        fromBy: 'Admin',
-        content: 'Còn 1 tuần nữa là bãi xe của bạn sẽ đóng do hết hợp đồng. Chúng tôi sẽ liên hệ một cách sớm nhất để gia hạn hợp đồng.',
-        date: '3 tiếng trước',
-      ),
+  Future<List<PLONotification>>? listNotificationFuture;
 
-    ];
+  String token = "";
+
+  @override
+  void initState() {
+    super.initState();
+    listNotificationFuture = _getListNotificationFuture();
   }
 
+  Future<List<PLONotification>> _getListNotificationFuture() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? accessToken = prefs.getString('access_token');
+    if (accessToken != null) {
+      setState(() {
+        token = accessToken;
+      });
+      return ParkingAPI.getNotifications(token);
+    } else {
+      throw Exception("Access token not found");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,15 +53,24 @@ class _NotificationScreenState extends State<NotificationScreen> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: ListView.builder(
-          shrinkWrap: true,
-          itemCount: getNotifications().length,
-          itemBuilder: (context, index) {
-            final notifications = getNotifications()[index];
-            return NotificationCard(notification: notifications);
-          },
-        ),
+      body: FutureBuilder<List<PLONotification>>(
+        future: listNotificationFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else {
+            return ListView.builder(
+              shrinkWrap: true,
+              itemCount: snapshot.data!.length,
+              itemBuilder: (context, index) {
+                final notification = snapshot.data![index];
+                return NotificationCard(notification: notification);
+              },
+            );
+          }
+        },
       ),
     );
   }

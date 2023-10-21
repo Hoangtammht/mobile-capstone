@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:fe_capstone/main.dart';
 
 class RatingCard extends StatelessWidget {
-  const RatingCard({Key? key}) : super(key: key);
+  final String fromBy;
+  final int star;
+  final String content;
+  const RatingCard({Key? key, required this.fromBy, required this.star, required this.content}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,19 +19,19 @@ class RatingCard extends StatelessWidget {
             padding: EdgeInsets.symmetric(vertical: 10 * fem),
             child: Row(
               children: [
-                Text('Mai Hoàng Tâm', style: TextStyle(
+                Text(fromBy, style: TextStyle(
                   fontSize: 18 * fem,
                   fontWeight: FontWeight.bold
                 ),),
                 RatingStars(
-                    rating: 4
+                    rating: star
                 ),
               ],
             ),
           ),
           Padding(
             padding: EdgeInsets.only(bottom: 5 * fem),
-            child: Text('Đang stress tìm chỗ mà đặt được chỗ ưng ghê', style: TextStyle(
+            child: Text(content, style: TextStyle(
               fontSize: 15 * fem,
               color: Colors.grey
             ),),
