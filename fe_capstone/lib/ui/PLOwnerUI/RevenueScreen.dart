@@ -392,7 +392,7 @@ class _RevenueScreenState extends State<RevenueScreen> {
                                   'Số lượng ',
                                   style: TextStyle(
                                     fontSize: 12 * ffem,
-                                    fontWeight: FontWeight.w400,
+                                    fontWeight: FontWeight.bold,
                                     height: 1.175 * ffem / fem,
                                     color: Color(0xff5b5b5b),
                                   ),
@@ -438,14 +438,13 @@ class _RevenueScreenState extends State<RevenueScreen> {
                                   'Ban ngày',
                                   style: TextStyle(
                                     fontSize: 12 * ffem,
-                                    fontWeight: FontWeight.w400,
+                                    fontWeight: FontWeight.bold,
                                     height: 1.175 * ffem / fem,
                                     color: Color(0xff5b5b5b),
                                   ),
                                 ),
                               ),
                               Container(
-                                // 4wy (648:918)
                                 margin: EdgeInsets.fromLTRB(
                                     1 * fem, 0 * fem, 0 * fem, 0 * fem),
                                 child: Text(
@@ -485,7 +484,7 @@ class _RevenueScreenState extends State<RevenueScreen> {
                                   'Ban Tối',
                                   style: TextStyle(
                                     fontSize: 12 * ffem,
-                                    fontWeight: FontWeight.w400,
+                                    fontWeight: FontWeight.bold,
                                     height: 1.175 * ffem / fem,
                                     color: Color(0xff5b5b5b),
                                   ),
@@ -532,7 +531,7 @@ class _RevenueScreenState extends State<RevenueScreen> {
                                   'Qua đêm',
                                   style: TextStyle(
                                     fontSize: 12 * ffem,
-                                    fontWeight: FontWeight.w400,
+                                    fontWeight: FontWeight.bold,
                                     height: 1.175 * ffem / fem,
                                     color: Color(0xff5b5b5b),
                                   ),

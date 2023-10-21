@@ -188,7 +188,7 @@ class _PloProfileScreenState extends State<PloProfileScreen> {
                                             'Số điện thoại',
                                             style: TextStyle(
                                               fontSize: 16 * ffem,
-                                              fontWeight: FontWeight.w400,
+                                              fontWeight: FontWeight.bold,
                                               height: 1.175 * ffem / fem,
                                               color: Color(0xff5b5b5b),
                                             ),

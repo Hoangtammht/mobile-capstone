@@ -1,5 +1,5 @@
 import 'package:fe_capstone/main.dart';
-import 'package:fe_capstone/ui/ChatScreen.dart';
+import 'package:fe_capstone/ui/screens/ChatScreen.dart';
 import 'package:fe_capstone/ui/CustomerUI/RatingScreen.dart';
 import 'package:fe_capstone/ui/CustomerUI/ReservationScreen.dart';
 import 'package:fe_capstone/ui/components/widgetCustomer/ListParkingCard.dart';
