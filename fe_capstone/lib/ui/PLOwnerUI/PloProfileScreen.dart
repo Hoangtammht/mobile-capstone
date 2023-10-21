@@ -3,8 +3,6 @@ import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/models/PloDetail.dart';
 import 'package:fe_capstone/ui/screens/ChangePasswordScreen.dart';
 import 'package:fe_capstone/ui/CustomerUI/EditProfileScreen.dart';
-import 'package:fe_capstone/ui/CustomerUI/VechicleScreen.dart';
-import 'package:fe_capstone/ui/PLOwnerUI/OwnershipHistoryScreen.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/TransferParking.dart';
 import 'package:fe_capstone/ui/screens/LoginScreen.dart';
 import 'package:flutter/material.dart';

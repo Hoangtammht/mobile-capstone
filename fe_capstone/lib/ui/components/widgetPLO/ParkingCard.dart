@@ -1,7 +1,6 @@
 import 'package:fe_capstone/apis/plo/ParkingAPI.dart';
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/models/ListVehicleInParking.dart';
-import 'package:fe_capstone/ui/PLOwnerUI/ParkingScreen.dart';
 import 'package:fe_capstone/ui/components/widgetPLO/ParkingDetailCard.dart';
 import 'package:fe_capstone/ui/helper/my_date_until.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +21,7 @@ class _ParkingCardState extends State<ParkingCard> {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context) => ParkingDetailCard(type: widget.type, licensePlate: widget.vehicleData.licensePlate, reservationID: int.parse(widget.vehicleData.reservationID),)));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => ParkingDetailCard(type: widget.type, licensePlate: widget.vehicleData.licensePlate, reservationID: int.parse(widget.vehicleData.reservationID), updateUI: widget.updateUI,)));
       },
       child: Container(
         margin:  EdgeInsets.fromLTRB(5*fem, 3*fem, 5*fem, 5*fem),
@@ -290,7 +289,6 @@ class _ParkingCardState extends State<ParkingCard> {
                                   widget.updateUI();
                                 } catch (e) {
                                 }
-                              } else {
                               }
                             },
                             child: Text(
@@ -439,7 +437,7 @@ class _ParkingCardState extends State<ParkingCard> {
                                 int reservationID = int.parse(widget.vehicleData.reservationID);
                                 try {
                                   await ParkingAPI.checkoutReservation(accessToken, reservationID);
-                                  Navigator.popUntil(context, (route) => route.isFirst);
+                                  Navigator.pop(context);
                                   widget.updateUI();
                                 } catch (e) {
                                 }

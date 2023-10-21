@@ -4,6 +4,7 @@ class ReservationDetail {
     required this.price,
     required this.methodName,
     required this.fullName,
+    required this.phoneNumber,
     required this.statusName,
     required this.startTime,
     required this.endTime,
@@ -14,6 +15,7 @@ class ReservationDetail {
   late final double price;
   late final String methodName;
   late final String fullName;
+  late final String phoneNumber;
   late final String statusName;
   late final String startTime;
   late final String endTime;
@@ -25,6 +27,7 @@ class ReservationDetail {
     price = json['price'] ?? 0.0;
     methodName = json['methodName'] ?? '';
     fullName = json['fullName'] ?? '';
+    phoneNumber = json['phoneNumber'] ?? '';
     statusName = json['statusName'] ?? '';
     startTime = json['startTime'] ?? '';
     endTime = json['endTime'] ?? '';
@@ -38,6 +41,7 @@ class ReservationDetail {
     _data['price'] = price;
     _data['methodName'] = methodName;
     _data['fullName'] = fullName;
+    _data['phoneNumber'] = phoneNumber;
     _data['statusName'] = statusName;
     _data['startTime'] = startTime;
     _data['endTime'] = endTime;

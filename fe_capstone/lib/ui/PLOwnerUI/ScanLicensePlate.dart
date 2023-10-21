@@ -8,7 +8,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ScanLicensePlate extends StatefulWidget {
-  const ScanLicensePlate({Key? key}) : super(key: key);
+  final void Function() updateUI;
+  const ScanLicensePlate({Key? key, required this.updateUI}) : super(key: key);
 
   @override
   State<ScanLicensePlate> createState() => _ScanLicensePlateState();
@@ -176,12 +177,22 @@ class _ScanLicensePlateState extends State<ScanLicensePlate> {
                             try {
                               await ParkingAPI.checkinReservationWithLicensePlate(
                                   accessToken, scannedText);
+                              widget.updateUI();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Check-in thành công'),
+                                ),
+                              );
                               setState(() {
                                 imageFile = null;
                                 scannedText = "";
                               });
                             } catch (e) {
-                              print('Error: $e');
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Có lỗi xảy ra khi thực hiện check-in'),
+                                ),
+                              );
                             }
                           }
                         },
@@ -224,12 +235,22 @@ class _ScanLicensePlateState extends State<ScanLicensePlate> {
                             try {
                               await ParkingAPI.checkoutReservationWithLicensePlate(
                                   accessToken, scannedText);
+                              widget.updateUI();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Check-out thành công'),
+                                ),
+                              );
                               setState(() {
                                 imageFile = null;
                                 scannedText = "";
                               });
                             } catch (e) {
-                              print('Error: $e');
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Có lỗi xảy ra khi thực hiện check-out'),
+                                ),
+                              );
                             }
                           }
                         },

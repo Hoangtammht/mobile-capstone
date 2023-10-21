@@ -1,6 +1,7 @@
 import 'package:fe_capstone/apis/plo/ParkingAPI.dart';
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/models/ReservationDetail.dart';
+import 'package:fe_capstone/ui/helper/ConfirmDialog.dart';
 import 'package:fe_capstone/ui/helper/my_date_until.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -10,7 +11,8 @@ class ParkingDetailCard extends StatefulWidget {
   final List<String> type;
   final String licensePlate;
   final int reservationID;
-  const ParkingDetailCard({Key? key, required this.type, required this.licensePlate, required this.reservationID}) : super(key: key);
+  final void Function() updateUI;
+  const ParkingDetailCard({Key? key, required this.type, required this.licensePlate, required this.reservationID, required this.updateUI}) : super(key: key);
 
   @override
   State<ParkingDetailCard> createState() => _ParkingDetailCardState();
@@ -65,6 +67,35 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
             color: Color(0xffffffff),
           ),
         ),
+        actions: [
+          if (widget.type.contains('Later'))
+            IconButton(
+              onPressed: () {
+                CustomDialogs.showCustomDialog(
+                  context,
+                  "Chủ xe sẽ nhận được thông báo khi bạn xóa xe khỏi bãi.",
+                  "Xác nhận",
+                  Color(0xffff3737),
+                      () async {
+                        SharedPreferences prefs = await SharedPreferences.getInstance();
+                        String? accessToken = prefs.getString('access_token');
+                        if (accessToken != null) {
+                          int reservationID = widget.reservationID;
+                          try {
+                            await ParkingAPI.checkInReservation(
+                                accessToken, reservationID);
+                            Navigator.popUntil(
+                                context, (route) => route.isFirst);
+                            widget.updateUI();
+                          } catch (e) {}
+                        }
+                  },
+                );
+              },
+
+              icon: Icon(Icons.delete),
+            ),
+        ],
       ),
       body: Container(
         padding: EdgeInsets.fromLTRB(15 * fem, 26 * fem, 14 * fem, 0),
@@ -243,7 +274,7 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
                               ),
                               Spacer(),
                               Text(
-                                snapshot.connectionState == ConnectionState.waiting ? 'Đang tải...' : reservationDetail?.licensePlate ?? '',
+                                snapshot.connectionState == ConnectionState.waiting ? 'Đang tải...' : reservationDetail?.phoneNumber ?? '',
                                 style: TextStyle(
                                   fontSize: 16 * ffem,
                                   fontWeight: FontWeight.w600,

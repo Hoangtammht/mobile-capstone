@@ -525,5 +525,58 @@ class ParkingAPI {
     }
   }
 
+  static Future<double> getSumByDate(String token, String startTime, String startTime2nd) async {
+    try {
+      var response = await dio.get(
+        '$baseUrl/PLO/getSumByDate',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+        queryParameters: {
+          'startTime': startTime,
+          'startTime2nd': startTime2nd,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        print('Response Data: ${response.data}');
+        return double.parse(response.data.toString());
+      } else {
+        throw Exception('Failed to get sum by date');
+      }
+    } catch (e) {
+      throw Exception('Failed to get sum by date: $e');
+    }
+  }
+
+  static Future<void> requestWithdrawal(String token, double amount, String method1, String method2) async {
+    try {
+      final response = await dio.post(
+        '$baseUrl/PLO/requestWithdrawal',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+        data: {
+          "amount": amount,
+          "method1": method1,
+          "method2": method2,
+        },
+      );
+      if (response.statusCode == 200) {
+        print("Withdrawal request successful");
+      } else {
+        throw Exception('Failed to request withdrawal');
+      }
+    } catch (e) {
+      throw Exception('Failed to request withdrawal: $e');
+    }
+  }
+
 
 }

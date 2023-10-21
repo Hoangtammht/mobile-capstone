@@ -5,7 +5,6 @@ import 'package:fe_capstone/ui/PLOwnerUI/ParkingInformation.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/ParkingPresentScreen.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/ScanLicensePlate.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/SettingParking.dart';
-import 'package:fe_capstone/ui/components/widgetPLO/ConfirmDeleteDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -83,7 +82,7 @@ class _ParkingScreenState extends State<ParkingScreen>
           IconButton(
             onPressed: () {
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => ScanLicensePlate()));
+                  MaterialPageRoute(builder: (context) => ScanLicensePlate(updateUI: updateUI)));
             },
             icon: Icon(Icons.qr_code),
           ),

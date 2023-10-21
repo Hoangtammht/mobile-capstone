@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:fe_capstone/models/PloDetail.dart';
+import 'package:fe_capstone/models/RevenueModel.dart';
 import 'package:fe_capstone/models/UpdateProfileRequest.dart';
 
 class AuthPloAPIs{
@@ -87,6 +88,29 @@ class AuthPloAPIs{
     }
   }
 
+  static Future<RevenueModel> getPloRevenue(String token) async {
+    try {
+      final response = await dio.get(
+        '$baseUrl/PLO/getRevenue',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        Map<String, dynamic> responseData = Map<String, dynamic>.from(response.data);
+        RevenueModel revenueModel = RevenueModel.fromJson(responseData);
+        return revenueModel;
+      } else {
+        throw Exception('Failed to get PloRevenue');
+      }
+    } catch (e) {
+      throw Exception('Failed to get PloRevenue: $e');
+    }
+  }
 
 
 
