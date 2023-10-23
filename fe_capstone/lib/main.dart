@@ -10,15 +10,17 @@ import 'package:fe_capstone/ui/PLOwnerUI/PloHomeScreen.dart';
 import 'package:fe_capstone/ui/screens/LoginScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'blocs/UserPreferences.dart';
 import 'firebase_options.dart';
 
 late Size mq;
 late double fem;
 late double ffem;
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   _initializeFirebase();
+  await UserPreferences.init();
   runApp(const MyApp());
 }
 

@@ -152,24 +152,20 @@ class _TransferParkingState extends State<TransferParking> {
                             ),
                             InkWell(
                               onTap: () async {
-                                SharedPreferences prefs =
-                                    await SharedPreferences.getInstance();
-                                String? token = prefs.getString('access_token');
                                 String phoneNumber =
                                     _phoneNumberController.text;
-                                if (token != null) {
-                                  try {
-                                    await ParkingAPI.checkPLOTransfer(
-                                        token, phoneNumber);
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              OTPConfirmScreen(phoneNumber: phoneNumber,)),
-                                    );
-                                  } catch (e) {
-                                    print('Error: $e');
-                                  }
+                                try {
+                                  await ParkingAPI.checkPLOTransfer(
+                                      phoneNumber);
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => OTPConfirmScreen(
+                                              phoneNumber: phoneNumber,
+                                            )),
+                                  );
+                                } catch (e) {
+                                  print('Error: $e');
                                 }
                               },
                               child: Container(

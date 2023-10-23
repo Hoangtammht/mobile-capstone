@@ -174,14 +174,9 @@ class _OTPConfirmScreenState extends State<OTPConfirmScreen> {
                             ),
                             InkWell(
                               onTap: () async {
-                                SharedPreferences prefs =
-                                await SharedPreferences.getInstance();
-                                String? token = prefs.getString('access_token');
-                                if (token != null) {
                                   try {
                                     await ParkingAPI
                                         .checkOTPcodeTransferParking(
-                                      token,
                                       otpCode,
                                       widget.phoneNumber,
                                     );
@@ -189,7 +184,6 @@ class _OTPConfirmScreenState extends State<OTPConfirmScreen> {
                                   } catch (e) {
                                     _showFailureDialog(context);
                                   }
-                                }
                               },
                               child: Container(
                                 width: 322 * fem,

@@ -20,9 +20,6 @@ class BottomTabNavPlo extends StatefulWidget {
 class _BottomTabNavPloState extends State<BottomTabNavPlo> {
   final PersistentTabController _controller =
   PersistentTabController(initialIndex: 0);
-
-  String token = "";
-
   late Future<ParkingStatusInformation> statusParkingFuture;
   int parkingStatusID = 0;
 
@@ -33,16 +30,7 @@ class _BottomTabNavPloState extends State<BottomTabNavPlo> {
   }
 
   Future<ParkingStatusInformation> _getParkingInformationFuture() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? accessToken = prefs.getString('access_token');
-    if (accessToken != null) {
-      setState(() {
-        token = accessToken;
-      });
-      return ParkingAPI.getParkingStatusID(token);
-    } else {
-      throw Exception("Access token not found");
-    }
+      return ParkingAPI.getParkingStatusID();
   }
 
   @override

@@ -1,6 +1,7 @@
+import 'package:fe_capstone/apis/Auth.dart';
 import 'package:fe_capstone/apis/plo/AuthAPI.dart';
 import 'package:fe_capstone/main.dart';
-import 'package:fe_capstone/ui/CustomerUI/EditProfileScreen.dart';
+import 'package:fe_capstone/ui/screens/EditProfileScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -281,19 +282,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                 if (newPassword != reNewPassword) {
                                   _showFailureDialog(context);
                                 } else {
-                                  SharedPreferences prefs = await SharedPreferences.getInstance();
-                                  String? accessToken = prefs.getString('access_token');
-
-                                  if (accessToken != null) {
-                                    await AuthPloAPIs.changePassword(accessToken, oldPassword, newPassword, reNewPassword)
+                                    await AuthAPIs.changePassword(oldPassword, newPassword, reNewPassword)
                                         .then((_) {
                                       _showSuccessfulDialog(context);
                                     }).catchError((error) {
                                       _showFailureDialog(context);
                                     });
-                                  } else {
-                                    throw Exception("Access token not found");
-                                  }
                                 }
 
                                 _OldPasswordController.clear();

@@ -279,17 +279,13 @@ class _ParkingCardState extends State<ParkingCard> {
                           ),
                           TextButton(
                             onPressed: () async {
-                              SharedPreferences prefs = await SharedPreferences.getInstance();
-                              String? accessToken = prefs.getString('access_token');
-                              if (accessToken != null) {
                                 int reservationID = int.parse(widget.vehicleData.reservationID);
                                 try {
-                                  await ParkingAPI.checkInReservation(accessToken, reservationID);
-                                  Navigator.popUntil(context, (route) => route.isFirst);
+                                  await ParkingAPI.checkInReservation(reservationID);
+                                  Navigator.pop(context);
                                   widget.updateUI();
                                 } catch (e) {
                                 }
-                              }
                             },
                             child: Text(
                               'Xác nhận',
@@ -431,18 +427,14 @@ class _ParkingCardState extends State<ParkingCard> {
                           ),
                           TextButton(
                             onPressed: () async{
-                              SharedPreferences prefs = await SharedPreferences.getInstance();
-                              String? accessToken = prefs.getString('access_token');
-                              if (accessToken != null) {
                                 int reservationID = int.parse(widget.vehicleData.reservationID);
                                 try {
-                                  await ParkingAPI.checkoutReservation(accessToken, reservationID);
+                                  await ParkingAPI.checkoutReservation(reservationID);
                                   Navigator.pop(context);
                                   widget.updateUI();
                                 } catch (e) {
+
                                 }
-                              } else {
-                              }
                             },
                             child: Text(
                               'Xác nhận',

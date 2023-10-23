@@ -30,9 +30,6 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
   TextEditingController _waitingController = TextEditingController();
   TextEditingController _cancelBookingController = TextEditingController();
 
-
-  String token = "";
-
   @override
   void initState() {
     super.initState();
@@ -48,16 +45,7 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
   }
 
   Future<ParkingInformationModel> _getParkingInformationFuture() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? accessToken = prefs.getString('access_token');
-    if (accessToken != null) {
-      setState(() {
-        token = accessToken;
-      });
-      return ParkingAPI.getParkingInformation(token);
-    } else {
-      throw Exception("Access token not found");
-    }
+      return ParkingAPI.getParkingInformation();
   }
 
   @override
@@ -409,7 +397,6 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
                         () async {
                           try {
                             await ParkingAPI.updateParkingInformation(
-                              token,
                               description,
                               images,
                               newParkingName,
@@ -420,7 +407,8 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
                           } catch (e) {
                             print("Error: $e");
                           }
-                          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => ParkingInformation()), (route) => false);
+                          Navigator.pop(context);
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ParkingInformation()));
                         },
                       );
                     },

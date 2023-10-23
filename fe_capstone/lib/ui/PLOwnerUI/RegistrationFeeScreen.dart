@@ -68,12 +68,8 @@ class _RegistrationFeeScreenState extends State<RegistrationFeeScreen> {
               ),
               InkWell(
                 onTap: () async {
-                  SharedPreferences prefs =
-                      await SharedPreferences.getInstance();
-                  String? accessToken = prefs.getString('access_token');
-                  if (accessToken != null) {
                     try {
-                      String newUUID = await ParkingAPI.makePayment(accessToken);
+                      String newUUID = await ParkingAPI.makePayment();
                       setState(() {
                         request = RequestRegisterParking(
                             address: widget.requestRegisterParking.address,
@@ -89,7 +85,6 @@ class _RegistrationFeeScreenState extends State<RegistrationFeeScreen> {
                     } catch (e) {
                       print('Error: $e');
                     }
-                  }
                 },
                 child: Container(
                   margin: EdgeInsets.fromLTRB(
@@ -163,12 +158,9 @@ class _RegistrationFeeScreenState extends State<RegistrationFeeScreen> {
               ),
               InkWell(
                 onTap: () async {
-                  SharedPreferences prefs = await SharedPreferences.getInstance();
-                  String? accessToken = prefs.getString('access_token');
-                  if (accessToken != null) {
                     try {
                       print(request.toJson());
-                      await ParkingAPI.registerParking(accessToken, request);
+                      await ParkingAPI.registerParking(request);
                       PersistentNavBarNavigator.pushNewScreen(
                         context,
                         screen: BottomTabNavPlo(),
@@ -183,7 +175,6 @@ class _RegistrationFeeScreenState extends State<RegistrationFeeScreen> {
                         ),
                       );
                     }
-                  }
                 },
                 child: Container(
                   margin: EdgeInsets.fromLTRB(

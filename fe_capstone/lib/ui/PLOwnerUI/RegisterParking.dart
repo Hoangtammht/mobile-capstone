@@ -253,7 +253,7 @@ class _RegisterParkingState extends State<RegisterParking> {
               Padding(
                 padding: EdgeInsets.symmetric(
                     horizontal: 5 * fem, vertical: 15 * fem),
-                child: Text('Số slot xe (chỗ):',
+                child: Text('Sức chứa của bãi xe:',
                     style: TextStyle(
                       fontSize: 16 * fem,
                       fontWeight: FontWeight.bold,
@@ -587,7 +587,7 @@ class _RegisterParkingState extends State<RegisterParking> {
                         children: [
                           Container(
                             height: 1,
-                            color: Color(0xffb3abab), // Đường thẳng ngang
+                            color: Color(0xffb3abab),
                           ),
                           TextButton(
                             onPressed: () {
