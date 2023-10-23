@@ -7,15 +7,15 @@ import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ScanLicensePlate extends StatefulWidget {
+class CheckInByLicensePlate extends StatefulWidget {
   final void Function() updateUI;
-  const ScanLicensePlate({Key? key, required this.updateUI}) : super(key: key);
+  const CheckInByLicensePlate({Key? key, required this.updateUI}) : super(key: key);
 
   @override
-  State<ScanLicensePlate> createState() => _ScanLicensePlateState();
+  State<CheckInByLicensePlate> createState() => _ScanLicensePlateState();
 }
 
-class _ScanLicensePlateState extends State<ScanLicensePlate> {
+class _ScanLicensePlateState extends State<CheckInByLicensePlate> {
   bool textScanning = false;
 
   XFile? imageFile;
@@ -43,7 +43,7 @@ class _ScanLicensePlateState extends State<ScanLicensePlate> {
           },
         ),
         title: Text(
-          'KIỂM TRA BIỂN SỐ XE',
+          'Check In',
           style: TextStyle(
             fontSize: 26 * ffem,
             fontWeight: FontWeight.w700,
@@ -157,7 +157,45 @@ class _ScanLicensePlateState extends State<ScanLicensePlate> {
                   children: [
                     Container(
                       height: 42 * fem,
-                      width: 80 * fem,
+                      width: 150 * fem,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColor,
+                        borderRadius: BorderRadius.circular(9 * fem),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0x82000000),
+                            offset: Offset(0 * fem, 4 * fem),
+                            blurRadius: 10 * fem,
+                          ),
+                        ],
+                      ),
+                      child: TextButton(
+                        onPressed: () async {
+                              setState(() {
+                                imageFile = null;
+                                scannedText = "";
+                              });
+                        },
+                        child: Center(
+                          child: Text(
+                            'Bỏ qua',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 16 * ffem,
+                              fontWeight: FontWeight.w600,
+                              height: 1.175 * ffem / fem,
+                              color: Color(0xffffffff),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    Container(
+                      width: 150 * fem,
+                      height: 42 * fem,
                       decoration: BoxDecoration(
                         color: Theme.of(context).primaryColor,
                         borderRadius: BorderRadius.circular(9 * fem),
@@ -189,64 +227,11 @@ class _ScanLicensePlateState extends State<ScanLicensePlate> {
                                   content: Text('Có lỗi xảy ra khi thực hiện check-in'),
                                 ),
                               );
-                          }
-                        },
-                        child: Center(
-                          child: Text(
-                            'Xe vào',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 16 * ffem,
-                              fontWeight: FontWeight.w600,
-                              height: 1.175 * ffem / fem,
-                              color: Color(0xffffffff),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    Container(
-                      width: 80 * fem,
-                      height: 42 * fem,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
-                        borderRadius: BorderRadius.circular(9 * fem),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Color(0x82000000),
-                            offset: Offset(0 * fem, 4 * fem),
-                            blurRadius: 10 * fem,
-                          ),
-                        ],
-                      ),
-                      child: TextButton(
-                        onPressed: () async {
-                            try {
-                              await ParkingAPI.checkoutReservationWithLicensePlate(scannedText);
-                              widget.updateUI();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('Check-out thành công'),
-                                ),
-                              );
-                              setState(() {
-                                imageFile = null;
-                                scannedText = "";
-                              });
-                            } catch (e) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('Có lỗi xảy ra khi thực hiện check-out'),
-                                ),
-                              );
                             }
                         },
                         child: Center(
                           child: Text(
-                            'Xe ra',
+                            'Xe vào',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 16 * ffem,

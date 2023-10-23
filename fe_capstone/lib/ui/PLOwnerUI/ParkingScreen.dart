@@ -1,9 +1,10 @@
 import 'package:fe_capstone/apis/plo/ParkingAPI.dart';
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/models/ListVehicleInParking.dart';
+import 'package:fe_capstone/ui/PLOwnerUI/CheckOutByLicensePlate.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/ParkingInformation.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/ParkingPresentScreen.dart';
-import 'package:fe_capstone/ui/PLOwnerUI/ScanLicensePlate.dart';
+import 'package:fe_capstone/ui/PLOwnerUI/CheckInByLicensePlate.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/SettingParking.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -73,9 +74,16 @@ class _ParkingScreenState extends State<ParkingScreen>
           IconButton(
             onPressed: () {
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => ScanLicensePlate(updateUI: updateUI)));
+                  MaterialPageRoute(builder: (context) => CheckInByLicensePlate(updateUI: updateUI)));
             },
             icon: Icon(Icons.qr_code),
+          ),
+          IconButton(
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => CheckOutByLicensePlate(updateUI: updateUI)));
+            },
+            icon: Icon(Icons.qr_code_scanner),
           ),
           PopupMenuButton<String>(
             itemBuilder: (BuildContext context) {
