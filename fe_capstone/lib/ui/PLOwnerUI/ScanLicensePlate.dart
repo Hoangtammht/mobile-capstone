@@ -171,12 +171,8 @@ class _ScanLicensePlateState extends State<ScanLicensePlate> {
                       ),
                       child: TextButton(
                         onPressed: () async {
-                          SharedPreferences prefs = await SharedPreferences.getInstance();
-                          String? accessToken = prefs.getString('access_token');
-                          if (accessToken != null) {
                             try {
-                              await ParkingAPI.checkinReservationWithLicensePlate(
-                                  accessToken, scannedText);
+                              await ParkingAPI.checkinReservationWithLicensePlate(scannedText);
                               widget.updateUI();
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
@@ -193,7 +189,6 @@ class _ScanLicensePlateState extends State<ScanLicensePlate> {
                                   content: Text('Có lỗi xảy ra khi thực hiện check-in'),
                                 ),
                               );
-                            }
                           }
                         },
                         child: Center(
@@ -229,12 +224,8 @@ class _ScanLicensePlateState extends State<ScanLicensePlate> {
                       ),
                       child: TextButton(
                         onPressed: () async {
-                          SharedPreferences prefs = await SharedPreferences.getInstance();
-                          String? accessToken = prefs.getString('access_token');
-                          if (accessToken != null) {
                             try {
-                              await ParkingAPI.checkoutReservationWithLicensePlate(
-                                  accessToken, scannedText);
+                              await ParkingAPI.checkoutReservationWithLicensePlate(scannedText);
                               widget.updateUI();
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
@@ -252,7 +243,6 @@ class _ScanLicensePlateState extends State<ScanLicensePlate> {
                                 ),
                               );
                             }
-                          }
                         },
                         child: Center(
                           child: Text(

@@ -1,8 +1,9 @@
-import 'package:fe_capstone/apis/plo/AuthAPI.dart';
+import 'package:fe_capstone/apis/Auth.dart';
+import 'package:fe_capstone/blocs/UserPreferences.dart';
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/models/PloDetail.dart';
 import 'package:fe_capstone/ui/screens/ChangePasswordScreen.dart';
-import 'package:fe_capstone/ui/CustomerUI/EditProfileScreen.dart';
+import 'package:fe_capstone/ui/screens/EditProfileScreen.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/TransferParking.dart';
 import 'package:fe_capstone/ui/screens/LoginScreen.dart';
 import 'package:flutter/material.dart';
@@ -19,8 +20,6 @@ class PloProfileScreen extends StatefulWidget {
 class _PloProfileScreenState extends State<PloProfileScreen> {
   late Future<PloProfile> ploProfileFuture;
 
-  String token = "";
-
   @override
   void initState() {
     super.initState();
@@ -28,16 +27,7 @@ class _PloProfileScreenState extends State<PloProfileScreen> {
   }
 
   Future<PloProfile> _getPloProfileFuture() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? accessToken = prefs.getString('access_token');
-    if (accessToken != null) {
-      setState(() {
-        token = accessToken;
-      });
-      return AuthPloAPIs.getPloProfile(token);
-    } else {
-      throw Exception("Access token not found");
-    }
+      return AuthAPIs.getPloProfile();
   }
 
 
@@ -430,9 +420,8 @@ class _PloProfileScreenState extends State<PloProfileScreen> {
                     ),
                     InkWell(
                       onTap: () async {
-                        SharedPreferences prefs = await SharedPreferences.getInstance();
-                        prefs.remove('access_token');
-                        PersistentNavBarNavigator.pushNewScreen( context, screen: LoginScreen(), withNavBar: false, pageTransitionAnimation: PageTransitionAnimation.cupertino, );
+                        await UserPreferences.logout();
+                        PersistentNavBarNavigator.pushNewScreen(context, screen: LoginScreen(), withNavBar: false, pageTransitionAnimation: PageTransitionAnimation.cupertino, );
                       },
                       child: Container(
                         margin:

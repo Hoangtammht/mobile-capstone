@@ -1,3 +1,4 @@
+import 'package:fe_capstone/apis/Auth.dart';
 import 'package:fe_capstone/apis/plo/AuthAPI.dart';
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/models/PloDetail.dart';
@@ -19,8 +20,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   TextEditingController _fullNameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
 
-  String token = "";
-
   @override
   void initState() {
     super.initState();
@@ -32,16 +31,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<PloProfile> _getPloProfileFuture() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? accessToken = prefs.getString('access_token');
-    if (accessToken != null) {
-      setState(() {
-        token = accessToken;
-      });
-      return AuthPloAPIs.getPloProfile(token);
-    } else {
-      throw Exception("Access token not found");
-    }
+      return AuthAPIs.getPloProfile();
   }
 
 
@@ -202,7 +192,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   "Xác nhận",
                                   Color(0xffff3737),
                                       () async {
-                                        await AuthPloAPIs.updateProfile(token, UpdateProfileRequest(
+                                        await AuthAPIs.updateProfile(UpdateProfileRequest(
                                           email: newEmail,
                                           fullName: newFullName,
                                         ));

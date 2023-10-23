@@ -32,6 +32,13 @@ class WaitingApprovalScreen extends StatelessWidget {
                 fontSize: 18 * fem,
                 fontWeight: FontWeight.bold
               ),),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 15 * fem),
+              child: Text('Chúng tôi sẽ sớm liên hệ lại từ 12 - 24h', style: TextStyle(
+                  fontSize: 18 * fem,
+                  fontWeight: FontWeight.bold
+              ),),
             )
           ],
         ),

@@ -1,6 +1,8 @@
+import 'package:fe_capstone/apis/Auth.dart';
 import 'package:fe_capstone/main.dart';
+import 'package:fe_capstone/models/PloDetail.dart';
 import 'package:fe_capstone/ui/screens/ChangePasswordScreen.dart';
-import 'package:fe_capstone/ui/CustomerUI/EditProfileScreen.dart';
+import 'package:fe_capstone/ui/screens/EditProfileScreen.dart';
 import 'package:fe_capstone/ui/CustomerUI/VechicleScreen.dart';
 import 'package:fe_capstone/ui/screens/LoginScreen.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +17,19 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  late Future<PloProfile> ploProfileFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    ploProfileFuture = _getPloProfileFuture();
+  }
+
+  Future<PloProfile> _getPloProfileFuture() async {
+    return AuthAPIs.getPloProfile();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,144 +92,154 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ],
                       ),
-                      child: Column(
-                        children: [
-                          Container(
-                            margin: EdgeInsets.symmetric(vertical: 15 * fem),
-                            padding: EdgeInsets.symmetric(horizontal: 10* fem),
-                            height: 30 * fem,
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
+                      child: FutureBuilder<PloProfile>(
+                        future: ploProfileFuture,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          } else {
+                            final ploProfile = snapshot.data;
+                            return Column(
                               children: [
                                 Container(
-                                    margin: EdgeInsets.fromLTRB(0 * fem,
-                                        1.21 * fem, 4.63 * fem, 0 * fem),
-                                    width: 21.75 * fem,
-                                    height: 22.96 * fem,
-                                    child: const Icon(Icons.person)),
-                                Text(
-                                  'Thông tin cá nhân',
-                                  style: TextStyle(
-                                    fontSize: 26 * ffem,
-                                    fontWeight: FontWeight.w600,
-                                    height: 1.175 * ffem / fem,
-                                    color: Color(0xff000000),
+                                  margin: EdgeInsets.symmetric(vertical: 15 * fem),
+                                  padding: EdgeInsets.symmetric(horizontal: 10* fem),
+                                  height: 30 * fem,
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                          margin: EdgeInsets.fromLTRB(0 * fem,
+                                              1.21 * fem, 4.63 * fem, 0 * fem),
+                                          width: 21.75 * fem,
+                                          height: 22.96 * fem,
+                                          child: const Icon(Icons.person)),
+                                      Text(
+                                        'Thông tin cá nhân',
+                                        style: TextStyle(
+                                          fontSize: 26 * ffem,
+                                          fontWeight: FontWeight.w600,
+                                          height: 1.175 * ffem / fem,
+                                          color: Color(0xff000000),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                    margin: EdgeInsets.symmetric(vertical: 15 * fem),
+                                    padding: EdgeInsets.symmetric(horizontal: 10* fem),
+                                    height: 20 * fem,
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          child: Text(
+                                            'Họ và tên',
+                                            style: TextStyle(
+                                              fontSize: 16 * ffem,
+                                              fontWeight: FontWeight.w400,
+                                              height: 1.175 * ffem / fem,
+                                              color: Color(0xff5b5b5b),
+                                            ),
+                                          ),
+                                        ),
+                                        Spacer(),
+                                        Text(
+                                          snapshot.connectionState == ConnectionState.waiting ? 'Đang tải...' : ploProfile?.fullName ?? '',
+                                          style: TextStyle(
+                                            fontSize: 16 * ffem,
+                                            fontWeight: FontWeight.w600,
+                                            height: 1.175 * ffem / fem,
+                                            color: Color(0xff000000),
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                ),
+                                Align(
+                                  child: SizedBox(
+                                    width: 390 * fem,
+                                    height: 1.01 * fem,
+                                    child: Divider(
+                                      thickness: 1,
+                                      color: Colors.grey[300],
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                    margin: EdgeInsets.symmetric(vertical: 15 * fem),
+                                    padding: EdgeInsets.symmetric(horizontal: 10* fem),
+                                    height: 20 * fem,
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          child: Text(
+                                            'Số điện thoại',
+                                            style: TextStyle(
+                                              fontSize: 16 * ffem,
+                                              fontWeight: FontWeight.bold,
+                                              height: 1.175 * ffem / fem,
+                                              color: Color(0xff5b5b5b),
+                                            ),
+                                          ),
+                                        ),
+                                        Spacer(),
+                                        Text(
+                                          snapshot.connectionState == ConnectionState.waiting ? 'Đang tải...' : ploProfile?.phoneNumber ?? '',
+                                          style: TextStyle(
+                                            fontSize: 16 * ffem,
+                                            fontWeight: FontWeight.w500,
+                                            height: 1.2175 * ffem / fem,
+                                            color: Color(0xff000000),
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                ),
+                                Align(
+                                  child: SizedBox(
+                                    width: 390 * fem,
+                                    height: 1.01 * fem,
+                                    child: Divider(
+                                      thickness: 1,
+                                      color: Colors.grey[300],
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  margin: EdgeInsets.symmetric(vertical: 15 * fem),
+                                  padding: EdgeInsets.symmetric(horizontal: 10* fem),
+                                  height: 20 * fem,
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        child: Text(
+                                          'Email',
+                                          style: TextStyle(
+                                            fontSize: 16 * ffem,
+                                            fontWeight: FontWeight.w400,
+                                            height: 1.175 * ffem / fem,
+                                            color: Color(0xff5b5b5b),
+                                          ),
+                                        ),
+                                      ),
+                                      Spacer(),
+                                      Text(
+                                        snapshot.connectionState == ConnectionState.waiting ? 'Đang tải...' : ploProfile?.email ?? '',
+                                        style: TextStyle(
+                                          fontSize: 16 * ffem,
+                                          fontWeight: FontWeight.w600,
+                                          height: 1.175 * ffem / fem,
+                                          color: Color(0xff000000),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
-                            ),
-                          ),
-                          Container(
-                              margin: EdgeInsets.symmetric(vertical: 15 * fem),
-                              padding: EdgeInsets.symmetric(horizontal: 10* fem),
-                              height: 20 * fem,
-                              child: Row(
-                                children: [
-                                  Container(
-                                    child: Text(
-                                      'Họ và tên',
-                                      style: TextStyle(
-                                        fontSize: 16 * ffem,
-                                        fontWeight: FontWeight.w400,
-                                        height: 1.175 * ffem / fem,
-                                        color: Color(0xff5b5b5b),
-                                      ),
-                                    ),
-                                  ),
-                                  Spacer(), // Sử dụng Spacer ở đây
-                                  Text(
-                                    'Huỳnh Bá Quốc',
-                                    style: TextStyle(
-                                      fontSize: 16 * ffem,
-                                      fontWeight: FontWeight.w600,
-                                      height: 1.175 * ffem / fem,
-                                      color: Color(0xff000000),
-                                    ),
-                                  ),
-                                ],
-                              )
-                          ),
-                          Align(
-                            child: SizedBox(
-                              width: 390 * fem,
-                              height: 1.01 * fem,
-                              child: Divider(
-                                thickness: 1,
-                                color: Colors.grey[300], // Đặt màu của Divider thành trong suốt
-                              ),
-                            ),
-                          ),
-                          Container(
-                              margin: EdgeInsets.symmetric(vertical: 15 * fem),
-                              padding: EdgeInsets.symmetric(horizontal: 10* fem),
-                              height: 20 * fem,
-                              child: Row(
-                                children: [
-                                  Container(
-                                    child: Text(
-                                      'Số điện thoại',
-                                      style: TextStyle(
-                                        fontSize: 16 * ffem,
-                                        fontWeight: FontWeight.w400,
-                                        height: 1.175 * ffem / fem,
-                                        color: Color(0xff5b5b5b),
-                                      ),
-                                    ),
-                                  ),
-                                  Spacer(), // Sử dụng Spacer ở đây
-                                  Text(
-                                    '0357280618',
-                                    style: TextStyle(
-                                      fontSize: 16 * ffem,
-                                      fontWeight: FontWeight.w500,
-                                      height: 1.2175 * ffem / fem,
-                                      color: Color(0xff000000),
-                                    ),
-                                  ),
-                                ],
-                              )
-                          ),
-                          Align(
-                            child: SizedBox(
-                              width: 390 * fem,
-                              height: 1.01 * fem,
-                              child: Divider(
-                                thickness: 1,
-                                color: Colors.grey[300], // Đặt màu của Divider thành trong suốt
-                              ),
-                            ),
-                          ),
-                          Container(
-                            margin: EdgeInsets.symmetric(vertical: 15 * fem),
-                            padding: EdgeInsets.symmetric(horizontal: 10* fem),
-                            height: 20 * fem,
-                            child: Row(
-                              children: [
-                                Container(
-                                  child: Text(
-                                    'Email',
-                                    style: TextStyle(
-                                      fontSize: 16 * ffem,
-                                      fontWeight: FontWeight.w400,
-                                      height: 1.175 * ffem / fem,
-                                      color: Color(0xff5b5b5b),
-                                    ),
-                                  ),
-                                ),
-                                Spacer(), // Sử dụng Spacer ở đây
-                                Text(
-                                  'quocbahuynh@gmail.com',
-                                  style: TextStyle(
-                                    fontSize: 16 * ffem,
-                                    fontWeight: FontWeight.w600,
-                                    height: 1.175 * ffem / fem,
-                                    color: Color(0xff000000),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+                            );
+                          }
+                        },
                       ),
                     ),
                   ),
@@ -226,7 +251,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       onTap: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => EditProfileScreen(), // Thay thế EditPloProfileScreen bằng màn hình chỉnh sửa của bạn
+                            builder: (context) => EditProfileScreen(),
                           ),
                         );
                       },

@@ -7,7 +7,6 @@ import 'package:fe_capstone/ui/components/widgetPLO/WithdrawCard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class RevenueScreen extends StatefulWidget {
   const RevenueScreen({Key? key}) : super(key: key);
@@ -28,7 +27,6 @@ class _RevenueScreenState extends State<RevenueScreen> {
   DateTime selectedToDate = DateTime.now();
   late Future<RevenueModel> revenueModelFuture;
 
-  String token = "";
   List<Withdraw> listHistoryWithdraw = [];
   double revenueValue = 0;
 
@@ -52,36 +50,19 @@ class _RevenueScreenState extends State<RevenueScreen> {
 
   void _getDataFromAPI() async {
     try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? accessToken = prefs.getString('access_token');
-      if (accessToken != null) {
-        setState(() {
-          token = accessToken;
-        });
         String fromDate = DateFormat("yyyy-MM-dd").format(DateFormat("dd/MM/yyyy").parse(_fromDateController.text));
         String toDate = DateFormat("yyyy-MM-dd").format(DateFormat("dd/MM/yyyy").parse(_toDateController.text));
-        double value = await ParkingAPI.getSumByDate(
-            token, fromDate, toDate);
+        double value = await ParkingAPI.getSumByDate(fromDate, toDate);
         setState(() {
           revenueValue = value;
         });
-      }
     } catch (e) {
       print('Error while fetching data: $e');
     }
   }
 
   Future<RevenueModel> _getPloProfileFuture() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? accessToken = prefs.getString('access_token');
-    if (accessToken != null) {
-      setState(() {
-        token = accessToken;
-      });
-      return AuthPloAPIs.getPloRevenue(token);
-    } else {
-      throw Exception("Access token not found");
-    }
+      return AuthPloAPIs.getPloRevenue();
   }
 
 
@@ -788,7 +769,7 @@ class _RevenueScreenState extends State<RevenueScreen> {
                               String method1 = _methodOneController.text;
                               String method2 = _methodTwoController.text;
                               try {
-                                await ParkingAPI.requestWithdrawal(token, amount, method1, method2);
+                                await ParkingAPI.requestWithdrawal(amount, method1, method2);
                                 Navigator.pop(context);
                                 _showSuccessfulDialog(context);
                               } catch (e) {

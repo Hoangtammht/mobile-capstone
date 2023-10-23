@@ -21,8 +21,6 @@ class ParkingDetailCard extends StatefulWidget {
 class _ParkingDetailCardState extends State<ParkingDetailCard> {
   late Future<ReservationDetail> reservationDetailFuture;
 
-  String token = "";
-
   @override
   void initState() {
     super.initState();
@@ -30,16 +28,7 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
   }
 
   Future<ReservationDetail> _getReservationDetailFuture() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? accessToken = prefs.getString('access_token');
-    if (accessToken != null) {
-      setState(() {
-        token = accessToken;
-      });
-      return ParkingAPI.getReservationDetail(token, widget.reservationID);
-    } else {
-      throw Exception("Access token not found");
-    }
+      return ParkingAPI.getReservationDetail(widget.reservationID);
   }
 
 
@@ -77,18 +66,13 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
                   "Xác nhận",
                   Color(0xffff3737),
                       () async {
-                        SharedPreferences prefs = await SharedPreferences.getInstance();
-                        String? accessToken = prefs.getString('access_token');
-                        if (accessToken != null) {
                           int reservationID = widget.reservationID;
                           try {
-                            await ParkingAPI.checkInReservation(
-                                accessToken, reservationID);
+                            await ParkingAPI.checkInReservation(reservationID);
                             Navigator.popUntil(
                                 context, (route) => route.isFirst);
                             widget.updateUI();
                           } catch (e) {}
-                        }
                   },
                 );
               },

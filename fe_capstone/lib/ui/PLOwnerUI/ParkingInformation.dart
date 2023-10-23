@@ -18,7 +18,6 @@ class _ParkingInformationState extends State<ParkingInformation> {
 
   late Future<ParkingInformationModel> parkingInformationFuture;
   late Future<List<RatingModel>> listRatingModelFuture;
-  late String token;
 
   @override
   void initState() {
@@ -28,29 +27,11 @@ class _ParkingInformationState extends State<ParkingInformation> {
   }
 
   Future<ParkingInformationModel> _getParkingInformationFuture() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? accessToken = prefs.getString('access_token');
-    if (accessToken != null) {
-      setState(() {
-        token = accessToken;
-      });
-      return ParkingAPI.getParkingInformation(token);
-    } else {
-      throw Exception("Access token not found");
-    }
+      return ParkingAPI.getParkingInformation();
   }
 
   Future<List<RatingModel>> _getListRating() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? accessToken = prefs.getString('access_token');
-    if (accessToken != null) {
-      setState(() {
-        token = accessToken;
-      });
-      return ParkingAPI.getRatingList(token);
-    } else {
-      throw Exception("Access token not found");
-    }
+      return ParkingAPI.getRatingList();
   }
 
 

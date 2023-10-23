@@ -23,8 +23,6 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
   TextEditingController _priceOfMethodTwoController = TextEditingController();
   TextEditingController _priceOfMethodThreeController = TextEditingController();
 
-  String token = "";
-
   @override
   void initState() {
     super.initState();
@@ -43,16 +41,7 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
   }
 
   Future<ResponseSettingParking> _getSettingParkingFuture() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? accessToken = prefs.getString('access_token');
-    if (accessToken != null) {
-      setState(() {
-        token = accessToken;
-      });
-      return ParkingAPI.getParkingSetting(token);
-    } else {
-      throw Exception("Access token not found");
-    }
+      return ParkingAPI.getParkingSetting();
   }
 
   @override
@@ -513,7 +502,7 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
                       }
 
                       try {
-                        await ParkingAPI.updateParkingSetting(token, data);
+                        await ParkingAPI.updateParkingSetting(data);
                         _showSuccessfulDialog(context);
                       } catch (e) {
                         _showFailureDialog(context);
@@ -610,7 +599,7 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
                   ),
                   InkWell(
                     onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => SettingParkingScreen()));
+                      Navigator.pop(context);
                     },
                     child: Container(
                       width:  60 * fem,

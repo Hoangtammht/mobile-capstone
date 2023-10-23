@@ -16,8 +16,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
   Future<List<PLONotification>>? listNotificationFuture;
 
-  String token = "";
-
   @override
   void initState() {
     super.initState();
@@ -25,16 +23,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
   }
 
   Future<List<PLONotification>> _getListNotificationFuture() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? accessToken = prefs.getString('access_token');
-    if (accessToken != null) {
-      setState(() {
-        token = accessToken;
-      });
-      return ParkingAPI.getNotifications(token);
-    } else {
-      throw Exception("Access token not found");
-    }
+      return ParkingAPI.getNotifications();
   }
 
   @override

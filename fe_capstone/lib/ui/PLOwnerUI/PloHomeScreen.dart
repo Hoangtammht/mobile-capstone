@@ -19,7 +19,6 @@ class PloHomeScreen extends StatefulWidget {
 }
 
 class _PloHomeScreenState extends State<PloHomeScreen> {
-  String token = "";
 
   late Future<ParkingStatusInformation> statusParkingFuture;
   int parkingStatusID = 0;
@@ -46,16 +45,7 @@ class _PloHomeScreenState extends State<PloHomeScreen> {
   }
 
   Future<ParkingStatusInformation> _getParkingInformationFuture() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? accessToken = prefs.getString('access_token');
-    if (accessToken != null) {
-      setState(() {
-        token = accessToken;
-      });
-      return ParkingAPI.getParkingStatusID(token);
-    } else {
-      throw Exception("Access token not found");
-    }
+      return ParkingAPI.getParkingStatusID();
   }
 
   Future<void> _reloadParkingInformation() async {
@@ -73,14 +63,7 @@ class _PloHomeScreenState extends State<PloHomeScreen> {
 
   void fetchVehicleInParking() async {
     try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? accessToken = prefs.getString('access_token');
-      if (accessToken != null) {
-        setState(() {
-          token = accessToken;
-        });
-        list1 = await ParkingAPI.fetchListVehicleInParking(token, 2);
-      }
+        list1 = await ParkingAPI.fetchListVehicleInParking(2);
       setState(() {
         list1Length = list1.length;
       });
@@ -88,16 +71,7 @@ class _PloHomeScreenState extends State<PloHomeScreen> {
   }
 
   Future<double> _getWalletFuture() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? accessToken = prefs.getString('access_token');
-    if (accessToken != null) {
-      setState(() {
-        token = accessToken;
-      });
-      return ParkingAPI.getBalance(token);
-    } else {
-      throw Exception("Access token not found");
-    }
+      return ParkingAPI.getBalance();
   }
 
   ParkingStatus _getParkingStatusFromID(int statusID) {
@@ -561,7 +535,7 @@ class _PloHomeScreenState extends State<PloHomeScreen> {
                           TextButton(
                             onPressed: () async {
                               if (currentParkingStatus == ParkingStatus.approved) {
-                                await ParkingAPI.updateParkingStatusID(token, 4);
+                                await ParkingAPI.updateParkingStatusID(4);
                                 Navigator.pop(context);
                                 Navigator.push(
                                   context,
@@ -575,7 +549,7 @@ class _PloHomeScreenState extends State<PloHomeScreen> {
                                 setState(() {
                                   currentParkingStatus = newValue!;
                                 });
-                                await ParkingAPI.updateParkingStatusID(token, _getParkingStatusID(newValue!));
+                                await ParkingAPI.updateParkingStatusID(_getParkingStatusID(newValue!));
                                 Navigator.pop(context);
                                 await _reloadParkingInformation();
                               }

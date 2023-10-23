@@ -27,8 +27,6 @@ class _ParkingScreenState extends State<ParkingScreen>
   late int list2Length = 0;
   late int list3Length = 0;
 
-  String token = "";
-
   @override
   void initState() {
     super.initState();
@@ -42,17 +40,10 @@ class _ParkingScreenState extends State<ParkingScreen>
 
   void fetchData() async {
     try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? accessToken = prefs.getString('access_token');
-      if (accessToken != null) {
-        setState(() {
-          token = accessToken;
-        });
-        list1 = await ParkingAPI.fetchListVehicleInParking(token, 2);
-        list2 = await ParkingAPI.fetchListVehicleInParking(token, 1);
-        list3 = await ParkingAPI.fetchListVehicleInParking(token, 3);
-        list4 = await ParkingAPI.fetchListVehicleInParking(token, 4);
-      }
+        list1 = await ParkingAPI.fetchListVehicleInParking(2);
+        list2 = await ParkingAPI.fetchListVehicleInParking(1);
+        list3 = await ParkingAPI.fetchListVehicleInParking(3);
+        list4 = await ParkingAPI.fetchListVehicleInParking(4);
       setState(() {
         list1Length = list1.length;
         list2Length = list2.length;

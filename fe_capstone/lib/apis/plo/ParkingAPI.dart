@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:fe_capstone/blocs/UserPreferences.dart';
 import 'package:fe_capstone/models/ListVehicleInParking.dart';
 import 'package:fe_capstone/models/PLONotification.dart';
 import 'package:fe_capstone/models/ParkingInformationModel.dart';
@@ -13,11 +14,14 @@ import 'package:url_launcher/url_launcher.dart';
 
 class ParkingAPI {
   static Dio dio = Dio();
-  static const String baseUrl = 'https://eparking.azurewebsites.net';
+  static const String baseUrl = 'https://eparkingcapstone.azurewebsites.net';
 
-  static Future<ParkingInformationModel> getParkingInformation(
-      String token) async {
+  static Future<ParkingInformationModel> getParkingInformation() async {
     try {
+      String? token = await UserPreferences.getAccessToken();
+      if (token == null) {
+        throw Exception('Access token is null');
+      }
       final response = await dio.get(
         '$baseUrl/PLO/getParkingInformation',
         options: Options(
@@ -40,8 +44,12 @@ class ParkingAPI {
     }
   }
 
-  static Future<List<RatingModel>> getRatingList(String token) async {
+  static Future<List<RatingModel>> getRatingList() async {
     try {
+      String? token = await UserPreferences.getAccessToken();
+      if (token == null) {
+        throw Exception('Access token is null');
+      }
       final response = await dio.get(
         '$baseUrl/PLO/getRatingList',
         options: Options(
@@ -66,7 +74,6 @@ class ParkingAPI {
   }
 
   static Future<void> updateParkingInformation(
-    String token,
     String description,
     List<String> images,
     String parkingName,
@@ -75,6 +82,10 @@ class ParkingAPI {
     Map<String, dynamic> cancelBookingTime,
   ) async {
     try {
+      String? token = await UserPreferences.getAccessToken();
+      if (token == null) {
+        throw Exception('Access token is null');
+      }
       final response = await dio.put(
         '$baseUrl/PLO/updateParkingInformation',
         data: {
@@ -139,9 +150,12 @@ class ParkingAPI {
     }
   }
 
-  static Future<List<ListVehicleInParking>> fetchListVehicleInParking(
-      String token, int statusID) async {
+  static Future<List<ListVehicleInParking>> fetchListVehicleInParking(int statusID) async {
     try {
+      String? token = await UserPreferences.getAccessToken();
+      if (token == null) {
+        throw Exception('Access token is null');
+      }
       var response = await dio.get(
         '$baseUrl/parking/showListVehicleInParking',
         queryParameters: {'statusID': statusID},
@@ -167,8 +181,12 @@ class ParkingAPI {
     }
   }
 
-  static Future<ResponseSettingParking> getParkingSetting(String token) async {
+  static Future<ResponseSettingParking> getParkingSetting() async {
     try {
+      String? token = await UserPreferences.getAccessToken();
+      if (token == null) {
+        throw Exception('Access token is null');
+      }
       var response = await dio.get(
         '$baseUrl/parking/getParkingSetting',
         options: Options(
@@ -192,9 +210,12 @@ class ParkingAPI {
     }
   }
 
-  static Future<void> updateParkingSetting(
-      String token, List<Map<String, dynamic>> data) async {
+  static Future<void> updateParkingSetting(List<Map<String, dynamic>> data) async {
     try {
+      String? token = await UserPreferences.getAccessToken();
+      if (token == null) {
+        throw Exception('Access token is null');
+      }
       final response = await dio.put(
         '$baseUrl/parking/updateParkingSetting',
         data: data,
@@ -215,9 +236,12 @@ class ParkingAPI {
     }
   }
 
-  static Future<void> checkoutReservation(
-      String token, int reservationID) async {
+  static Future<void> checkoutReservation(int reservationID) async {
     try {
+      String? token = await UserPreferences.getAccessToken();
+      if (token == null) {
+        throw Exception('Access token is null');
+      }
       var response = await dio.put(
         '$baseUrl/reservation/checkoutReservation',
         data: {"reservationID": reservationID},
@@ -238,9 +262,12 @@ class ParkingAPI {
     }
   }
 
-  static Future<void> checkInReservation(
-      String token, int reservationID) async {
+  static Future<void> checkInReservation(int reservationID) async {
     try {
+      String? token = await UserPreferences.getAccessToken();
+      if (token == null) {
+        throw Exception('Access token is null');
+      }
       var response = await dio.put(
         '$baseUrl/reservation/checkinReservation',
         data: {"reservationID": reservationID},
@@ -261,9 +288,12 @@ class ParkingAPI {
     }
   }
 
-  static Future<ReservationDetail> getReservationDetail(
-      String token, int reservationID) async {
+  static Future<ReservationDetail> getReservationDetail(int reservationID) async {
     try {
+      String? token = await UserPreferences.getAccessToken();
+      if (token == null) {
+        throw Exception('Access token is null');
+      }
       var response = await dio.get(
         '$baseUrl/parking/getReservationDetail',
         queryParameters: {'reservationID': reservationID},
@@ -286,8 +316,12 @@ class ParkingAPI {
     }
   }
 
-  static Future<void> checkPLOTransfer(String token, String phoneNumber) async {
+  static Future<void> checkPLOTransfer(String phoneNumber) async {
     try {
+      String? token = await UserPreferences.getAccessToken();
+      if (token == null) {
+        throw Exception('Access token is null');
+      }
       final response = await dio.get(
         '$baseUrl/PLO/checkPLOTransfer',
         queryParameters: {
@@ -310,9 +344,12 @@ class ParkingAPI {
     }
   }
 
-  static Future<void> checkOTPcodeTransferParking(
-      String token, String otpCode, String phoneNumber) async {
+  static Future<void> checkOTPcodeTransferParking(String otpCode, String phoneNumber) async {
     try {
+      String? token = await UserPreferences.getAccessToken();
+      if (token == null) {
+        throw Exception('Access token is null');
+      }
       final response = await dio.put(
         '$baseUrl/PLO/checkOTPcodeTransferParking',
         queryParameters: {
@@ -336,9 +373,12 @@ class ParkingAPI {
     }
   }
 
-  static Future<ParkingStatusInformation> getParkingStatusID(
-      String token) async {
+  static Future<ParkingStatusInformation> getParkingStatusID() async {
     try {
+      String? token = await UserPreferences.getAccessToken();
+      if (token == null) {
+        throw Exception('Access token is null');
+      }
       final response = await dio.get(
         '$baseUrl/parking/getParkingStatusID',
         options: Options(
@@ -361,8 +401,12 @@ class ParkingAPI {
     }
   }
 
-  static Future<List<PLONotification>> getNotifications(String token) async {
+  static Future<List<PLONotification>> getNotifications() async {
     try {
+      String? token = await UserPreferences.getAccessToken();
+      if (token == null) {
+        throw Exception('Access token is null');
+      }
       final response = await dio.get(
         '$baseUrl/user/getNotifcations',
         options: Options(
@@ -385,8 +429,12 @@ class ParkingAPI {
     }
   }
 
-  static Future<double> getBalance(String token) async {
+  static Future<double> getBalance() async {
     try {
+      String? token = await UserPreferences.getAccessToken();
+      if (token == null) {
+        throw Exception('Access token is null');
+      }
       final response = await dio.get(
         '$baseUrl/PLO/getBalance',
         options: Options(
@@ -406,8 +454,12 @@ class ParkingAPI {
     }
   }
 
-  static Future<void> updateParkingStatusID(String token, int parkingStatusID) async {
+  static Future<void> updateParkingStatusID(int parkingStatusID) async {
     try {
+      String? token = await UserPreferences.getAccessToken();
+      if (token == null) {
+        throw Exception('Access token is null');
+      }
       final response = await dio.put(
         '$baseUrl/parking/updateParkingStatusID',
         queryParameters: {
@@ -430,8 +482,12 @@ class ParkingAPI {
     }
   }
 
-  static Future<String> makePayment(String token) async {
+  static Future<String> makePayment() async {
     try {
+      String? token = await UserPreferences.getAccessToken();
+      if (token == null) {
+        throw Exception('Access token is null');
+      }
       final response = await dio.post(
         '$baseUrl/parking/paymentRegisterParking',
         options: Options(
@@ -455,10 +511,12 @@ class ParkingAPI {
     }
   }
 
-  static Future<void> registerParking(
-      String token,
-      RequestRegisterParking request) async {
+  static Future<void> registerParking(RequestRegisterParking request) async {
     try {
+      String? token = await UserPreferences.getAccessToken();
+      if (token == null) {
+        throw Exception('Access token is null');
+      }
       final response = await dio.post(
         '$baseUrl/parking/registerParking',
         options: Options(
@@ -479,9 +537,12 @@ class ParkingAPI {
     }
   }
 
-  static Future<void> checkinReservationWithLicensePlate(String token,
-      String licensePlate) async {
+  static Future<void> checkinReservationWithLicensePlate(String licensePlate) async {
     try {
+      String? token = await UserPreferences.getAccessToken();
+      if (token == null) {
+        throw Exception('Access token is null');
+      }
       final response = await dio.put(
         '$baseUrl/reservation/checkinReservationWithLicensePlate',
         options: Options(
@@ -502,14 +563,17 @@ class ParkingAPI {
     }
   }
 
-  static Future<void> checkoutReservationWithLicensePlate(
-      String accessToken, String licensePlate) async {
+  static Future<void> checkoutReservationWithLicensePlate(String licensePlate) async {
     try {
+      String? token = await UserPreferences.getAccessToken();
+      if (token == null) {
+        throw Exception('Access token is null');
+      }
       final response = await dio.put(
         '$baseUrl/reservation/checkoutReservationWithLicensePlate',
         options: Options(
           headers: {
-            'Authorization': 'Bearer $accessToken',
+            'Authorization': 'Bearer $token',
             'Content-Type': 'application/json',
           },
         ),
@@ -525,8 +589,12 @@ class ParkingAPI {
     }
   }
 
-  static Future<double> getSumByDate(String token, String startTime, String startTime2nd) async {
+  static Future<double> getSumByDate(String startTime, String startTime2nd) async {
     try {
+      String? token = await UserPreferences.getAccessToken();
+      if (token == null) {
+        throw Exception('Access token is null');
+      }
       var response = await dio.get(
         '$baseUrl/PLO/getSumByDate',
         options: Options(
@@ -552,8 +620,12 @@ class ParkingAPI {
     }
   }
 
-  static Future<void> requestWithdrawal(String token, double amount, String method1, String method2) async {
+  static Future<void> requestWithdrawal(double amount, String method1, String method2) async {
     try {
+      String? token = await UserPreferences.getAccessToken();
+      if (token == null) {
+        throw Exception('Access token is null');
+      }
       final response = await dio.post(
         '$baseUrl/PLO/requestWithdrawal',
         options: Options(
