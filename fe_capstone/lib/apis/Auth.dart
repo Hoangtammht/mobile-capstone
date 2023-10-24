@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:fe_capstone/blocs/UserPreferences.dart';
+import 'package:fe_capstone/models/CustomerDetail.dart';
 import 'package:fe_capstone/models/PloDetail.dart';
 import 'package:fe_capstone/models/UpdateProfileRequest.dart';
 
@@ -40,6 +41,7 @@ class AuthAPIs {
       if (token == null) {
         throw Exception('Access token is null');
       }
+
       final response = await dio.get(
         '$baseUrl/PLO/profile',
         options: Options(
@@ -62,12 +64,14 @@ class AuthAPIs {
     }
   }
 
-  static Future<PloProfile> getCustomerProfile() async {
+
+  static Future<CustomerProfile> getCustomerProfile() async {
     try {
       String? token = await UserPreferences.getAccessToken();
       if (token == null) {
         throw Exception('Access token is null');
       }
+
       final response = await dio.get(
         '$baseUrl/customer/getProfile',
         options: Options(
@@ -80,8 +84,8 @@ class AuthAPIs {
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = response.data;
-        PloProfile ploProfile = PloProfile.fromJson(data);
-        return ploProfile;
+        CustomerProfile customerProfile = CustomerProfile.fromJson(data);
+        return customerProfile;
       } else {
         throw Exception('Failed to get PloProfile');
       }
@@ -89,6 +93,7 @@ class AuthAPIs {
       throw Exception('Failed to get PloProfile: $e');
     }
   }
+
 
   static Future<void> changePassword(
     String currentPassword,

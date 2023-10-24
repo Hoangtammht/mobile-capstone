@@ -1,6 +1,7 @@
 import 'package:fe_capstone/apis/Auth.dart';
 import 'package:fe_capstone/apis/plo/AuthAPI.dart';
 import 'package:fe_capstone/main.dart';
+import 'package:fe_capstone/models/CustomerDetail.dart';
 import 'package:fe_capstone/models/PloDetail.dart';
 import 'package:fe_capstone/models/UpdateProfileRequest.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/PloProfileScreen.dart';
@@ -16,22 +17,22 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  late Future<PloProfile> ploProfileFuture;
+  late Future<CustomerProfile> customerProfileFuture;
   TextEditingController _fullNameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    ploProfileFuture = _getPloProfileFuture();
-    ploProfileFuture.then((data) {
+    customerProfileFuture = _getCustomerProfileFuture();
+    customerProfileFuture.then((data) {
       _fullNameController.text = data?.fullName ?? '';
       _emailController.text = data?.email ?? '';
     });
   }
 
-  Future<PloProfile> _getPloProfileFuture() async {
-      return AuthAPIs.getPloProfile();
+  Future<CustomerProfile> _getCustomerProfileFuture() async {
+      return AuthAPIs.getCustomerProfile();
   }
 
 
@@ -66,8 +67,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             color: Color(0xffffffff),
             borderRadius: BorderRadius.circular(26 * fem),
           ),
-          child: FutureBuilder<PloProfile>(
-            future: ploProfileFuture,
+          child: FutureBuilder<CustomerProfile>(
+            future: customerProfileFuture,
             builder: (context, snapshot) {
               if (snapshot.hasError) {
                 return Text('Error: ${snapshot.error}');
