@@ -1,6 +1,9 @@
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/models/Transaction.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
+import '../../helper/my_date_until.dart';
 
 class TransactionCard extends StatelessWidget {
   final Transaction transaction;
@@ -8,78 +11,71 @@ class TransactionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      child: Column(
+    return Container(
+      margin: EdgeInsets.fromLTRB(0 * fem, 0 * fem, 0 * fem, 15 * fem),
+      width: double.infinity,
+      height: 45 * fem,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          ListTile(
-            title: Column(
+          Container(
+            padding: EdgeInsets.fromLTRB(0 * fem, 3 * fem, 0 * fem, 5 * fem),
+            height: double.infinity,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
-                  width: 309 * fem,
-                  height: 32 * fem,
+                  height: double.infinity,
                   child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Container(
-                        width: 32 * fem,
-                        height: 32 * fem,
-                        child: Icon(transaction.icon),
-                      ),
-                      Container(
-                        padding: EdgeInsets.fromLTRB(7 * fem, 3 * fem, 0 * fem, 3 * fem),
-                        height: double.infinity,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                              margin: EdgeInsets.fromLTRB(0 * fem, 0 * fem, 152 * fem, 0 * fem),
-                              height: double.infinity,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  FittedBox(
-                                    fit: BoxFit.scaleDown,
-                                    child: Text(
-                                      transaction.title,
-                                      style: TextStyle(
-                                        fontSize: 18 * ffem,
-                                        fontWeight: FontWeight.w600,
-                                        height: 1.175 * ffem / fem,
-                                        color: Color(0xff000000),
-                                      ),
-                                    ),
-                                  ),
-                                  FittedBox(
-                                    fit: BoxFit.scaleDown,
-                                    child: Text(
-                                      transaction.date,
-                                      style: TextStyle(
-                                        fontSize: 10 * ffem,
-                                        fontWeight: FontWeight.w600,
-                                        height: 1.2175 * ffem / fem,
-                                        color: Color(0xff9e9e9e),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Text(
-                              transaction.amount,
+                          width: 40 * fem,
+                          height: 60 * fem,
+                          child: Icon(Icons.account_balance_wallet_outlined)),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            margin: EdgeInsets.fromLTRB(
+                                0 * fem, 0 * fem, 0 * fem, 5 * fem),
+                            child: Text(
+                              transaction.title,
                               style: TextStyle(
-                                fontSize: 13 * ffem,
-                                fontWeight: FontWeight.w500,
-                                height: 1.2175 * ffem / fem,
-                                color: transaction.amount.startsWith('+') ? Color(0xff2b7031) : Color(0xffcc5252),
+                                fontSize: 18 * ffem,
+                                fontWeight: FontWeight.w600,
+                                height: 1.175 * ffem / fem,
+                                color: Color(0xff000000),
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                          Text(
+                            MyDateUtil.formatCheckInAndCheckOutDate(transaction.date),
+                            style: TextStyle(
+                              fontSize: 14 * ffem,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xff9e9e9e),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                )
+                ),
               ],
+            ),
+          ),
+          Container(
+            margin:
+            EdgeInsets.fromLTRB(0 * fem, 2 * fem, 0 * fem, 0 * fem),
+            child: Text(
+              '+ ${NumberFormat("#,##0", "en_US").format(transaction.amount)} đ',
+              style: TextStyle(
+                fontSize: 18 * ffem,
+                fontWeight: FontWeight.bold,
+                height: 1.2175 * ffem / fem,
+                color: Colors.green,
+              ),
             ),
           ),
         ],

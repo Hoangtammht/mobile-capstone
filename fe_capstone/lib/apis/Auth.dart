@@ -61,6 +61,34 @@ class AuthAPIs{
     }
   }
 
+  static Future<PloProfile> getCustomerProfile() async {
+    try {
+      String? token = await UserPreferences.getAccessToken();
+      if (token == null) {
+        throw Exception('Access token is null');
+      }
+      final response = await dio.get(
+        '$baseUrl/customer/getProfile',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = response.data;
+        PloProfile ploProfile = PloProfile.fromJson(data);
+        return ploProfile;
+      } else {
+        throw Exception('Failed to get PloProfile');
+      }
+    } catch (e) {
+      throw Exception('Failed to get PloProfile: $e');
+    }
+  }
+
   static Future<void> changePassword(
       String currentPassword,
       String newPassword,
@@ -122,6 +150,140 @@ class AuthAPIs{
       }
     } catch (e) {
       throw Exception('Failed to update profile: $e');
+    }
+  }
+
+  static Future<void> checkPhoneNumber(String phoneNumber, String role) async {
+    try {
+      var response = await dio.post(
+        '$baseUrl/user/checkPhoneNumber',
+        data: {
+          "phoneNumber": phoneNumber,
+          "role": role,
+        },
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        print("Check phone number successful");
+      } else {
+        throw Exception('Failed to check phone number');
+      }
+    } catch (e) {
+      throw Exception('Failed to check phone number: $e');
+    }
+  }
+
+  static Future<void> verifyOTP(String otpCode, String phoneNumber) async {
+    try {
+      var response = await dio.post(
+        '$baseUrl/user/checkOTPcode',
+        data: {
+          "otpcode": otpCode,
+          "phoneNumber": phoneNumber,
+        },
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+      } else {
+        throw Exception('Failed to verify OTP');
+      }
+    } catch (e) {
+      throw Exception('Verification failed: $e');
+    }
+  }
+
+  static Future<void> updatePassword(String password, String phoneNumber, String role) async {
+    try {
+      var response = await dio.put(
+        '$baseUrl/user/updatePassword',
+        data: {
+          "password": password,
+          "phoneNumber": phoneNumber,
+          "role": role,
+        },
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        print('Thay đổi mật khẩu thành công');
+      } else {
+        throw Exception('Failed to update password');
+      }
+    } catch (e) {
+      throw Exception('Update password failed: $e');
+    }
+  }
+
+  static Future<void> registerUser(String phoneNumber, String role) async {
+    try {
+      var response = await dio.post(
+        '$baseUrl/user/registerUser',
+        queryParameters: {
+          'phoneNumber': phoneNumber,
+          'role': role,
+        },
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        print('Đăng ký thành công');
+      } else {
+        throw Exception('Đăng ký thất bại. Vui lòng thử lại sau.');
+      }
+    } catch (e) {
+      throw Exception('Đăng ký thất bại: $e');
+    }
+  }
+
+  static Future<void> confirmRegisterOTP(
+      String fullName,
+      String otpCode,
+      String password,
+      String phoneNumber,
+      String role,
+      ) async {
+    try {
+      var response = await dio.post(
+        '$baseUrl/user/confirmRegisterOTP',
+        data: {
+          'fullName': fullName,
+          'otpcode': otpCode,
+          'password': password,
+          'phoneNumber': phoneNumber,
+          'role': role,
+        },
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        print('Xác nhận đăng ký thành công');
+      } else {
+        throw Exception('Xác nhận đăng ký thất bại. Vui lòng thử lại sau.');
+      }
+    } catch (e) {
+      throw Exception('Xác nhận đăng ký thất bại: $e');
     }
   }
 

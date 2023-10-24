@@ -1,18 +1,26 @@
+import 'package:fe_capstone/apis/Auth.dart';
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/ui/components/FooterComponent.dart';
 import 'package:fe_capstone/ui/components/HeaderComponent.dart';
+import 'package:fe_capstone/ui/helper/dialogs.dart';
 import 'package:fe_capstone/ui/screens/LoginScreen.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 class NewPasswordScreen extends StatefulWidget {
-  const NewPasswordScreen({Key? key}) : super(key: key);
+  final String phoneNumber;
+  final String role;
+  const NewPasswordScreen(
+      {Key? key, required this.phoneNumber, required this.role})
+      : super(key: key);
 
   @override
   State<NewPasswordScreen> createState() => _NewPasswordScreenState();
 }
 
 class _NewPasswordScreenState extends State<NewPasswordScreen> {
+  TextEditingController _newPasswordController = TextEditingController();
+  TextEditingController _confirmNewPasswordController = TextEditingController();
   bool isPasswordVisible = false;
   bool isConfirmPasswordVisible = false;
 
@@ -77,6 +85,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                       children: [
                         Expanded(
                           child: TextFormField(
+                            controller: _newPasswordController,
                             obscureText:
                                 isPasswordVisible ? false : true, // Ẩn mật khẩu
                             style: TextStyle(
@@ -98,14 +107,14 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                           child: IconButton(
                             icon: Icon(
                               isPasswordVisible
-                                  ? Icons.visibility // Hiển thị khi mật khẩu ẩn
+                                  ? Icons.visibility
                                   : Icons
-                                      .visibility_off, // Hiển thị khi mật khẩu hiển thị
+                                      .visibility_off,
                             ),
                             onPressed: () {
                               setState(() {
                                 isPasswordVisible =
-                                    !isPasswordVisible; // Đảo ngược trạng thái
+                                    !isPasswordVisible;
                               });
                             },
                           ),
@@ -127,9 +136,9 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                       children: [
                         Expanded(
                           child: TextFormField(
-                            obscureText: isConfirmPasswordVisible
-                                ? false
-                                : true, // Ẩn mật khẩu
+                            controller: _confirmNewPasswordController,
+                            obscureText:
+                                isConfirmPasswordVisible ? false : true,
                             style: TextStyle(
                               fontSize: 20 * ffem,
                               fontWeight: FontWeight.w600,
@@ -149,14 +158,13 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                           child: IconButton(
                             icon: Icon(
                               isConfirmPasswordVisible
-                                  ? Icons.visibility // Hiển thị khi mật khẩu ẩn
-                                  : Icons
-                                      .visibility_off, // Hiển thị khi mật khẩu hiển thị
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
                             ),
                             onPressed: () {
                               setState(() {
                                 isConfirmPasswordVisible =
-                                    !isConfirmPasswordVisible; // Đảo ngược trạng thái
+                                    !isConfirmPasswordVisible;
                               });
                             },
                           ),
@@ -165,13 +173,27 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => LoginScreen(),
-                        ),
-                      );
+                    onPressed: () async {
+                      String password = _newPasswordController.text;
+                      String confirmPassword = _confirmNewPasswordController.text;
+
+                      if (password != confirmPassword) {
+                        Dialogs.showSnackbar(context, "Mật khẩu không trùng khớp. Vui lòng thử lại.");
+                        return;
+                      }
+
+                      try {
+                        await AuthAPIs.updatePassword(
+                            password, widget.phoneNumber, widget.role);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => LoginScreen(),
+                          ),
+                        );
+                      } catch (e) {
+                        print(e);
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       primary: Theme.of(context).primaryColor,

@@ -1,3 +1,4 @@
+import 'package:fe_capstone/apis/Auth.dart';
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/ui/components/FooterComponent.dart';
 import 'package:fe_capstone/ui/components/HeaderComponent.dart';
@@ -17,6 +18,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool isPasswordVisible = false;
   bool isConfirmPasswordVisible = false;
   bool isOwner = false;
+
+  TextEditingController _fullNameController = TextEditingController();
+  TextEditingController _phoneNumberController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+  TextEditingController _confirmPasswordController = TextEditingController();
+
 
   @override
   Widget build(BuildContext context) {
@@ -75,6 +82,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         borderRadius: BorderRadius.circular(30 * fem),
                       ),
                       child: TextFormField(
+                        controller: _fullNameController,
                         style: TextStyle(
                           fontSize: 20 * ffem,
                           fontWeight: FontWeight.w600,
@@ -101,6 +109,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         borderRadius: BorderRadius.circular(30 * fem),
                       ),
                       child: TextFormField(
+                        controller: _phoneNumberController,
                         style: TextStyle(
                           fontSize: 20 * ffem,
                           fontWeight: FontWeight.w600,
@@ -131,6 +140,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         children: [
                           Expanded(
                             child: TextFormField(
+                              controller: _passwordController,
                               obscureText: isPasswordVisible
                                   ? false
                                   : true,
@@ -154,14 +164,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               icon: Icon(
                                 isPasswordVisible
                                     ? Icons
-                                    .visibility // Hiển thị khi mật khẩu ẩn
+                                    .visibility
                                     : Icons
-                                    .visibility_off, // Hiển thị khi mật khẩu hiển thị
+                                    .visibility_off,
                               ),
                               onPressed: () {
                                 setState(() {
                                   isPasswordVisible =
-                                  !isPasswordVisible; // Đảo ngược trạng thái
+                                  !isPasswordVisible;
                                 });
                               },
                             ),
@@ -184,6 +194,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         children: [
                           Expanded(
                             child: TextFormField(
+                              controller: _confirmPasswordController,
                               obscureText: isConfirmPasswordVisible
                                   ? false
                                   : true, 
@@ -207,14 +218,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               icon: Icon(
                                 isConfirmPasswordVisible
                                     ? Icons
-                                    .visibility // Hiển thị khi mật khẩu ẩn
+                                    .visibility
                                     : Icons
-                                    .visibility_off, // Hiển thị khi mật khẩu hiển thị
+                                    .visibility_off,
                               ),
                               onPressed: () {
                                 setState(() {
                                   isConfirmPasswordVisible =
-                                  !isConfirmPasswordVisible; // Đảo ngược trạng thái
+                                  !isConfirmPasswordVisible;
                                 });
                               },
                             ),
@@ -224,13 +235,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     buildOwnerCheckbox(),
                     ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => OTPScreen(type: 1),
-                          ),
-                        );
+                      onPressed: () async {
+                        try{
+                          String phoneNumber = _phoneNumberController.text;
+                          String fullName = _fullNameController.text;
+                          String password = _passwordController.text;
+                          String role = isOwner ? "PLO" : "CUSTOMER";
+                          print(phoneNumber);
+                          print(role);
+                          await AuthAPIs.registerUser(phoneNumber, role);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => OTPScreen(type: 1, phoneNumber: phoneNumber, role: role, fullName: fullName, password: password,),
+                            ),
+                          );
+                        }catch(e){
+                          print(e);
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         primary: Theme.of(context).primaryColor,

@@ -4,7 +4,7 @@ class Transaction {
   final IconData icon;
   final String title;
   final String date;
-  final String amount;
+  final double amount;
 
   Transaction({
     required this.icon,

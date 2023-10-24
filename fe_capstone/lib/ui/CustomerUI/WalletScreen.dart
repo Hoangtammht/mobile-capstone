@@ -1,9 +1,13 @@
+import 'package:fe_capstone/apis/customer/WalletScreenAPI.dart';
 import 'package:fe_capstone/main.dart';
+import 'package:fe_capstone/models/ResponseWalletCustomer.dart';
 import 'package:fe_capstone/models/Transaction.dart';
+import 'package:fe_capstone/ui/CustomerUI/RechargeWebView.dart';
 import 'package:fe_capstone/ui/components/widgetCustomer/TransactionCard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class WalletScreen extends StatefulWidget {
   const WalletScreen({Key? key}) : super(key: key);
@@ -15,57 +19,28 @@ class WalletScreen extends StatefulWidget {
 class _WalletScreenState extends State<WalletScreen> {
   TextEditingController _InputMoneyController = TextEditingController();
   final NumberFormat currencyFormat = NumberFormat("#,###");
+  late Future<ResponseWalletCustomer> responseWalletCustomer;
 
-  final List<Transaction> transactions = [
-    Transaction(
-      icon: Icons.wallet,
-      title: 'Nạp tiền',
-      date: '10:30 20-6-2023',
-      amount: '+200.000',
-    ),
-    Transaction(
-      icon: Icons.wallet,
-      title: 'Nạp tiền',
-      date: '10:30 20-6-2023',
-      amount: '+200.000',
-    ),
-    Transaction(
-      icon: Icons.wallet,
-      title: 'Nạp tiền',
-      date: '10:30 20-6-2023',
-      amount: '+200.000',
-    ),
-    Transaction(
-      icon: Icons.wallet,
-      title: 'Nạp tiền',
-      date: '10:30 20-6-2023',
-      amount: '+200.000',
-    ),
-    Transaction(
-      icon: Icons.wallet,
-      title: 'Nạp tiền',
-      date: '10:30 20-6-2023',
-      amount: '+200.000',
-    ),
-    Transaction(
-      icon: Icons.wallet,
-      title: 'Nạp tiền',
-      date: '10:30 20-6-2023',
-      amount: '+200.000',
-    ),
-    Transaction(
-      icon: Icons.wallet,
-      title: 'Nạp tiền',
-      date: '10:30 20-6-2023',
-      amount: '+200.000',
-    ),
-    Transaction(
-      icon: Icons.wallet,
-      title: 'Nạp tiền',
-      date: '10:30 20-6-2023',
-      amount: '+200.000',
-    ),
-  ];
+  List<Transaction> transactions = [];
+
+  @override
+  void initState() {
+    super.initState();
+    responseWalletCustomer = _getWalletCustomerFuture();
+    responseWalletCustomer.then((data) {
+      transactions = data.historyBalanceCustomerList
+          .map((history) => Transaction(
+              icon: Icons.account_balance_wallet_outlined,
+              title: "Nạp tiền",
+              date: history.rechargeTime,
+              amount: history.depositAmount))
+          .toList();
+    });
+  }
+
+  Future<ResponseWalletCustomer> _getWalletCustomerFuture() async {
+    return WalletScreenAPI.getWalletScreenData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -140,24 +115,38 @@ class _WalletScreenState extends State<WalletScreen> {
                 ),
               ),
             ),
-            Positioned(
-              left: 19 * fem,
-              top: 232 * fem,
-              child: Align(
-                child: SizedBox(
-                  width: 191 * fem,
-                  height: 48 * fem,
-                  child: Text(
-                    '300.000đ',
-                    style: TextStyle(
-                      fontSize: 30 * ffem,
-                      fontWeight: FontWeight.w600,
-                      height: 1.2175 * ffem / fem,
-                      color: Color(0xff000000),
+            FutureBuilder<ResponseWalletCustomer>(
+              future: responseWalletCustomer,
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  final balance = snapshot.data;
+                  return Positioned(
+                    left: 19 * fem,
+                    top: 232 * fem,
+                    child: Align(
+                      child: SizedBox(
+                        width: 191 * fem,
+                        height: 48 * fem,
+                        child: Text(
+                          snapshot.connectionState == ConnectionState.waiting
+                              ? 'Đang tải...'
+                              : (balance != null
+                                  ? '${NumberFormat("#,##0", "vi_VN").format(balance.walletBalance)} đ'
+                                  : '${NumberFormat("#,##0", "vi_VN").format(0.0)} đ'),
+                          style: TextStyle(
+                            fontSize: 30 * ffem,
+                            fontWeight: FontWeight.w600,
+                            height: 1.2175 * ffem / fem,
+                            color: Color(0xff000000),
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ),
+                  );
+                }
+              },
             ),
             Positioned(
               left: 14 * fem,
@@ -172,7 +161,7 @@ class _WalletScreenState extends State<WalletScreen> {
                   borderRadius: BorderRadius.circular(9 * fem),
                 ),
                 child: InkWell(
-                  onTap: (){
+                  onTap: () {
                     _showAddNewTransactionDialog(context);
                   },
                   child: Row(
@@ -183,7 +172,11 @@ class _WalletScreenState extends State<WalletScreen> {
                             0 * fem, 0 * fem, 12 * fem, 0 * fem),
                         width: 22 * fem,
                         height: 18 * fem,
-                        child: Icon(Icons.wallet, color: Colors.white, size: 25,),
+                        child: Icon(
+                          Icons.wallet,
+                          color: Colors.white,
+                          size: 25,
+                        ),
                       ),
                       Text(
                         'Nạp tiền',
@@ -204,7 +197,7 @@ class _WalletScreenState extends State<WalletScreen> {
               right: 19 * fem,
               top: 372 * fem,
               child: Container(
-                width: 354 * fem,
+                width: 300 * fem,
                 height: 367 * fem,
                 decoration: BoxDecoration(
                   color: Color(0xfff8f8f8),
@@ -214,7 +207,7 @@ class _WalletScreenState extends State<WalletScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: EdgeInsets.all(16*fem), // Thay đổi top để giảm khoảng cách
+                      padding: EdgeInsets.all(16 * fem),
                       child: Text(
                         'Lịch sử giao dịch',
                         style: TextStyle(
@@ -225,17 +218,26 @@ class _WalletScreenState extends State<WalletScreen> {
                         ),
                       ),
                     ),
-                    Expanded(
-                      child: ListView.builder(
-                        padding: EdgeInsets.only(top: 8), // Thay đổi giá trị top tại đây
-                        itemCount: transactions.length,
-                        itemBuilder: (context, index) {
-                          final transaction = transactions[index];
-                          return TransactionCard(transaction: transaction);
-                        },
-                      ),
+                    FutureBuilder<ResponseWalletCustomer>(
+                      future: responseWalletCustomer,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
+                        } else {
+                          final balance = snapshot.data;
+                          return Expanded(
+                            child: ListView.builder(
+                              padding: EdgeInsets.only(top: 8),
+                              itemCount: transactions.length,
+                              itemBuilder: (context, index) {
+                                final transaction = transactions[index];
+                                return TransactionCard(transaction: transaction);
+                              },
+                            ),
+                          );
+                        }
+                      },
                     ),
-
                   ],
                 ),
               ),
@@ -270,37 +272,38 @@ class _WalletScreenState extends State<WalletScreen> {
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.only(bottom: 20, top: 20),
-                  padding: EdgeInsets.fromLTRB(15, 0, 10, 0),
-                  constraints: BoxConstraints(
-                    maxWidth: 300,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Color(0xfff5f5f5),
-                    borderRadius: BorderRadius.circular(9 * fem),
-                  ),
-                  child: TextFormField(
-                    controller: _InputMoneyController,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                      LengthLimitingTextInputFormatter(10),
-                    ],
-                    onChanged: (value) {
-                      final numberFormat = NumberFormat("#,###");
-                      final text = value.isNotEmpty ? numberFormat.format(int.parse(value)) : '';
-                      _InputMoneyController.value = TextEditingValue(
-                        text: text,
-                        selection: TextSelection.collapsed(offset: text.length),
-                      );
-                    },
-                    decoration: InputDecoration(
-                      hintText: '100.000',
-                      border: InputBorder.none,
+                    margin: EdgeInsets.only(bottom: 20, top: 20),
+                    padding: EdgeInsets.fromLTRB(15, 0, 10, 0),
+                    constraints: BoxConstraints(
+                      maxWidth: 300,
                     ),
-                  )
-
-                ),
+                    decoration: BoxDecoration(
+                      color: Color(0xfff5f5f5),
+                      borderRadius: BorderRadius.circular(9 * fem),
+                    ),
+                    child: TextFormField(
+                      controller: _InputMoneyController,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(10),
+                      ],
+                      onChanged: (value) {
+                        final numberFormat = NumberFormat("#,###");
+                        final text = value.isNotEmpty
+                            ? numberFormat.format(int.parse(value))
+                            : '';
+                        _InputMoneyController.value = TextEditingValue(
+                          text: text,
+                          selection:
+                              TextSelection.collapsed(offset: text.length),
+                        );
+                      },
+                      decoration: InputDecoration(
+                        hintText: '100.000',
+                        border: InputBorder.none,
+                      ),
+                    )),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -357,7 +360,6 @@ class _WalletScreenState extends State<WalletScreen> {
                               ),
                             ),
                           ),
-
                         ],
                       ),
                     ),
@@ -396,7 +398,7 @@ class _WalletScreenState extends State<WalletScreen> {
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
                       ),
-                      textAlign: TextAlign.center, // Căn giữa dọc
+                      textAlign: TextAlign.center,
                     ),
                   ),
                 ),
@@ -408,7 +410,7 @@ class _WalletScreenState extends State<WalletScreen> {
                         children: [
                           Container(
                             height: 1,
-                            color: Color(0xffb3abab), // Đường thẳng ngang
+                            color: Color(0xffb3abab),
                           ),
                           TextButton(
                             onPressed: () {
@@ -440,11 +442,26 @@ class _WalletScreenState extends State<WalletScreen> {
                         children: [
                           Container(
                             height: 1,
-                            color: Color(0xffb3abab), // Đường thẳng ngang
+                            color: Color(0xffb3abab),
                           ),
                           TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop(); // Đóng hộp thoại
+                            onPressed: () async {
+                              double amount = double.parse(_InputMoneyController
+                                  .text
+                                  .replaceAll(RegExp(r'[^\d]'), ''));
+                              try {
+                                  String url = await WalletScreenAPI.createPayment(amount);
+                                  await launch(url, forceWebView: false);
+                                  // Navigator.push(
+                                  //   context,
+                                  //   MaterialPageRoute(
+                                  //     builder: (context) => RechargeWebViewScreen(url),
+                                  //   ),
+                                  // );
+                              } catch (e) {
+                                print(e);
+                              }
+                              Navigator.of(context).pop();
                             },
                             child: Text(
                               'Xác nhận',
@@ -467,5 +484,4 @@ class _WalletScreenState extends State<WalletScreen> {
       },
     );
   }
-
 }

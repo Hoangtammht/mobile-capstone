@@ -1,3 +1,4 @@
+import 'package:fe_capstone/apis/Auth.dart';
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/ui/CustomerUI/HomeScreen.dart';
 import 'package:fe_capstone/ui/components/FooterComponent.dart';
@@ -16,6 +17,9 @@ class ResetPasswordScreen extends StatefulWidget {
 }
 
 class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
+  bool isOwner = false;
+  TextEditingController _phoneNumberController = TextEditingController();
+
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +39,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 padding: EdgeInsets.fromLTRB(
                     16 * fem, 53 * fem, 16 * fem, 45 * fem),
                 width: 362 * fem,
-                height: 350 * fem,
+                height: 365 * fem,
                 decoration: BoxDecoration(
                   color: Color(0xffffffff),
                   borderRadius: BorderRadius.circular(26 * fem),
@@ -64,7 +68,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                             child: IconButton(
                               icon: Icon(Icons.arrow_back_rounded),
                               onPressed: () {
-                                Navigator.pop(context); // Quay lại màn hình trước đó
+                                Navigator.pop(context);
                               },
                             ),
                           ),
@@ -96,9 +100,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                         ),
                       ),
                     ),
+                    buildOwnerCheckbox(),
                     Container(
                       margin: EdgeInsets.fromLTRB(
-                          0, 0, 0, 15 * fem), // Thêm khoảng cách bottom 15*fem
+                          0, 0, 0, 15 * fem),
                       padding: EdgeInsets.fromLTRB(20.5 * fem, 0, 20.5 * fem,
                           0),
                       width: double.infinity,
@@ -107,6 +112,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                         borderRadius: BorderRadius.circular(30 * fem),
                       ),
                       child: TextFormField(
+                        controller: _phoneNumberController,
                         style: TextStyle(
                           fontSize: 20 * ffem,
                           fontWeight: FontWeight.w200,
@@ -115,8 +121,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                         ),
                         decoration: InputDecoration(
                           border: InputBorder
-                              .none, // Loại bỏ viền của TextFormField
-                          hintText: 'Số điện thoại', // Gợi ý cho người dùng
+                              .none,
+                          hintText: 'Số điện thoại',
                           hintStyle: TextStyle(
                             fontSize: 20 * ffem,
                             fontWeight: FontWeight.w600,
@@ -126,24 +132,32 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                         ),
                       ),
                     ),
-                    Container(
-                      width: double.infinity,
-                      height: 42 * fem,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
-                        borderRadius: BorderRadius.circular(9 * fem),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Color(0x82000000),
-                            offset: Offset(0 * fem, 4 * fem),
-                            blurRadius: 10 * fem,
-                          ),
-                        ],
-                      ),
-                      child: InkWell(
-                        onTap: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => OTPScreen(type: 2,)));
-                        },
+                    InkWell(
+                      onTap: () async {
+                        String role = isOwner ? "PLO" : "CUSTOMER";
+                        String phoneNumber = _phoneNumberController.text;
+                        try {
+                          await AuthAPIs.checkPhoneNumber(phoneNumber, role);
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => OTPScreen(type: 2, phoneNumber: phoneNumber, role: role,)));
+                        } catch (e) {
+                          // Xử lý các lỗi ở đây
+                          print(e);
+                        }
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        height: 42 * fem,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).primaryColor,
+                          borderRadius: BorderRadius.circular(9 * fem),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Color(0x82000000),
+                              offset: Offset(0 * fem, 4 * fem),
+                              blurRadius: 10 * fem,
+                            ),
+                          ],
+                        ),
                         child: Center(
                           child: Text(
                             'TIẾP TỤC',
@@ -177,4 +191,26 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       ),
     );
   }
+
+  Widget buildOwnerCheckbox() {
+    return CheckboxListTile(
+      title: Text(
+        "Bạn là chủ bãi xe",
+        style: TextStyle(
+          fontSize: 15 * ffem,
+          fontWeight: FontWeight.w600,
+          height: 1.175 * ffem / fem,
+          color: Colors.grey,
+        ),
+      ),
+      value: isOwner,
+      onChanged: (newValue) {
+        setState(() {
+          isOwner = newValue ?? false;
+        });
+      },
+      controlAffinity: ListTileControlAffinity.leading,
+    );
+  }
+
 }
