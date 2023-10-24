@@ -1,3 +1,4 @@
+import 'package:fe_capstone/apis/Auth.dart';
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/ui/components/FooterComponent.dart';
 import 'package:fe_capstone/ui/components/HeaderComponent.dart';
@@ -5,16 +6,30 @@ import 'package:fe_capstone/ui/screens/LoginScreen.dart';
 import 'package:fe_capstone/ui/screens/NewPasswordScreen.dart';
 import 'package:flutter/material.dart';
 
-
 class OTPScreen extends StatefulWidget {
   final int type;
-  const OTPScreen({Key? key, required this.type}) : super(key: key);
+  final String phoneNumber;
+  final String role;
+  final String? fullName;
+  final String? password;
+  const OTPScreen(
+      {Key? key,
+      required this.type,
+      required this.phoneNumber,
+      required this.role,
+        this.fullName,
+        this.password,
+      })
+      : super(key: key);
 
   @override
   State<OTPScreen> createState() => _OTPScreenState();
 }
 
 class _OTPScreenState extends State<OTPScreen> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  String otpCode = "";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,8 +45,8 @@ class _OTPScreenState extends State<OTPScreen> {
               top: 193 * fem,
               child: Container(
                 margin: EdgeInsets.only(top: 20 * fem),
-                padding: EdgeInsets.fromLTRB(
-                    16 * fem, 53 * fem, 11 * fem, 45 * fem),
+                padding:
+                    EdgeInsets.fromLTRB(16 * fem, 53 * fem, 11 * fem, 45 * fem),
                 width: 362 * fem,
                 decoration: BoxDecoration(
                   color: Color(0xffffffff),
@@ -55,7 +70,7 @@ class _OTPScreenState extends State<OTPScreen> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           InkWell(
-                            onTap: (){
+                            onTap: () {
                               Navigator.pop(context);
                             },
                             child: Container(
@@ -77,29 +92,35 @@ class _OTPScreenState extends State<OTPScreen> {
                         ],
                       ),
                     ),
-                    OtpForm(),
-                    Container(
-                      margin: EdgeInsets.fromLTRB(
-                          3 * fem, 0 * fem, 0 * fem, 27.5 * fem),
-                      width: 332 * fem,
-                      height: 1 * fem,
+                    OtpForm(
+                      formKey: _formKey,
+                      onSaved: (value) {},
+                      onCompleted: (otp) {
+                        otpCode = otp;
+                      },
                     ),
-                    Center(
-                      child: Container(
-                        margin: EdgeInsets.fromLTRB(
-                            0 * fem, 0 * fem, 5 * fem, 17.5 * fem),
-                        child: Text(
-                          '0:10',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 16 * ffem,
-                            fontWeight: FontWeight.w600,
-                            height: 1.175 * ffem / fem,
-                            color: Color(0xff999999),
-                          ),
-                        ),
-                      ),
-                    ),
+                    // Container(
+                    //   margin: EdgeInsets.fromLTRB(
+                    //       3 * fem, 0 * fem, 0 * fem, 27.5 * fem),
+                    //   width: 332 * fem,
+                    //   height: 1 * fem,
+                    // ),
+                    // Center(
+                    //   child: Container(
+                    //     margin: EdgeInsets.fromLTRB(
+                    //         0 * fem, 0 * fem, 5 * fem, 17.5 * fem),
+                    //     child: Text(
+                    //       '0:10',
+                    //       textAlign: TextAlign.center,
+                    //       style: TextStyle(
+                    //         fontSize: 16 * ffem,
+                    //         fontWeight: FontWeight.w600,
+                    //         height: 1.175 * ffem / fem,
+                    //         color: Color(0xff999999),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                     Container(
                       margin: EdgeInsets.fromLTRB(
                           3 * fem, 0 * fem, 0 * fem, 29 * fem),
@@ -107,7 +128,7 @@ class _OTPScreenState extends State<OTPScreen> {
                         maxWidth: 294 * fem,
                       ),
                       child: Text(
-                        'Nhập mã OTP đã được gửi về số điện thoại 09030239230',
+                        'Nhập mã OTP đã được gửi về số điện thoại ${widget.phoneNumber}',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 16 * ffem,
@@ -149,21 +170,32 @@ class _OTPScreenState extends State<OTPScreen> {
                       ),
                     ),
                     ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         if (widget.type == 1) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => LoginScreen(),
-                            ),
-                          );
+                          try{
+                            await AuthAPIs.confirmRegisterOTP(widget.fullName!, otpCode, widget.password!, widget.phoneNumber, widget.role);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => LoginScreen(),
+                              ),
+                            );
+                          }catch(e){
+                            print(e);
+                          }
                         } else {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => NewPasswordScreen(),
-                            ),
-                          );
+                          try {
+                            await AuthAPIs.verifyOTP(
+                                otpCode, widget.phoneNumber);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => NewPasswordScreen(phoneNumber: widget.phoneNumber, role: widget.role),
+                              ),
+                            );
+                          } catch (e) {
+                            print(e);
+                          }
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -190,7 +222,6 @@ class _OTPScreenState extends State<OTPScreen> {
                         ),
                       ),
                     )
-
                   ],
                 ),
               ),
@@ -212,8 +243,23 @@ class _OTPScreenState extends State<OTPScreen> {
   }
 }
 
-class OtpForm extends StatelessWidget {
-  const OtpForm({Key? key}) : super(key: key);
+class OtpForm extends StatefulWidget {
+  final GlobalKey<FormState> formKey;
+  final Function(String) onSaved;
+  final Function(String) onCompleted;
+  const OtpForm(
+      {Key? key,
+      required this.formKey,
+      required this.onSaved,
+      required this.onCompleted})
+      : super(key: key);
+
+  @override
+  State<OtpForm> createState() => _OtpFormState();
+}
+
+class _OtpFormState extends State<OtpForm> {
+  String otpCode = "";
 
   @override
   Widget build(BuildContext context) {
@@ -226,10 +272,17 @@ class OtpForm extends StatelessWidget {
             width: 30 * fem,
             child: TextFormField(
               autofocus: true,
-              onSaved: (pin1){},
-              onChanged: (value){
-                if(value.length == 1){
-                  FocusScope.of(context).nextFocus();
+              onSaved: (pin1) {},
+              onChanged: (value) {
+                if (value.length == 1) {
+                  setState(() {
+                    otpCode += value;
+                    if (otpCode.length < 4) {
+                      FocusScope.of(context).nextFocus();
+                    } else {
+                      widget.onCompleted(otpCode);
+                    }
+                  });
                 }
               },
               keyboardType: TextInputType.text,
@@ -243,10 +296,18 @@ class OtpForm extends StatelessWidget {
             width: 30 * fem,
             child: TextFormField(
               autofocus: true,
-              onSaved: (pin2){},
-              onChanged: (value){
-                if(value.length == 1){
-                  FocusScope.of(context).nextFocus();
+              onSaved: (pin2) {},
+              onChanged: (value) {
+                if (value.length == 1) {
+                  setState(() {
+                    otpCode += value;
+                    if (otpCode.length < 4) {
+                      FocusScope.of(context).nextFocus();
+                    } else {
+                      widget.onCompleted(
+                          otpCode); // Gọi hàm callback khi chuỗi OTP đã đủ 4 ký tự
+                    }
+                  });
                 }
               },
               keyboardType: TextInputType.text,
@@ -260,10 +321,18 @@ class OtpForm extends StatelessWidget {
             width: 30 * fem,
             child: TextFormField(
               autofocus: true,
-              onSaved: (pin3){},
-              onChanged: (value){
-                if(value.length == 1){
-                  FocusScope.of(context).nextFocus();
+              onSaved: (pin3) {},
+              onChanged: (value) {
+                if (value.length == 1) {
+                  setState(() {
+                    otpCode += value;
+                    if (otpCode.length < 4) {
+                      FocusScope.of(context).nextFocus();
+                    } else {
+                      widget.onCompleted(
+                          otpCode); // Gọi hàm callback khi chuỗi OTP đã đủ 4 ký tự
+                    }
+                  });
                 }
               },
               keyboardType: TextInputType.text,
@@ -277,10 +346,18 @@ class OtpForm extends StatelessWidget {
             width: 30 * fem,
             child: TextFormField(
               autofocus: true,
-              onSaved: (pin4){},
-              onChanged: (value){
-                if(value.length == 1){
-                  FocusScope.of(context).nextFocus();
+              onSaved: (pin4) {},
+              onChanged: (value) {
+                if (value.length == 1) {
+                  setState(() {
+                    otpCode += value;
+                    if (otpCode.length < 4) {
+                      FocusScope.of(context).nextFocus();
+                    } else {
+                      widget.onCompleted(
+                          otpCode); // Gọi hàm callback khi chuỗi OTP đã đủ 4 ký tự
+                    }
+                  });
                 }
               },
               keyboardType: TextInputType.text,
@@ -294,4 +371,3 @@ class OtpForm extends StatelessWidget {
     );
   }
 }
-

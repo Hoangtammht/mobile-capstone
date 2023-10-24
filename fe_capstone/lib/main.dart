@@ -1,12 +1,4 @@
-import 'package:fe_capstone/ui/screens/ChatScreen.dart';
-import 'package:fe_capstone/ui/CustomerUI/BottomTabNavCustomer.dart';
-import 'package:fe_capstone/ui/CustomerUI/HomeScreen.dart';
-import 'package:fe_capstone/ui/CustomerUI/VechicleScreen.dart';
-import 'package:fe_capstone/ui/CustomerUI/WalletScreen.dart';
-import 'package:fe_capstone/ui/PLOwnerUI/BottomTabNavPlo.dart';
-import 'package:fe_capstone/ui/PLOwnerUI/ContractExpiredScreen.dart';
-import 'package:fe_capstone/ui/PLOwnerUI/PloChatScreen.dart';
-import 'package:fe_capstone/ui/PLOwnerUI/PloHomeScreen.dart';
+import 'package:fe_capstone/apis/FirebaseAPI.dart';
 import 'package:fe_capstone/ui/screens/LoginScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';

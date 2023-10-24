@@ -1,13 +1,11 @@
 import 'package:fe_capstone/apis/plo/ParkingAPI.dart';
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/models/ListVehicleInParking.dart';
-import 'package:fe_capstone/ui/PLOwnerUI/CheckOutByLicensePlate.dart';
+import 'package:fe_capstone/ui/PLOwnerUI/CheckReservationByLicensePlate.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/ParkingInformation.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/ParkingPresentScreen.dart';
-import 'package:fe_capstone/ui/PLOwnerUI/CheckInByLicensePlate.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/SettingParking.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ParkingScreen extends StatefulWidget {
   const ParkingScreen({Key? key}) : super(key: key);
@@ -41,10 +39,10 @@ class _ParkingScreenState extends State<ParkingScreen>
 
   void fetchData() async {
     try {
-        list1 = await ParkingAPI.fetchListVehicleInParking(2);
-        list2 = await ParkingAPI.fetchListVehicleInParking(1);
-        list3 = await ParkingAPI.fetchListVehicleInParking(3);
-        list4 = await ParkingAPI.fetchListVehicleInParking(4);
+      list1 = await ParkingAPI.fetchListVehicleInParking(2);
+      list2 = await ParkingAPI.fetchListVehicleInParking(1);
+      list3 = await ParkingAPI.fetchListVehicleInParking(3);
+      list4 = await ParkingAPI.fetchListVehicleInParking(4);
       setState(() {
         list1Length = list1.length;
         list2Length = list2.length;
@@ -73,15 +71,11 @@ class _ParkingScreenState extends State<ParkingScreen>
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => CheckInByLicensePlate(updateUI: updateUI)));
-            },
-            icon: Icon(Icons.qr_code),
-          ),
-          IconButton(
-            onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => CheckOutByLicensePlate(updateUI: updateUI)));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          CheckOutByLicensePlate(updateUI: updateUI)));
             },
             icon: Icon(Icons.qr_code_scanner),
           ),

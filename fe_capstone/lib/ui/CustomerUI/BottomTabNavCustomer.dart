@@ -1,3 +1,4 @@
+import 'package:fe_capstone/apis/FirebaseAPI.dart';
 import 'package:fe_capstone/ui/CustomerUI/CustomerNotificationScreen.dart';
 import 'package:fe_capstone/ui/CustomerUI/HistoryScreen.dart';
 import 'package:fe_capstone/ui/CustomerUI/HomeScreen.dart';
@@ -6,9 +7,21 @@ import 'package:fe_capstone/ui/CustomerUI/WalletScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
-class BottomTabNavCustomer extends StatelessWidget {
+class BottomTabNavCustomer extends StatefulWidget {
+  @override
+  State<BottomTabNavCustomer> createState() => _BottomTabNavCustomerState();
+}
+
+class _BottomTabNavCustomerState extends State<BottomTabNavCustomer> {
   final PersistentTabController _controller =
   PersistentTabController(initialIndex: 0);
+
+
+  @override
+  void initState() {
+    super.initState();
+    FirebaseAPI.getFirebaseMessagingToken();
+  }
 
   List<Widget> _buildScreens() {
     return [
@@ -19,6 +32,7 @@ class BottomTabNavCustomer extends StatelessWidget {
       CustomerNotificationScreen(),
     ];
   }
+
 
   List<PersistentBottomNavBarItem> _navBarsItems() {
     return [

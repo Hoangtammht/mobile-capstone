@@ -22,11 +22,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    ploProfileFuture = _getPloProfileFuture();
+    ploProfileFuture = _getCusProfileFuture();
   }
 
-  Future<PloProfile> _getPloProfileFuture() async {
-    return AuthAPIs.getPloProfile();
+  Future<PloProfile> _getCusProfileFuture() async {
+    return AuthAPIs.getCustomerProfile();
   }
 
 

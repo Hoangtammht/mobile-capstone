@@ -1,3 +1,4 @@
+import 'package:fe_capstone/apis/FirebaseAPI.dart';
 import 'package:fe_capstone/apis/plo/ParkingAPI.dart';
 import 'package:fe_capstone/models/ParkingStatusInformation.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/ContractExpiredScreen.dart';
@@ -10,7 +11,6 @@ import 'package:fe_capstone/ui/PLOwnerUI/RevenueScreen.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/WaitingApprovalScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class BottomTabNavPlo extends StatefulWidget {
   @override
@@ -26,6 +26,7 @@ class _BottomTabNavPloState extends State<BottomTabNavPlo> {
   @override
   void initState() {
     super.initState();
+    FirebaseAPI.getFirebaseMessagingToken();
     statusParkingFuture = _getParkingInformationFuture();
   }
 

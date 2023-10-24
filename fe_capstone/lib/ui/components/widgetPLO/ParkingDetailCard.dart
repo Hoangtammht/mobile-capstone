@@ -151,9 +151,12 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
                               ),
                               Spacer(),
                               Text(
-                                snapshot.connectionState == ConnectionState.waiting
-                                    ? 'Đang tải...'
-                                    : NumberFormat.compact(locale: "en").format(reservationDetail?.price) ?? '0.0',style: TextStyle(
+                                  snapshot.connectionState == ConnectionState.waiting
+                                      ? 'Đang tải...'
+                                      : (reservationDetail != null
+                                      ? '${NumberFormat("#,##0", "vi_VN").format(reservationDetail.price)} đ'
+                                      : '${NumberFormat("#,##0", "vi_VN").format(0.0)} đ'),
+                                style: TextStyle(
                                   fontSize: 15 * ffem,
                                   fontWeight: FontWeight.w600,
                                   color: Color(0xff000000),

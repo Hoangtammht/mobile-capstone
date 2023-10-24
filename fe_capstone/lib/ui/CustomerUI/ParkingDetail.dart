@@ -5,9 +5,11 @@ class ParkingDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        'Chi tiết bãi xe'
+    return Scaffold(
+      body: Center(
+        child: Text(
+          'Chi tiết bãi xe'
+        ),
       ),
     );
   }
