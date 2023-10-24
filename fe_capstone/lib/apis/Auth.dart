@@ -4,7 +4,7 @@ import 'package:fe_capstone/models/PloDetail.dart';
 import 'package:fe_capstone/models/UpdateProfileRequest.dart';
 
 
-class AuthAPIs{
+class AuthAPIs {
   static Dio dio = Dio();
   static const String baseUrl = 'https://eparkingcapstone.azurewebsites.net';
 
@@ -26,7 +26,8 @@ class AuthAPIs{
       if (response.statusCode == 200) {
         await UserPreferences.setAccessToken(response.data['access_token']);
       } else {
-        throw Exception('Tài khoản hoặc mật khẩu không đúng. Vui lòng đăng nhập lại.');
+        throw Exception(
+            'Tài khoản hoặc mật khẩu không đúng. Vui lòng đăng nhập lại.');
       }
     } catch (e) {
       throw Exception('Login failed. Please check your credentials.');
@@ -90,10 +91,10 @@ class AuthAPIs{
   }
 
   static Future<void> changePassword(
-      String currentPassword,
-      String newPassword,
-      String reNewPassword,
-      ) async {
+    String currentPassword,
+    String newPassword,
+    String reNewPassword,
+  ) async {
     try {
       String? token = await UserPreferences.getAccessToken();
       if (token == null) {
@@ -202,7 +203,8 @@ class AuthAPIs{
     }
   }
 
-  static Future<void> updatePassword(String password, String phoneNumber, String role) async {
+  static Future<void> updatePassword(
+      String password, String phoneNumber, String role) async {
     try {
       var response = await dio.put(
         '$baseUrl/user/updatePassword',
@@ -254,12 +256,12 @@ class AuthAPIs{
   }
 
   static Future<void> confirmRegisterOTP(
-      String fullName,
-      String otpCode,
-      String password,
-      String phoneNumber,
-      String role,
-      ) async {
+    String fullName,
+    String otpCode,
+    String password,
+    String phoneNumber,
+    String role,
+  ) async {
     try {
       var response = await dio.post(
         '$baseUrl/user/confirmRegisterOTP',
@@ -288,4 +290,7 @@ class AuthAPIs{
   }
 
 
+
 }
+
+

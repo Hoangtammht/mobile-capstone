@@ -7,15 +7,15 @@ import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class CheckInByLicensePlate extends StatefulWidget {
+class CheckOutByLicensePlate extends StatefulWidget {
   final void Function() updateUI;
-  const CheckInByLicensePlate({Key? key, required this.updateUI}) : super(key: key);
+  const CheckOutByLicensePlate({Key? key, required this.updateUI}) : super(key: key);
 
   @override
-  State<CheckInByLicensePlate> createState() => _ScanLicensePlateState();
+  State<CheckOutByLicensePlate> createState() => _ScanLicensePlateState();
 }
 
-class _ScanLicensePlateState extends State<CheckInByLicensePlate> {
+class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
   bool textScanning = false;
 
   XFile? imageFile;
@@ -43,7 +43,7 @@ class _ScanLicensePlateState extends State<CheckInByLicensePlate> {
           },
         ),
         title: Text(
-          'Check In',
+          'Kiểm tra biển số xe',
           style: TextStyle(
             fontSize: 26 * ffem,
             fontWeight: FontWeight.w700,
@@ -171,14 +171,29 @@ class _ScanLicensePlateState extends State<CheckInByLicensePlate> {
                       ),
                       child: TextButton(
                         onPressed: () async {
-                              setState(() {
-                                imageFile = null;
-                                scannedText = "";
-                              });
+                          try {
+                            await ParkingAPI.checkinReservationWithLicensePlate(scannedText);
+                            widget.updateUI();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Check-in thành công'),
+                              ),
+                            );
+                            setState(() {
+                              imageFile = null;
+                              scannedText = "";
+                            });
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Việc check-in thất bại'),
+                              ),
+                            );
+                          }
                         },
                         child: Center(
                           child: Text(
-                            'Bỏ qua',
+                            'Xe tới',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 16 * ffem,
@@ -210,11 +225,11 @@ class _ScanLicensePlateState extends State<CheckInByLicensePlate> {
                       child: TextButton(
                         onPressed: () async {
                             try {
-                              await ParkingAPI.checkinReservationWithLicensePlate(scannedText);
+                              await ParkingAPI.checkoutReservationWithLicensePlate(scannedText);
                               widget.updateUI();
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text('Check-in thành công'),
+                                  content: Text('Check-out thành công'),
                                 ),
                               );
                               setState(() {
@@ -224,14 +239,14 @@ class _ScanLicensePlateState extends State<CheckInByLicensePlate> {
                             } catch (e) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text('Có lỗi xảy ra khi thực hiện check-in'),
+                                  content: Text('Việc check-out thất bại'),
                                 ),
                               );
                             }
                         },
                         child: Center(
                           child: Text(
-                            'Xe vào',
+                            'Xe ra',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 16 * ffem,
