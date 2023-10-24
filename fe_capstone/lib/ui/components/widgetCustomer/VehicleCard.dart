@@ -1,9 +1,11 @@
+import 'package:fe_capstone/apis/customer/VehicleAPI.dart';
 import 'package:flutter/material.dart';
 
 class VehicleCard extends StatelessWidget {
   final String vehicleNumber;
+  final int vehicleID;
 
-  const VehicleCard({Key? key, required this.vehicleNumber}) : super(key: key);
+  const VehicleCard({Key? key, required this.vehicleNumber, required this.vehicleID}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -45,8 +47,19 @@ class VehicleCard extends StatelessWidget {
     );
   }
 
+  Future<void> _handleDeleteVehicle(BuildContext context) async {
+    try {
+      await VehicleAPI.deleteNewLicencePlate(vehicleID);
+      Navigator.of(context).pop();
+
+    } catch (error) {
+      print('Lỗi khi xóa xe: $error');
+    }
+
+  }
+
   Future<void> _showDeleteConfirmationDialog(BuildContext context) async {
-    return showDialog(
+    final confirmed = await showDialog(
       context: context,
       builder: (BuildContext context) {
         return Dialog(
@@ -118,7 +131,7 @@ class VehicleCard extends StatelessWidget {
                           ),
                           TextButton(
                             onPressed: () {
-                              Navigator.of(context).pop(); // Đóng hộp thoại
+                            _handleDeleteVehicle(context);
                             },
                             child: Text(
                               'Xóa',
@@ -142,4 +155,5 @@ class VehicleCard extends StatelessWidget {
       },
     );
   }
+
 }

@@ -1,4 +1,6 @@
+import 'package:fe_capstone/apis/customer/VehicleAPI.dart';
 import 'package:fe_capstone/main.dart';
+import 'package:fe_capstone/models/ListVehicleCustomer.dart';
 import 'package:fe_capstone/ui/components/widgetCustomer/VehicleCard.dart';
 import 'package:flutter/material.dart';
 
@@ -10,8 +12,22 @@ class VehicleScreen extends StatefulWidget {
 }
 
 class _VehicleScreenState extends State<VehicleScreen> {
-  final List<String> vehicles = ['72A-371.90', 'ABC-123', 'XYZ-789'];
+
   TextEditingController _vehicleNumberController = TextEditingController();
+  int vehicleID = 0;
+  Future<List<ListVehicleCustomer>>? historyListFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    historyListFuture = _getListHistoryFuture();
+  }
+
+  Future<List<ListVehicleCustomer>> _getListHistoryFuture() async {
+    return VehicleAPI.getVehicleList();
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -38,54 +54,73 @@ class _VehicleScreenState extends State<VehicleScreen> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          margin: EdgeInsets.only(top: 20),
-          child: Column(
-            crossAxisAlignment:  CrossAxisAlignment.start,
-            children: [
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: vehicles.length,
-                itemBuilder: (context, index) {
-                  return VehicleCard(
-                    vehicleNumber: vehicles[index],
-                  );
-                },
-              ),
-              InkWell(
-                onTap: (){
-                  _showAddVehicleDialog(context);
-                },
-                child: Container(
-                  margin: EdgeInsets.only(left: 20, top: 20),
-                  width:  138*fem,
-                  height:  42*fem,
-                  decoration:  BoxDecoration (
-                    color:  Theme.of(context).primaryColor,
-                    borderRadius:  BorderRadius.circular(9*fem),
+      body: FutureBuilder<List<ListVehicleCustomer>>(
+        future: historyListFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Lỗi: ${snapshot.error}'));
+          } else {
+            final vehicles = snapshot.data;
+
+            if (vehicles == null || vehicles.isEmpty) {
+              return Center(child: Text('Không có xe'));
+            }
+
+            return SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: vehicles.length,
+                    itemBuilder: (context, index) {
+                      return VehicleCard(
+                        vehicleNumber: vehicles[index].licencePlate, vehicleID: vehicles[index].licencePlateID,
+                      );
+                    },
                   ),
-                  child:
-                  Center(
-                    child:
-                    Text(
-                      'Thêm xe',
-                      style:  TextStyle (
-                        fontSize:  16*ffem,
-                        fontWeight:  FontWeight.w600,
-                        height:  1.175*ffem/fem,
-                        color:  Color(0xffffffff),
+                  InkWell(
+                    onTap: () {
+                      _showAddVehicleDialog(context);
+                    },
+                    child: Container(
+                      margin: EdgeInsets.only(left: 20, top: 20),
+                      width: 138 * fem,
+                      height: 42 * fem,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColor,
+                        borderRadius: BorderRadius.circular(9 * fem),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Thêm xe',
+                          style: TextStyle(
+                            fontSize: 16 * ffem,
+                            fontWeight: FontWeight.w600,
+                            height: 1.175 * ffem / fem,
+                            color: Color(0xffffffff),
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
-        ),
+            );
+          }
+        },
       ),
     );
   }
+
+
+  Future<void> _saveNewVehicle(String licencePlate, BuildContext context) async {
+      VehicleAPI.addNewLicencePlate(licencePlate);
+      Navigator.of(context).pop();
+  }
+
 
 
   Future<void> _showAddVehicleDialog(BuildContext context) async {
@@ -124,7 +159,7 @@ class _VehicleScreenState extends State<VehicleScreen> {
                   child: TextFormField(
                     controller: _vehicleNumberController,
                     decoration: InputDecoration(
-                      hintText: '12A-1234',
+                      hintText: '12A-123.45',
                       border: InputBorder.none,
                     ),
                   ),
@@ -173,12 +208,10 @@ class _VehicleScreenState extends State<VehicleScreen> {
                           ),
                           TextButton(
                             onPressed: () {
-                              Navigator.of(context).pop(); //
+                              // Navigator.of(context).pop(); //
                               String newVehicle = _vehicleNumberController.text;
                               if (newVehicle.isNotEmpty) {
-                                setState(() {
-                                  vehicles.add(newVehicle);
-                                });
+                                _saveNewVehicle(newVehicle, context );
                               }
                             },
                             child: Text(

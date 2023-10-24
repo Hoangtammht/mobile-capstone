@@ -1,8 +1,7 @@
+import 'package:fe_capstone/apis/customer/NoticationAPI.dart';
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/models/CustomerNotification.dart';
-import 'package:fe_capstone/models/PLONotification.dart';
 import 'package:fe_capstone/ui/components/widgetCustomer/CustomerNotificationCard.dart';
-import 'package:fe_capstone/ui/components/widgetPLO/NotificationCard.dart';
 import 'package:flutter/material.dart';
 
 class CustomerNotificationScreen extends StatefulWidget {
@@ -13,30 +12,18 @@ class CustomerNotificationScreen extends StatefulWidget {
 }
 
 class _NotificationScreenState extends State<CustomerNotificationScreen> {
+  Future<List<CustomerNotification>>? customerNoti;
 
-  List<CustomerNotification> getNotifications() {
-    return [
-      CustomerNotification(
-        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTeET9OkThGxXQWnPrfXR_2NY45Xn1cqtKJwXhtNx2bjjW8rM8fUwW-ChoZM-3FyzI0MmQ&usqp=CAU',
-        fromBy: 'Bãi xe Hoàng Hoa Thám',
-        content: 'Bạn mới checkin ở bãi xe.',
-        date: '3 tiếng trước',
-      ),
-      CustomerNotification(
-        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTeET9OkThGxXQWnPrfXR_2NY45Xn1cqtKJwXhtNx2bjjW8rM8fUwW-ChoZM-3FyzI0MmQ&usqp=CAU',
-        fromBy: 'Bãi xe của tôi',
-        content: 'Bạn đã quá hạn gửi xe. Bạn phải trả phí thêm 3000VNĐ cho chủ bãi xe',
-        date: '3 tiếng trước',
-      ), CustomerNotification(
-        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTeET9OkThGxXQWnPrfXR_2NY45Xn1cqtKJwXhtNx2bjjW8rM8fUwW-ChoZM-3FyzI0MmQ&usqp=CAU',
-        fromBy: 'Bãi xe mệt mỏi',
-        content: 'Còn 10 phút nữa là phải checkout. Nếu không bạn phải trả thêm phí.',
-        date: '3 tiếng trước',
-      ),
 
-    ];
+  @override
+  void initState() {
+    super.initState();
+    customerNoti = _getListCustomerNotiFuture();
   }
 
+  Future<List<CustomerNotification>> _getListCustomerNotiFuture() async {
+    return NoticationAPI.getNotication();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,15 +41,29 @@ class _NotificationScreenState extends State<CustomerNotificationScreen> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: ListView.builder(
-          shrinkWrap: true,
-          itemCount: getNotifications().length,
-          itemBuilder: (context, index) {
-            final notifications = getNotifications()[index];
-            return CustomerNotificationCard(notification: notifications,);
-          },
-        ),
+      body: FutureBuilder<List<CustomerNotification>>(
+        future: customerNoti, // Thay thế customerNoti bằng Future bạn muốn sử dụng
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Lỗi: ${snapshot.error}'));
+          } else if (snapshot.data!.isEmpty) {
+            return Center(child: Text('Không có thông báo'));
+          } else {
+
+            return SingleChildScrollView(
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: snapshot.data!.length,
+                itemBuilder: (context, index) {
+                  final notification = snapshot.data![index];
+                  return CustomerNotificationCard(notification: notification);
+                },
+              ),
+            );
+          }
+        },
       ),
     );
   }

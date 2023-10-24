@@ -1,5 +1,6 @@
 import 'package:fe_capstone/apis/Auth.dart';
 import 'package:fe_capstone/main.dart';
+import 'package:fe_capstone/models/CustomerDetail.dart';
 import 'package:fe_capstone/models/PloDetail.dart';
 import 'package:fe_capstone/ui/screens/ChangePasswordScreen.dart';
 import 'package:fe_capstone/ui/screens/EditProfileScreen.dart';
@@ -17,16 +18,16 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  late Future<PloProfile> ploProfileFuture;
+  late Future<CustomerProfile> customerProfileFuture;
 
   @override
   void initState() {
     super.initState();
-    ploProfileFuture = _getPloProfileFuture();
+    customerProfileFuture = _getCustomerProfileFuture();
   }
 
-  Future<PloProfile> _getPloProfileFuture() async {
-    return AuthAPIs.getPloProfile();
+  Future<CustomerProfile> _getCustomerProfileFuture() async {
+    return AuthAPIs.getCustomerProfile();
   }
 
 
@@ -92,8 +93,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ],
                       ),
-                      child: FutureBuilder<PloProfile>(
-                        future: ploProfileFuture,
+                      child: FutureBuilder<CustomerProfile>(
+                        future: customerProfileFuture,
                         builder: (context, snapshot) {
                           if (snapshot.hasError) {
                             return Text('Error: ${snapshot.error}');

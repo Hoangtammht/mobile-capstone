@@ -1,6 +1,7 @@
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/models/CustomerNotification.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class CustomerNotificationCard extends StatelessWidget {
   final CustomerNotification notification;
@@ -9,6 +10,11 @@ class CustomerNotificationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final inputDateFormat = DateFormat("yyyy-MM-ddTHH:mm:ss.SSSZ");
+    final outputDateFormat = DateFormat("HH:mm:ss - dd/MM/yyyy");
+
+    final originDate = inputDateFormat.parse(notification.createdAt);
+    final formatDate = outputDateFormat.format(originDate);
     return InkWell(
       child: Container(
         padding: EdgeInsets.only(top: 5 * fem, bottom: 5 * fem),
@@ -19,7 +25,7 @@ class CustomerNotificationCard extends StatelessWidget {
                 width: 100 * fem,
                 height: 60 * fem,
                 child: Image.network(
-                  notification.image,
+                  '',
                   fit: BoxFit.cover,
                 ),
               ),
@@ -30,7 +36,7 @@ class CustomerNotificationCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Từ: ${notification.fromBy}',
+                        'Từ: ${notification.senderName}',
                         style: TextStyle(
                             fontSize: 16 * fem, fontWeight: FontWeight.bold),
                       ),
@@ -44,7 +50,7 @@ class CustomerNotificationCard extends StatelessWidget {
                       Align(
                           alignment: Alignment.bottomRight,
                           child: Text(
-                            notification.date,
+                            formatDate,
                             style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 15 * fem,

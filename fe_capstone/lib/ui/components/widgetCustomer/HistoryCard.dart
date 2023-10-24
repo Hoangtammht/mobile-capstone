@@ -1,3 +1,4 @@
+
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/models/History.dart';
 import 'package:fe_capstone/ui/CustomerUI/ReBooking.dart';
@@ -7,11 +8,13 @@ class HistoryCard extends StatelessWidget {
   final History history;
   const HistoryCard({Key? key, required this.history}) : super(key: key);
 
+
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context) => ReBooking(title: history.title,)));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => Rebooking(reservationId: history.reservationID)));
       },
       child: Card(
         child: Padding(
@@ -20,7 +23,7 @@ class HistoryCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '${history.title}',
+                '${history.parkingName}',
                 style: TextStyle(
                   fontSize: 18 * ffem,
                   fontWeight: FontWeight.w600,
@@ -48,7 +51,7 @@ class HistoryCard extends StatelessWidget {
                 Center(
                   child:
                   Text(
-                    history.status,
+                    history.methodName,
                     style:  TextStyle (
                       fontSize:  11*ffem,
                       fontWeight:  FontWeight.w400,
