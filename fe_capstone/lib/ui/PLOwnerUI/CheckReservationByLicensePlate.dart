@@ -45,7 +45,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
         title: Text(
           'Kiểm tra biển số xe',
           style: TextStyle(
-            fontSize: 26 * ffem,
+            fontSize: 30 * ffem,
             fontWeight: FontWeight.w700,
             height: 1.175 * ffem / fem,
             color: Color(0xffffffff),
@@ -97,7 +97,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                 Text(
                                   "Gallery",
                                   style: TextStyle(
-                                      fontSize: 13, color: Colors.grey[600]),
+                                      fontSize: 22, color: Colors.grey[600]),
                                 )
                               ],
                             ),
@@ -131,7 +131,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                 Text(
                                   "Camera",
                                   style: TextStyle(
-                                      fontSize: 13, color: Colors.grey[600]),
+                                      fontSize: 22, color: Colors.grey[600]),
                                 )
                               ],
                             ),
@@ -145,7 +145,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                 Container(
                   child: Text(
                     scannedText,
-                    style: TextStyle(fontSize: 30),
+                    style: TextStyle(fontSize: 32 * fem),
                   ),
                 ),
                 const SizedBox(
@@ -196,7 +196,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                             'Xe tới',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: 16 * ffem,
+                              fontSize: 25 * ffem,
                               fontWeight: FontWeight.w600,
                               height: 1.175 * ffem / fem,
                               color: Color(0xffffffff),
@@ -249,7 +249,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                             'Xe ra',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: 16 * ffem,
+                              fontSize: 25 * ffem,
                               fontWeight: FontWeight.w600,
                               height: 1.175 * ffem / fem,
                               color: Color(0xffffffff),

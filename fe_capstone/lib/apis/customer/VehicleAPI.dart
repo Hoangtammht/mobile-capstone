@@ -27,10 +27,10 @@ class VehicleAPI{
         List<ListVehicleCustomer> listVehicleList = data.map((item) => ListVehicleCustomer.fromJson(item)).toList();
         return listVehicleList;
       } else {
-        throw Exception('Failed to get HistoryList');
+        throw Exception('Failed to get vehicle list');
       }
     } catch (e) {
-      throw Exception('Failed to get HistoryList: $e');
+      throw Exception('Failed to get vehicle list: $e');
     }
   }
 
@@ -76,10 +76,10 @@ class VehicleAPI{
       if (response.statusCode == 200) {
         print("Xóa xe thành công!");
       } else {
-        throw Exception('Failed to get HistoryList');
+        throw Exception('Failed to get delete vehicle');
       }
     } catch (e) {
-      throw Exception('Failed to get HistoryList: $e');
+      throw Exception('Failed to get delete vehicle: $e');
     }
   }
 

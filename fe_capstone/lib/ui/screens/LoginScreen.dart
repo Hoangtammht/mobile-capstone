@@ -52,7 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 margin: EdgeInsets.only(top: 20 * fem),
                 padding:
                     EdgeInsets.fromLTRB(24 * fem, 55 * fem, 16 * fem, 29 * fem),
-                width: 362 * fem,
+                width: mq.width,
                 height: 520 * fem,
                 decoration: BoxDecoration(
                   color: Color(0xffffffff),
@@ -97,13 +97,12 @@ class _LoginScreenState extends State<LoginScreen> {
                           GestureDetector(
                             onTap: toggleUserRole,
                             child: Container(
-                              margin: EdgeInsets.fromLTRB(0, 0, 14 * fem, 0),
+                              padding: EdgeInsets.fromLTRB(0, 0, 14 * fem, 0),
                               child: Text(
                                 dropdownValue == 'CU' ? 'C' : 'P',
                                 style: TextStyle(
-                                  fontSize: 20 * ffem,
+                                  fontSize: 25 * ffem,
                                   fontWeight: FontWeight.w600,
-                                  height: 1.175 * ffem / fem,
                                   color: Color(0xffa3a3a3),
                                 ),
                               ),
@@ -121,7 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: TextFormField(
                               controller: _userNameController,
                               style: TextStyle(
-                                fontSize: 20 * ffem,
+                                fontSize: 25 * ffem,
                                 fontWeight: FontWeight.w600,
                                 height: 1.175 * ffem / fem,
                                 color: Color(0xff000000),
@@ -130,9 +129,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 border: InputBorder.none,
                                 hintText: 'Số điện thoại',
                                 hintStyle: TextStyle(
-                                  fontSize: 20 * ffem,
+                                  fontSize: 22 * ffem,
                                   fontWeight: FontWeight.w600,
-                                  height: 1.175 * ffem / fem,
                                   color: Color(0xffa3a3a3),
                                 ),
                               ),
@@ -162,7 +160,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ? false
                                   : true,
                               style: TextStyle(
-                                fontSize: 20 * ffem,
+                                fontSize: 25 * ffem,
                                 fontWeight: FontWeight.w600,
                                 height: 1.175 * ffem / fem,
                                 color: Color(0xff000000),
@@ -215,7 +213,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: Text(
                           'Quên mật khẩu?',
                           style: TextStyle(
-                            fontSize: 16 * ffem,
+                            fontSize: 25 * ffem,
                             fontWeight: FontWeight.w600,
                             height: 1.175 * ffem / fem,
                             color: Theme.of(context).primaryColor,
@@ -273,7 +271,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             'ĐĂNG NHẬP',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: 16 * ffem,
+                              fontSize: 25 * ffem,
                               fontWeight: FontWeight.w600,
                               height: 1.175 * ffem / fem,
                               color: Color(0xffffffff),
@@ -287,7 +285,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         textAlign: TextAlign.center,
                         text: TextSpan(
                           style: TextStyle(
-                            fontSize: 16 * ffem,
+                            fontSize: 20 * ffem,
                             fontWeight: FontWeight.w600,
                             height: 1.175 * ffem / fem,
                             color: Theme.of(context).primaryColor,
@@ -299,12 +297,12 @@ class _LoginScreenState extends State<LoginScreen> {
                             TextSpan(
                               text: 'Đăng ký',
                               style: TextStyle(
-                                fontSize: 16 * ffem,
+                                fontSize: 22 * ffem,
                                 fontWeight: FontWeight.w600,
                                 height: 1.175 * ffem / fem,
                                 color: const Color(0xff5767f5),
                                 decoration:
-                                    TextDecoration.underline, // Thêm gạch chân
+                                    TextDecoration.underline,
                               ),
                               recognizer: TapGestureRecognizer()
                                 ..onTap = () {

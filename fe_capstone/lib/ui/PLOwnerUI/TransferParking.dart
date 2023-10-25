@@ -59,7 +59,7 @@ class _TransferParkingState extends State<TransferParking> {
                       left: 0 * fem,
                       top: 0 * fem,
                       child: Container(
-                        width: 390 * fem,
+                        width: mq.width,
                         height: 120 * fem,
                         decoration: BoxDecoration(
                           color: Theme.of(context).primaryColor,
@@ -102,7 +102,7 @@ class _TransferParkingState extends State<TransferParking> {
                                   Text(
                                     'Nhập số điện thoại mà bạn',
                                     style: TextStyle(
-                                      fontSize: 20 * ffem,
+                                      fontSize: 25 * ffem,
                                       fontWeight: FontWeight.w600,
                                       height: 1.2175 * ffem / fem,
                                       color: Colors.black,
@@ -111,7 +111,7 @@ class _TransferParkingState extends State<TransferParking> {
                                   Text(
                                     'muốn chuyển dữ liệu',
                                     style: TextStyle(
-                                      fontSize: 20 * ffem,
+                                      fontSize: 25 * ffem,
                                       fontWeight: FontWeight.w600,
                                       height: 1.2175 * ffem / fem,
                                       color: Colors.black,
@@ -133,7 +133,7 @@ class _TransferParkingState extends State<TransferParking> {
                               child: TextFormField(
                                 controller: _phoneNumberController,
                                 style: TextStyle(
-                                  fontSize: 20 * ffem,
+                                  fontSize: 22 * ffem,
                                   fontWeight: FontWeight.w600,
                                   height: 1.175 * ffem / fem,
                                   color: Color(0xff000000),
@@ -142,7 +142,7 @@ class _TransferParkingState extends State<TransferParking> {
                                   border: InputBorder.none,
                                   hintText: 'Số điện thoại',
                                   hintStyle: TextStyle(
-                                    fontSize: 20 * ffem,
+                                    fontSize: 22 * ffem,
                                     fontWeight: FontWeight.w600,
                                     height: 1.175 * ffem / fem,
                                     color: Color(0xffa3a3a3),
@@ -185,7 +185,7 @@ class _TransferParkingState extends State<TransferParking> {
                                   child: Text(
                                     'Xác minh',
                                     style: TextStyle(
-                                      fontSize: 16 * ffem,
+                                      fontSize: 25 * ffem,
                                       fontWeight: FontWeight.w600,
                                       height: 1.175 * ffem / fem,
                                       color: Color(0xffffffff),

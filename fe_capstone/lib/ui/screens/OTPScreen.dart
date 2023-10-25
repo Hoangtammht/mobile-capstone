@@ -131,7 +131,7 @@ class _OTPScreenState extends State<OTPScreen> {
                         'Nhập mã OTP đã được gửi về số điện thoại ${widget.phoneNumber}',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontSize: 16 * ffem,
+                          fontSize: 22 * ffem,
                           fontWeight: FontWeight.w400,
                           height: 1.2175 * ffem / fem,
                           color: Color(0xff999999),
@@ -158,7 +158,7 @@ class _OTPScreenState extends State<OTPScreen> {
                               TextSpan(
                                 text: 'Gửi lại mã OTP',
                                 style: TextStyle(
-                                  fontSize: 16 * ffem,
+                                  fontSize: 22 * ffem,
                                   fontWeight: FontWeight.w600,
                                   height: 1.175 * ffem / fem,
                                   color: Color(0xff5767f5),
@@ -213,7 +213,7 @@ class _OTPScreenState extends State<OTPScreen> {
                             'XÁC MINH',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: 16 * ffem,
+                              fontSize: 25 * ffem,
                               fontWeight: FontWeight.w600,
                               height: 1.175 * ffem / fem,
                               color: Color(0xffffffff),

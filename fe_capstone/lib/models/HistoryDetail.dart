@@ -1,6 +1,6 @@
 class HistoryDetail {
   late final String parkingName;
-  late final int fee;
+  late final double fee;
   late final String address;
   late final String methodName;
   late final String licensePlate;
@@ -22,7 +22,7 @@ class HistoryDetail {
   factory HistoryDetail.fromJson(Map<String, dynamic> json){
     return HistoryDetail(
       parkingName: json['parkingName'] ?? '',
-      fee: json['fee'] ?? 0,
+      fee: json['fee'] ?? 0.0,
       address: json['address'] ?? '',
       methodName: json['methodName'] ?? '',
       licensePlate: json['licensePlate'] ?? '',

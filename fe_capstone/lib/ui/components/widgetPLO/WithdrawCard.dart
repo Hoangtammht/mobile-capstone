@@ -28,7 +28,6 @@ class WithdrawCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
-            padding: EdgeInsets.fromLTRB(0 * fem, 3 * fem, 0 * fem, 5 * fem),
             height: double.infinity,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -51,7 +50,7 @@ class WithdrawCard extends StatelessWidget {
                               child: Text(
                                 title,
                                 style: TextStyle(
-                                  fontSize: 16 * ffem,
+                                  fontSize: 22 * ffem,
                                   fontWeight: FontWeight.w600,
                                   height: 1.175 * ffem / fem,
                                   color: Color(0xff000000),
@@ -63,7 +62,7 @@ class WithdrawCard extends StatelessWidget {
                             child: Text(
                               MyDateUtil.formatCheckInAndCheckOutDate(time),
                               style: TextStyle(
-                                fontSize: 14 * ffem,
+                                fontSize: 22 * ffem,
                                 fontWeight: FontWeight.bold,
                                 color: Color(0xff9e9e9e),
                               ),
@@ -83,7 +82,7 @@ class WithdrawCard extends StatelessWidget {
             child: Text(
               '${NumberFormat("#,##0", "en_US").format(amount)} đ',
               style: TextStyle(
-                fontSize: 13 * ffem,
+                fontSize: 22 * ffem,
                 fontWeight: FontWeight.bold,
                 height: 1.2175 * ffem / fem,
                 color: Color(0xffcc5252),

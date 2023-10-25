@@ -41,7 +41,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               child: Container(
                 margin: EdgeInsets.only(top: 20 * fem),
                 padding: EdgeInsets.fromLTRB(
-                    20 * fem, 47 * fem, 20 * fem, 24 * fem),
+                    20 * fem, 25 * fem, 20 * fem, 24 * fem),
                 width: 362 * fem,
                 decoration: BoxDecoration(
                   color: const Color(0xffffffff),
@@ -59,7 +59,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   children: [
                     Container(
                       margin: EdgeInsets.fromLTRB(
-                          0 * fem, 0 * fem, 0 * fem, 25 * fem),
+                          0 * fem, 0 * fem, 0 * fem, 15 * fem),
                       child: Text(
                         'ĐĂNG KÝ',
                         textAlign: TextAlign.center,
@@ -84,7 +84,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       child: TextFormField(
                         controller: _fullNameController,
                         style: TextStyle(
-                          fontSize: 20 * ffem,
+                          fontSize: 22 * ffem,
                           fontWeight: FontWeight.w600,
                           height: 1.175 * ffem / fem,
                           color: Color(0xff000000),
@@ -111,7 +111,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       child: TextFormField(
                         controller: _phoneNumberController,
                         style: TextStyle(
-                          fontSize: 20 * ffem,
+                          fontSize: 22 * ffem,
                           fontWeight: FontWeight.w600,
                           height: 1.175 * ffem / fem,
                           color: Color(0xff000000),
@@ -145,7 +145,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   ? false
                                   : true,
                               style: TextStyle(
-                                fontSize: 20 * ffem,
+                                fontSize: 22 * ffem,
                                 fontWeight: FontWeight.w600,
                                 height: 1.175 * ffem / fem,
                                 color: Color(0xff000000),
@@ -199,7 +199,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   ? false
                                   : true, 
                               style: TextStyle(
-                                fontSize: 20 * ffem,
+                                fontSize: 22 * ffem,
                                 fontWeight: FontWeight.w600,
                                 height: 1.175 * ffem / fem,
                                 color: Color(0xff000000),
@@ -269,7 +269,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             'ĐĂNG KÝ',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: 16 * ffem,
+                              fontSize: 25 * ffem,
                               fontWeight: FontWeight.w600,
                               height: 1.175 * ffem / fem,
                               color: Color(0xffffffff),
@@ -286,7 +286,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           textAlign: TextAlign.center,
                           text: TextSpan(
                             style: TextStyle(
-                              fontSize: 16 * ffem,
+                              fontSize: 20 * ffem,
                               fontWeight: FontWeight.w600,
                               height: 1.175 * ffem / fem,
                               color: Theme.of(context).primaryColor,
@@ -298,7 +298,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               TextSpan(
                                 text: 'Đăng Nhập',
                                 style: TextStyle(
-                                  fontSize: 16 * ffem,
+                                  fontSize: 22 * ffem,
                                   fontWeight: FontWeight.w600,
                                   height: 1.175 * ffem / fem,
                                   color: Color(0xff5767f5),
@@ -345,7 +345,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       title: Text(
         "Bạn là chủ bãi xe",
         style: TextStyle(
-          fontSize: 15 * ffem,
+          fontSize: 20 * ffem,
           fontWeight: FontWeight.w600,
           height: 1.175 * ffem / fem,
           color: Colors.grey,

@@ -62,7 +62,7 @@ class _ParkingScreenState extends State<ParkingScreen>
         title: Text(
           'Bãi xe',
           style: TextStyle(
-            fontSize: 26 * ffem,
+            fontSize: 30 * ffem,
             fontWeight: FontWeight.w700,
             height: 1.175 * ffem / fem,
             color: const Color(0xffffffff),
@@ -99,7 +99,9 @@ class _ParkingScreenState extends State<ParkingScreen>
                         ),
                         Padding(
                           padding: EdgeInsets.only(left: 4 * fem),
-                          child: Text('Cài đặt'),
+                          child: Text('Cài đặt', style: TextStyle(
+                              fontSize: 20 * fem
+                          ),),
                         )
                       ],
                     ),
@@ -150,7 +152,9 @@ class _ParkingScreenState extends State<ParkingScreen>
                         ),
                         Padding(
                           padding: EdgeInsets.only(left: 4 * fem),
-                          child: Text('Thông tin'),
+                          child: Text('Thông tin', style: TextStyle(
+                            fontSize: 20 * fem
+                          ),),
                         )
                       ],
                     ),

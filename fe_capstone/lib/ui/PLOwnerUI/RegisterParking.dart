@@ -60,9 +60,8 @@ class _RegisterParkingState extends State<RegisterParking> {
         title: Text(
           'Đăng ký bãi đỗ',
           style: TextStyle(
-            fontSize: 26 * ffem,
+            fontSize: 30 * ffem,
             fontWeight: FontWeight.w700,
-            height: 1.175 * ffem / fem,
             color: Color(0xffffffff),
           ),
         ),
@@ -78,7 +77,7 @@ class _RegisterParkingState extends State<RegisterParking> {
                 child: Text(
                   'Tên bãi đỗ',
                   style: TextStyle(
-                    fontSize: 16 * fem,
+                    fontSize: 22 * fem,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -95,7 +94,7 @@ class _RegisterParkingState extends State<RegisterParking> {
                   maxLines: null,
                   controller: _parkingNameController,
                   style: TextStyle(
-                    fontSize: 16 * ffem,
+                    fontSize: 22 * ffem,
                     fontWeight: FontWeight.w400,
                     height: 1.175 * ffem / fem,
                     color: Color(0xff9e9e9e),
@@ -117,12 +116,12 @@ class _RegisterParkingState extends State<RegisterParking> {
                   children: [
                     Text('Người đăng ký: ',
                         style: TextStyle(
-                          fontSize: 16 * fem,
+                          fontSize: 22 * fem,
                           fontWeight: FontWeight.bold,
                         )),
                     Text('Huỳnh Bá Quốc',
                         style: TextStyle(
-                          fontSize: 16 * fem,
+                          fontSize: 22 * fem,
                           fontWeight: FontWeight.bold,
                         )),
                   ],
@@ -133,7 +132,7 @@ class _RegisterParkingState extends State<RegisterParking> {
                     horizontal: 5 * fem, vertical: 15 * fem),
                 child: Text('Hình ảnh:',
                     style: TextStyle(
-                      fontSize: 16 * fem,
+                      fontSize: 22 * fem,
                       fontWeight: FontWeight.bold,
                     )),
               ),
@@ -189,7 +188,7 @@ class _RegisterParkingState extends State<RegisterParking> {
                     horizontal: 5 * fem, vertical: 15 * fem),
                 child: Text('Chiều rộng(m):',
                     style: TextStyle(
-                      fontSize: 16 * fem,
+                      fontSize: 22 * fem,
                       fontWeight: FontWeight.bold,
                     )),
               ),
@@ -206,7 +205,7 @@ class _RegisterParkingState extends State<RegisterParking> {
                   controller: _widthController,
                   keyboardType: TextInputType.number,
                   style: TextStyle(
-                    fontSize: 16 * ffem,
+                    fontSize: 22 * ffem,
                     fontWeight: FontWeight.w400,
                     height: 1.175 * ffem / fem,
                     color: Color(0xff9e9e9e),
@@ -222,7 +221,7 @@ class _RegisterParkingState extends State<RegisterParking> {
                     horizontal: 5 * fem, vertical: 15 * fem),
                 child: Text('Chiều dài(m):',
                     style: TextStyle(
-                      fontSize: 16 * fem,
+                      fontSize: 22 * fem,
                       fontWeight: FontWeight.bold,
                     )),
               ),
@@ -239,7 +238,7 @@ class _RegisterParkingState extends State<RegisterParking> {
                   controller: _lenthController,
                   keyboardType: TextInputType.number,
                   style: TextStyle(
-                    fontSize: 16 * ffem,
+                    fontSize: 22 * ffem,
                     fontWeight: FontWeight.w400,
                     height: 1.175 * ffem / fem,
                     color: Color(0xff9e9e9e),
@@ -255,7 +254,7 @@ class _RegisterParkingState extends State<RegisterParking> {
                     horizontal: 5 * fem, vertical: 15 * fem),
                 child: Text('Sức chứa của bãi xe:',
                     style: TextStyle(
-                      fontSize: 16 * fem,
+                      fontSize: 22 * fem,
                       fontWeight: FontWeight.bold,
                     )),
               ),
@@ -272,7 +271,7 @@ class _RegisterParkingState extends State<RegisterParking> {
                   controller: _slotController,
                   keyboardType: TextInputType.number,
                   style: TextStyle(
-                    fontSize: 16 * ffem,
+                    fontSize: 22 * ffem,
                     fontWeight: FontWeight.w400,
                     height: 1.175 * ffem / fem,
                     color: Color(0xff9e9e9e),
@@ -288,7 +287,7 @@ class _RegisterParkingState extends State<RegisterParking> {
                     horizontal: 5 * fem, vertical: 15 * fem),
                 child: Text('Địa chỉ:',
                     style: TextStyle(
-                      fontSize: 16 * fem,
+                      fontSize: 22 * fem,
                       fontWeight: FontWeight.bold,
                     )),
               ),
@@ -304,7 +303,7 @@ class _RegisterParkingState extends State<RegisterParking> {
                   maxLines: null,
                   controller: _addressController,
                   style: TextStyle(
-                    fontSize: 16 * ffem,
+                    fontSize: 22 * ffem,
                     fontWeight: FontWeight.w400,
                     height: 1.175 * ffem / fem,
                     color: Color(0xff9e9e9e),
@@ -320,7 +319,7 @@ class _RegisterParkingState extends State<RegisterParking> {
                     horizontal: 5 * fem, vertical: 15 * fem),
                 child: Text('Mô tả (không bắt buộc):',
                     style: TextStyle(
-                      fontSize: 16 * fem,
+                      fontSize: 22 * fem,
                       fontWeight: FontWeight.bold,
                     )),
               ),
@@ -336,7 +335,7 @@ class _RegisterParkingState extends State<RegisterParking> {
                   maxLines: null,
                   controller: _descriptionController,
                   style: TextStyle(
-                    fontSize: 16 * ffem,
+                    fontSize: 22 * ffem,
                     fontWeight: FontWeight.w400,
                     height: 1.175 * ffem / fem,
                     color: Color(0xff9e9e9e),
@@ -355,15 +354,15 @@ class _RegisterParkingState extends State<RegisterParking> {
                     horizontal: 5 * fem, vertical: 15 * fem),
                 child: Text('Điều kiện bắt buộc:',
                     style: TextStyle(
-                      fontSize: 16 * fem,
+                      fontSize: 20 * fem,
                       fontWeight: FontWeight.bold,
                     )),
               ),
               Row(
                 children: [
                   Checkbox(
-                    activeColor: Colors.white, // Màu của checkbox khi được chọn
-                    checkColor: Colors.black, // Màu của dấu tích
+                    activeColor: Colors.white,
+                    checkColor: Colors.black,
                     value: isCheckOne,
                     onChanged: (bool? value) {
                       setState(() {
@@ -372,7 +371,9 @@ class _RegisterParkingState extends State<RegisterParking> {
                       });
                     },
                   ),
-                  const Text('Có camera')
+                   Text('Có camera', style: TextStyle(
+                     fontSize: 20 * fem,
+                   ),)
                 ],
               ),
               Row(
@@ -388,7 +389,9 @@ class _RegisterParkingState extends State<RegisterParking> {
                       });
                     },
                   ),
-                  const Text('Có phòng cháy chữa cháy')
+                  Text('Có phòng cháy chữa cháy', style: TextStyle(
+                    fontSize: 20 * fem,
+                  ),)
                 ],
               ),
               InkWell(
@@ -419,7 +422,7 @@ class _RegisterParkingState extends State<RegisterParking> {
                 child: Container(
                   padding: EdgeInsets.all(8 * fem),
                   margin: EdgeInsets.fromLTRB(
-                      20 * fem, 30 * fem, 20 * fem, 0 * fem),
+                      20 * fem, 30 * fem, 20 * fem, 25 * fem),
                   height: 50 * fem,
                   decoration: BoxDecoration(
                     color: canSubmit
@@ -432,7 +435,7 @@ class _RegisterParkingState extends State<RegisterParking> {
                     child: Text(
                       'Tiếp tục',
                       style: TextStyle(
-                        fontSize: 19 * ffem,
+                        fontSize: 25 * ffem,
                         fontWeight: FontWeight.w600,
                         color: Color(0xffffffff),
                       ),

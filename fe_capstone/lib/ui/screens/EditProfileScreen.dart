@@ -1,13 +1,10 @@
 import 'package:fe_capstone/apis/Auth.dart';
-import 'package:fe_capstone/apis/plo/AuthAPI.dart';
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/models/CustomerDetail.dart';
-import 'package:fe_capstone/models/PloDetail.dart';
 import 'package:fe_capstone/models/UpdateProfileRequest.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/PloProfileScreen.dart';
 import 'package:fe_capstone/ui/helper/ConfirmDialog.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({Key? key}) : super(key: key);
@@ -83,7 +80,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       child: Text(
                         'Họ và tên',
                         style: TextStyle(
-                          fontSize: 19 * ffem,
+                          fontSize: 25 * ffem,
                           fontWeight: FontWeight.w600,
                           height: 1.175 * ffem / fem,
                           color: Color(0xff000000),
@@ -110,7 +107,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             child: TextFormField(
                               controller: _fullNameController,
                               style: TextStyle(
-                                fontSize: 16 * ffem,
+                                fontSize: 20 * ffem,
                                 fontWeight: FontWeight.w600,
                                 height: 1.175 * ffem / fem,
                                 color: Color(0xff9e9e9e),
@@ -127,7 +124,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             child: Text(
                               'Số điện thoại',
                               style: TextStyle(
-                                fontSize: 19 * ffem,
+                                fontSize: 25 * ffem,
                                 fontWeight: FontWeight.w600,
                                 height: 1.175 * ffem / fem,
                                 color: Color(0xff000000),
@@ -140,7 +137,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             child: Text(
                               snapshot.connectionState == ConnectionState.waiting ? 'Đang tải...' : ploProfile?.phoneNumber ?? '',
                               style: TextStyle(
-                                fontSize: 20 * ffem,
+                                fontSize: 22 * ffem,
                                 fontWeight: FontWeight.w400,
                                 height: 1.175 * ffem / fem,
                                 color: Color(0xff9e9e9e),
@@ -153,7 +150,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             child: Text(
                               'Email',
                               style: TextStyle(
-                                fontSize: 19 * ffem,
+                                fontSize: 25 * ffem,
                                 fontWeight: FontWeight.w600,
                                 height: 1.175 * ffem / fem,
                                 color: Color(0xff000000),
@@ -173,7 +170,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             child: TextFormField(
                               controller: _emailController,
                               style: TextStyle(
-                                fontSize: 16 * ffem,
+                                fontSize: 20 * ffem,
                                 fontWeight: FontWeight.w400,
                                 height: 1.175 * ffem / fem,
                                 color: Color(0xff9e9e9e),
@@ -213,7 +210,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   child: Text(
                                     'Hoàn tất',
                                     style: TextStyle(
-                                      fontSize: 19 * ffem,
+                                      fontSize: 25 * ffem,
                                       fontWeight: FontWeight.w600,
                                       height: 1.175 * ffem / fem,
                                       color: Color(0xffffffff),

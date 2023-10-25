@@ -35,7 +35,7 @@ class _OTPConfirmScreenState extends State<OTPConfirmScreen> {
         title: Text(
           'CẬP NHẬT SỐ ĐIỆN THOẠI',
           style: TextStyle(
-            fontSize: 26 * ffem,
+            fontSize: 30 * ffem,
             fontWeight: FontWeight.w700,
             height: 1.175 * ffem / fem,
             color: Color(0xffffffff),
@@ -134,7 +134,7 @@ class _OTPConfirmScreenState extends State<OTPConfirmScreen> {
                                 'Nhập mã OTP đã được gửi về số điện thoại ${widget.phoneNumber}',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  fontSize: 16 * ffem,
+                                  fontSize: 22 * ffem,
                                   fontWeight: FontWeight.w400,
                                   height: 1.2175 * ffem / fem,
                                   color: Color(0xff999999),
@@ -149,7 +149,7 @@ class _OTPConfirmScreenState extends State<OTPConfirmScreen> {
                                   textAlign: TextAlign.center,
                                   text: TextSpan(
                                     style: TextStyle(
-                                      fontSize: 16 * ffem,
+                                      fontSize: 22 * ffem,
                                       fontWeight: FontWeight.w600,
                                       height: 1.175 * ffem / fem,
                                       color: Theme.of(context).primaryColor,
@@ -161,7 +161,7 @@ class _OTPConfirmScreenState extends State<OTPConfirmScreen> {
                                       TextSpan(
                                         text: 'Gửi lại mã OTP',
                                         style: TextStyle(
-                                          fontSize: 16 * ffem,
+                                          fontSize: 22 * ffem,
                                           fontWeight: FontWeight.w600,
                                           height: 1.175 * ffem / fem,
                                           color: Color(0xff5767f5),
@@ -203,7 +203,7 @@ class _OTPConfirmScreenState extends State<OTPConfirmScreen> {
                                   child: Text(
                                     'Xác minh',
                                     style: TextStyle(
-                                      fontSize: 16 * ffem,
+                                      fontSize: 25 * ffem,
                                       fontWeight: FontWeight.w600,
                                       height: 1.175 * ffem / fem,
                                       color: Color(0xffffffff),

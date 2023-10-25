@@ -57,15 +57,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              width: double.infinity,
-              height: 450,
+              width: mq.width,
+              height: 420,
               child: Stack(
                 children: [
                   Positioned(
                     left: 0 * fem,
                     top: 0 * fem,
                     child: Container(
-                      width: 390 * fem,
+                      width: mq.width,
                       height: 120 * fem,
                       decoration: BoxDecoration(
                         color: Theme.of(context).primaryColor,
@@ -137,7 +137,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           child: Text(
                                             'Họ và tên',
                                             style: TextStyle(
-                                              fontSize: 16 * ffem,
+                                              fontSize: 20 * ffem,
                                               fontWeight: FontWeight.w400,
                                               height: 1.175 * ffem / fem,
                                               color: Color(0xff5b5b5b),
@@ -148,7 +148,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         Text(
                                           snapshot.connectionState == ConnectionState.waiting ? 'Đang tải...' : ploProfile?.fullName ?? '',
                                           style: TextStyle(
-                                            fontSize: 16 * ffem,
+                                            fontSize: 20 * ffem,
                                             fontWeight: FontWeight.w600,
                                             height: 1.175 * ffem / fem,
                                             color: Color(0xff000000),
@@ -177,7 +177,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           child: Text(
                                             'Số điện thoại',
                                             style: TextStyle(
-                                              fontSize: 16 * ffem,
+                                              fontSize: 20 * ffem,
                                               fontWeight: FontWeight.bold,
                                               height: 1.175 * ffem / fem,
                                               color: Color(0xff5b5b5b),
@@ -188,7 +188,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         Text(
                                           snapshot.connectionState == ConnectionState.waiting ? 'Đang tải...' : ploProfile?.phoneNumber ?? '',
                                           style: TextStyle(
-                                            fontSize: 16 * ffem,
+                                            fontSize: 20 * ffem,
                                             fontWeight: FontWeight.w500,
                                             height: 1.2175 * ffem / fem,
                                             color: Color(0xff000000),
@@ -217,7 +217,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         child: Text(
                                           'Email',
                                           style: TextStyle(
-                                            fontSize: 16 * ffem,
+                                            fontSize: 20 * ffem,
                                             fontWeight: FontWeight.w400,
                                             height: 1.175 * ffem / fem,
                                             color: Color(0xff5b5b5b),
@@ -228,7 +228,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       Text(
                                         snapshot.connectionState == ConnectionState.waiting ? 'Đang tải...' : ploProfile?.email ?? '',
                                         style: TextStyle(
-                                          fontSize: 16 * ffem,
+                                          fontSize: 20 * ffem,
                                           fontWeight: FontWeight.w600,
                                           height: 1.175 * ffem / fem,
                                           color: Color(0xff000000),
@@ -273,7 +273,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           child: Text(
                             'Chỉnh sửa',
                             style: TextStyle(
-                              fontSize: 16 * ffem,
+                              fontSize: 25 * ffem,
                               fontWeight: FontWeight.w600,
                               height: 1.175 * ffem / fem,
                               color: Color(0xffffffff),
@@ -302,7 +302,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         margin:
                         EdgeInsets.fromLTRB(1 * fem, 0 * fem, 0 * fem, 0 * fem),
                         width: 362 * fem,
-                        height: 63 * fem,
+                        height: 60 * fem,
                         decoration: BoxDecoration(
                           border: Border.all(color: Color(0xffdcdada)),
                           color: Color(0xffffffff),
@@ -320,7 +320,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               child: Text(
                                 'Thay đổi mật khẩu',
                                 style: TextStyle(
-                                  fontSize: 19 * ffem,
+                                  fontSize: 24 * ffem,
                                   fontWeight: FontWeight.w600,
                                   height: 1.175 * ffem / fem,
                                   color: Color(0xff000000),
@@ -361,7 +361,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               child: Text(
                                 'Danh sách xe',
                                 style: TextStyle(
-                                  fontSize: 19 * ffem,
+                                  fontSize: 24 * ffem,
                                   fontWeight: FontWeight.w600,
                                   height: 1.175 * ffem / fem,
                                   color: Color(0xff000000),
@@ -405,7 +405,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               child: Text(
                                 'Đăng xuất',
                                 style: TextStyle(
-                                  fontSize: 19 * ffem,
+                                  fontSize: 24 * ffem,
                                   fontWeight: FontWeight.w600,
                                   height: 1.175 * ffem / fem,
                                   color: Color(0xff000000),

@@ -6,6 +6,7 @@ import 'package:fe_capstone/models/ListVehicleInParking.dart';
 import 'package:fe_capstone/models/PLONotification.dart';
 import 'package:fe_capstone/models/ParkingInformationModel.dart';
 import 'package:fe_capstone/models/ParkingStatusInformation.dart';
+import 'package:fe_capstone/models/PaymentResponse.dart';
 import 'package:fe_capstone/models/RatingModel.dart';
 import 'package:fe_capstone/models/RequestResgisterParking.dart';
 import 'package:fe_capstone/models/ReservationDetail.dart';
@@ -482,7 +483,7 @@ class ParkingAPI {
     }
   }
 
-  static Future<String> makePayment() async {
+  static Future<PaymentResponse> makePayment() async {
     try {
       String? token = await UserPreferences.getAccessToken();
       if (token == null) {
@@ -501,8 +502,7 @@ class ParkingAPI {
         final Map<String, dynamic> responseData = response.data['Payment']['body'];
         String paymentUrl = responseData['url'];
         String uuid = response.data['UUID'];
-        await launch(paymentUrl, forceWebView: false);
-        return uuid;
+        return PaymentResponse(paymentUrl, uuid);
       } else {
         throw Exception('Failed to create payment');
       }

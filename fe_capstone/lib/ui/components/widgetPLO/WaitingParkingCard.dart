@@ -17,7 +17,7 @@ class WaitingParkingCard extends StatelessWidget {
             listVehicleComing.licensePlate,
             style: TextStyle(
                 color: Colors.black,
-                fontSize: 16 * fem,
+                fontSize: 20 * fem,
                 fontWeight: FontWeight.w600),
           ),
         ),
@@ -27,7 +27,7 @@ class WaitingParkingCard extends StatelessWidget {
             listVehicleComing.fullName,
             style: TextStyle(
                 color: Colors.grey,
-                fontSize: 12 * fem,
+                fontSize: 18 * fem,
                 fontWeight: FontWeight.w600),
           ),
         ),
@@ -47,7 +47,7 @@ class WaitingParkingCard extends StatelessWidget {
                   child: Text(
                     listVehicleComing.methodName,
                     style: TextStyle(
-                      fontSize: 11 * ffem,
+                      fontSize: 15 * ffem,
                       fontWeight: FontWeight.w400,
                       height: 1.2175 * ffem / fem,
                       color: Color(0xff2b7031),

@@ -108,7 +108,7 @@ class _PloHomeScreenState extends State<PloHomeScreen> {
         title: Text(
           'Parco',
           style: TextStyle(
-            fontSize: 26 * ffem,
+            fontSize: 35 * ffem,
             fontWeight: FontWeight.w500,
             height: 1.175 * ffem / fem,
             fontStyle: FontStyle.italic,
@@ -152,7 +152,7 @@ class _PloHomeScreenState extends State<PloHomeScreen> {
                       child: Text(
                         'Ví tiền',
                         style: TextStyle(
-                          fontSize: 18 * ffem,
+                          fontSize: 22 * ffem,
                           fontWeight: FontWeight.w500,
                           height: 1.2175 * ffem / fem,
                           color: Colors.grey,
@@ -177,7 +177,7 @@ class _PloHomeScreenState extends State<PloHomeScreen> {
                                 child: Text(
                                   'VND',
                                   style: TextStyle(
-                                    fontSize: 14 * ffem,
+                                    fontSize: 18 * ffem,
                                     fontWeight: FontWeight.w500,
                                     height: 1.2175 * ffem / fem,
                                     color: Color(0xff000000),
@@ -201,7 +201,7 @@ class _PloHomeScreenState extends State<PloHomeScreen> {
                                     return Text(
                                       formattedValue,
                                       style: TextStyle(
-                                        fontSize: 35 * ffem,
+                                        fontSize: 38 * ffem,
                                         fontWeight: FontWeight.w600,
                                         height: 1.2175 * ffem / fem,
                                         color: Color(0xff2b7031),
@@ -228,7 +228,7 @@ class _PloHomeScreenState extends State<PloHomeScreen> {
                       child: Text(
                         'Xe đang trong bãi',
                         style: TextStyle(
-                          fontSize: 18 * ffem,
+                          fontSize: 22 * ffem,
                           fontWeight: FontWeight.w500,
                           height: 1.2175 * ffem / fem,
                           color: Colors.grey,
@@ -247,7 +247,7 @@ class _PloHomeScreenState extends State<PloHomeScreen> {
                           Text(
                             list1Length.toString(),
                             style: TextStyle(
-                              fontSize: 35 * ffem,
+                              fontSize: 38 * ffem,
                               fontWeight: FontWeight.w600,
                               height: 1.2175 * ffem / fem,
                             ),
@@ -278,7 +278,7 @@ class _PloHomeScreenState extends State<PloHomeScreen> {
                         Text(
                           'Trạng thái',
                           style: TextStyle(
-                              fontSize: 18 * fem, fontWeight: FontWeight.w400),
+                              fontSize: 22 * fem, fontWeight: FontWeight.w400),
                         ),
                         DropdownButton<ParkingStatus>(
                           value: currentParkingStatus,
@@ -411,7 +411,7 @@ class _PloHomeScreenState extends State<PloHomeScreen> {
               child: Text(
                 'Xe sắp tới',
                 style:
-                    TextStyle(fontSize: 16 * fem, fontWeight: FontWeight.w400),
+                    TextStyle(fontSize: 20 * fem, fontWeight: FontWeight.w400),
               ),
             ),
             Container(
@@ -456,7 +456,7 @@ class _PloHomeScreenState extends State<PloHomeScreen> {
                     child: Column(children: [
                       Text('Thay đổi trạng thái sang',
                           style: TextStyle(
-                              fontSize: 18 * fem, fontWeight: FontWeight.bold)),
+                              fontSize: 22 * fem, fontWeight: FontWeight.bold)),
                       if (currentParkingStatus == ParkingStatus.closed)
                         Padding(
                           padding:
@@ -464,7 +464,7 @@ class _PloHomeScreenState extends State<PloHomeScreen> {
                           child: Text('còn chỗ',
                               style: TextStyle(
                                   color: Colors.green,
-                                  fontSize: 18 * fem,
+                                  fontSize: 22 * fem,
                                   fontWeight: FontWeight.bold)),
                         )
                       else if (currentParkingStatus == ParkingStatus.open)
@@ -474,7 +474,7 @@ class _PloHomeScreenState extends State<PloHomeScreen> {
                           child: Text('đóng',
                               style: TextStyle(
                                   color: Colors.red,
-                                  fontSize: 18 * fem,
+                                  fontSize: 22 * fem,
                                   fontWeight: FontWeight.bold)),
                         )
                       else if (currentParkingStatus == ParkingStatus.approved)
@@ -484,7 +484,7 @@ class _PloHomeScreenState extends State<PloHomeScreen> {
                             child: Text('cài đặt bãi xe',
                                 style: TextStyle(
                                     color: Colors.orange,
-                                    fontSize: 18 * fem,
+                                    fontSize: 22 * fem,
                                     fontWeight: FontWeight.bold)),
                           ),
                     ]),

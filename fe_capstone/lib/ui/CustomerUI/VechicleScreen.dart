@@ -1,8 +1,10 @@
 import 'package:fe_capstone/apis/customer/VehicleAPI.dart';
+import 'package:fe_capstone/blocs/VehicleProvider.dart';
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/models/ListVehicleCustomer.dart';
 import 'package:fe_capstone/ui/components/widgetCustomer/VehicleCard.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class VehicleScreen extends StatefulWidget {
   const VehicleScreen({Key? key}) : super(key: key);
@@ -15,19 +17,13 @@ class _VehicleScreenState extends State<VehicleScreen> {
 
   TextEditingController _vehicleNumberController = TextEditingController();
   int vehicleID = 0;
-  Future<List<ListVehicleCustomer>>? historyListFuture;
+  late VehicleProvider _vehicleProvider;
 
   @override
   void initState() {
     super.initState();
-    historyListFuture = _getListHistoryFuture();
+    _vehicleProvider = Provider.of<VehicleProvider>(context, listen: false);
   }
-
-  Future<List<ListVehicleCustomer>> _getListHistoryFuture() async {
-    return VehicleAPI.getVehicleList();
-  }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -54,62 +50,72 @@ class _VehicleScreenState extends State<VehicleScreen> {
           ),
         ),
       ),
-      body: FutureBuilder<List<ListVehicleCustomer>>(
-        future: historyListFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Lỗi: ${snapshot.error}'));
-          } else {
-            final vehicles = snapshot.data;
-
-            if (vehicles == null || vehicles.isEmpty) {
-              return Center(child: Text('Không có xe'));
-            }
-
-            return SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: vehicles.length,
-                    itemBuilder: (context, index) {
-                      return VehicleCard(
-                        vehicleNumber: vehicles[index].licencePlate, vehicleID: vehicles[index].licencePlateID,
-                      );
-                    },
-                  ),
-                  InkWell(
-                    onTap: () {
-                      _showAddVehicleDialog(context);
-                    },
-                    child: Container(
-                      margin: EdgeInsets.only(left: 20, top: 20),
-                      width: 138 * fem,
-                      height: 42 * fem,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
-                        borderRadius: BorderRadius.circular(9 * fem),
-                      ),
-                      child: Center(
-                        child: Text(
-                          'Thêm xe',
-                          style: TextStyle(
-                            fontSize: 16 * ffem,
-                            fontWeight: FontWeight.w600,
-                            height: 1.175 * ffem / fem,
-                            color: Color(0xffffffff),
-                          ),
-                        ),
-                      ),
+      body: Consumer<VehicleProvider>(
+        builder: (context, vehicleProvider, child) {
+          if (vehicleProvider.vehicles.isEmpty) {
+            return InkWell(
+              onTap: () {
+                _showAddVehicleDialog(context);
+              },
+              child: Container(
+                margin: EdgeInsets.only(left: 20, top: 20),
+                width: 138 * fem,
+                height: 42 * fem,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor,
+                  borderRadius: BorderRadius.circular(9 * fem),
+                ),
+                child: Center(
+                  child: Text(
+                    'Thêm xe',
+                    style: TextStyle(
+                      fontSize: 25 * ffem,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xffffffff),
                     ),
                   ),
-                ],
+                ),
               ),
             );
           }
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ListView.builder(
+                shrinkWrap: true,
+                itemCount: vehicleProvider.vehicles.length,
+                itemBuilder: (context, index) {
+                  return VehicleCard(
+                    vehicleNumber: vehicleProvider.vehicles[index].licencePlate, vehicleID: vehicleProvider.vehicles[index].licencePlateID,
+                  );
+                },
+              ),
+              InkWell(
+                onTap: () {
+                  _showAddVehicleDialog(context);
+                },
+                child: Container(
+                  margin: EdgeInsets.only(left: 20, top: 20),
+                  width: 138 * fem,
+                  height: 42 * fem,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor,
+                    borderRadius: BorderRadius.circular(9 * fem),
+                  ),
+                  child: Center(
+                    child: Text(
+                      'Thêm xe',
+                      style: TextStyle(
+                        fontSize: 25 * ffem,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xffffffff),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          );
         },
       ),
     );
@@ -117,7 +123,7 @@ class _VehicleScreenState extends State<VehicleScreen> {
 
 
   Future<void> _saveNewVehicle(String licencePlate, BuildContext context) async {
-      VehicleAPI.addNewLicencePlate(licencePlate);
+      await _vehicleProvider.addNewVehicle(licencePlate);
       Navigator.of(context).pop();
   }
 

@@ -35,7 +35,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
         title: Text(
           'Thông báo',
           style: TextStyle(
-            fontSize: 26 * ffem,
+            fontSize: 30 * ffem,
             fontWeight: FontWeight.w700,
             height: 1.175 * ffem / fem,
             color: Color(0xffffffff),

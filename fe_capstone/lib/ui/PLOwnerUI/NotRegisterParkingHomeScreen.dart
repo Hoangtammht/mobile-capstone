@@ -13,7 +13,7 @@ class NotRegisterParkingHomeScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: Text('Parco', style: TextStyle(
-          fontSize:  26*ffem,
+          fontSize:  35*ffem,
           fontWeight:  FontWeight.w500,
           height:  1.175*ffem/fem,
           fontStyle:  FontStyle.italic,
@@ -38,7 +38,7 @@ class NotRegisterParkingHomeScreen extends StatelessWidget {
               child: Text(
                 'Bạn chưa đăng ký bãi đỗ xe',
                 style:  TextStyle (
-                  fontSize:  20*ffem,
+                  fontSize:  22*ffem,
                   fontWeight:  FontWeight.w600,
                   color:  Color(0xff000000),
                 ),
@@ -61,7 +61,7 @@ class NotRegisterParkingHomeScreen extends StatelessWidget {
                   child: Text(
                     'Đăng kí bãi đỗ',
                     style: TextStyle(
-                      fontSize: 19 * ffem,
+                      fontSize: 22 * ffem,
                       fontWeight: FontWeight.w600,
                       color: Color(0xffffffff),
                     ),

@@ -14,14 +14,14 @@ class ListParkingCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Khách sạn Romantic', style: TextStyle(
-              fontSize: 16 * fem,
+              fontSize: 20 * fem,
               fontWeight: FontWeight.bold
             ),),
             Padding(
               padding: EdgeInsets.only(top: 5 * fem, bottom: 10 * fem),
               child: Text('681A Đ. Nguyễn Huệ, Bến Nghé, Quận 1, TP HCM', style: TextStyle(
                 color: Colors.grey,
-                fontSize: 15 * fem,
+                fontSize: 18 * fem,
               ),),
             ),
             Row(
@@ -39,7 +39,7 @@ class ListParkingCard extends StatelessWidget {
                     child: Text(
                       'Còn 11 chỗ',
                       style:  TextStyle (
-                        fontSize:  11*ffem,
+                        fontSize:  15*ffem,
                         fontWeight:  FontWeight.w400,
                         height:  1.2175*ffem/fem,
                         color:  Color(0xff2b7031),
@@ -58,7 +58,7 @@ class ListParkingCard extends StatelessWidget {
                     child: Text(
                       '5 m',
                       style:  TextStyle (
-                        fontSize:  11*ffem,
+                        fontSize:  15*ffem,
                         fontWeight:  FontWeight.w400,
                         height:  1.2175*ffem/fem,
                       ),

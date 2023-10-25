@@ -75,7 +75,7 @@ class _RevenueScreenState extends State<RevenueScreen> {
         title: Text(
           'Doanh thu',
           style: TextStyle(
-            fontSize: 26 * ffem,
+            fontSize: 30 * ffem,
             fontWeight: FontWeight.w700,
             height: 1.175 * ffem / fem,
             color: Color(0xffffffff),
@@ -104,7 +104,7 @@ class _RevenueScreenState extends State<RevenueScreen> {
                     child: Text(
                       'Ví tiền',
                       style: TextStyle(
-                        fontSize: 20 * ffem,
+                        fontSize: 25 * ffem,
                         fontWeight: FontWeight.w600,
                         color: Color(0xff000000),
                       ),
@@ -146,7 +146,7 @@ class _RevenueScreenState extends State<RevenueScreen> {
                         children: [
                           Container(
                             margin: EdgeInsets.fromLTRB(
-                                0 * fem, 1 * fem, 11.5 * fem, 0 * fem),
+                                0 * fem, 1 * fem, 11.5 * fem, 8 * fem),
                             width: 21 * fem,
                             height: 18.67 * fem,
                             child: Icon(
@@ -157,7 +157,7 @@ class _RevenueScreenState extends State<RevenueScreen> {
                           Text(
                             'Rút tiền',
                             style: TextStyle(
-                              fontSize: 19 * ffem,
+                              fontSize: 25 * ffem,
                               fontWeight: FontWeight.w600,
                               color: Color(0xffffffff),
                             ),
@@ -183,7 +183,7 @@ class _RevenueScreenState extends State<RevenueScreen> {
                           child: Text(
                             'Thống kê chi tiết',
                             style: TextStyle(
-                              fontSize: 19 * ffem,
+                              fontSize: 25 * ffem,
                               fontWeight: FontWeight.w400,
                               height: 1.175 * ffem / fem,
                               color: Color(0xff000000),
@@ -192,7 +192,7 @@ class _RevenueScreenState extends State<RevenueScreen> {
                         ),
                         Container(
                           margin: EdgeInsets.fromLTRB(
-                              8 * fem, 0 * fem, 0 * fem, 15 * fem),
+                              8 * fem, 0 * fem, 0 * fem, 10 * fem),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
@@ -201,7 +201,7 @@ class _RevenueScreenState extends State<RevenueScreen> {
                                 child: Text(
                                   'Từ',
                                   style: TextStyle(
-                                    fontSize: 19 * ffem,
+                                    fontSize: 25 * ffem,
                                     fontWeight: FontWeight.w400,
                                     height: 1.175 * ffem / fem,
                                     color: Color(0xff9e9e9e),
@@ -244,7 +244,7 @@ class _RevenueScreenState extends State<RevenueScreen> {
                                         Text(
                                           _fromDateController.text,
                                           style: TextStyle(
-                                            fontSize: 16 * ffem,
+                                            fontSize: 20 * ffem,
                                           ),
                                         ),
                                       ],
@@ -258,7 +258,7 @@ class _RevenueScreenState extends State<RevenueScreen> {
                                 child: Text(
                                   'đến',
                                   style: TextStyle(
-                                    fontSize: 19 * ffem,
+                                    fontSize: 25 * ffem,
                                     fontWeight: FontWeight.w400,
                                     height: 1.175 * ffem / fem,
                                     color: Color(0xff9e9e9e),
@@ -303,7 +303,7 @@ class _RevenueScreenState extends State<RevenueScreen> {
                                         Text(
                                           _toDateController.text,
                                           style: TextStyle(
-                                            fontSize: 16 * ffem,
+                                            fontSize: 20 * ffem,
                                           ),
                                         ),
                                       ],
@@ -320,14 +320,15 @@ class _RevenueScreenState extends State<RevenueScreen> {
                           width: double.infinity,
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Container(
                                 margin: EdgeInsets.fromLTRB(
-                                    0 * fem, 3 * fem, 115 * fem, 0 * fem),
+                                    0 * fem, 3 * fem, 8 * fem, 0 * fem),
                                 child: Text(
                                   'Doanh thu',
                                   style: TextStyle(
-                                    fontSize: 19 * ffem,
+                                    fontSize: 25 * ffem,
                                     fontWeight: FontWeight.w400,
                                     height: 1.175 * ffem / fem,
                                     color: Color(0xff9e9e9e),
@@ -337,7 +338,7 @@ class _RevenueScreenState extends State<RevenueScreen> {
                               Text(
                               '${NumberFormat("#,##0", "vi_VN").format(revenueValue)} đ',
                                 style: TextStyle(
-                                  fontSize: 24 * ffem,
+                                  fontSize: 30 * ffem,
                                   fontWeight: FontWeight.w600,
                                   height: 1.2175 * ffem / fem,
                                   color: Color(0xff000000),
@@ -358,7 +359,7 @@ class _RevenueScreenState extends State<RevenueScreen> {
                       children: [
                         Container(
                           padding: EdgeInsets.fromLTRB(
-                              15 * fem, 13 * fem, 15 * fem, 15 * fem),
+                              15 * fem, 13 * fem, 15 * fem, 0 * fem),
                           decoration: BoxDecoration(
                             color: Color(0xfff5f5f5),
                             borderRadius: BorderRadius.circular(6 * fem),
@@ -372,7 +373,7 @@ class _RevenueScreenState extends State<RevenueScreen> {
                                 child: Text(
                                   'Số lượng ',
                                   style: TextStyle(
-                                    fontSize: 12 * ffem,
+                                    fontSize: 18 * ffem,
                                     fontWeight: FontWeight.bold,
                                     height: 1.175 * ffem / fem,
                                     color: Color(0xff5b5b5b),
@@ -389,7 +390,7 @@ class _RevenueScreenState extends State<RevenueScreen> {
                                       : revenueModel?.totalVehicle.toString() ??
                                           '0',
                                   style: TextStyle(
-                                    fontSize: 13 * ffem,
+                                    fontSize: 20 * ffem,
                                     fontWeight: FontWeight.w600,
                                     height: 1.2175 * ffem / fem,
                                     color: Color(0xff000000),
@@ -404,7 +405,7 @@ class _RevenueScreenState extends State<RevenueScreen> {
                         ),
                         Container(
                           padding: EdgeInsets.fromLTRB(
-                              18 * fem, 14 * fem, 19 * fem, 15 * fem),
+                              18 * fem, 14 * fem, 19 * fem, 0 * fem),
                           decoration: BoxDecoration(
                             color: Color(0xfff5f5f5),
                             borderRadius: BorderRadius.circular(6 * fem),
@@ -418,9 +419,8 @@ class _RevenueScreenState extends State<RevenueScreen> {
                                 child: Text(
                                   'Ban ngày',
                                   style: TextStyle(
-                                    fontSize: 12 * ffem,
+                                    fontSize: 18 * ffem,
                                     fontWeight: FontWeight.bold,
-                                    height: 1.175 * ffem / fem,
                                     color: Color(0xff5b5b5b),
                                   ),
                                 ),
@@ -436,7 +436,7 @@ class _RevenueScreenState extends State<RevenueScreen> {
                                               .toString() ??
                                           '0',
                                   style: TextStyle(
-                                    fontSize: 13 * ffem,
+                                    fontSize: 22 * ffem,
                                     fontWeight: FontWeight.w600,
                                     height: 1.2175 * ffem / fem,
                                     color: Color(0xff000000),
@@ -451,7 +451,7 @@ class _RevenueScreenState extends State<RevenueScreen> {
                         ),
                         Container(
                           padding: EdgeInsets.fromLTRB(
-                              16 * fem, 15 * fem, 17 * fem, 12 * fem),
+                              16 * fem, 15 * fem, 17 * fem, 0 * fem),
                           decoration: BoxDecoration(
                             color: Color(0xfff5f5f5),
                           ),
@@ -464,7 +464,7 @@ class _RevenueScreenState extends State<RevenueScreen> {
                                 child: Text(
                                   'Ban Tối',
                                   style: TextStyle(
-                                    fontSize: 12 * ffem,
+                                    fontSize: 18 * ffem,
                                     fontWeight: FontWeight.bold,
                                     height: 1.175 * ffem / fem,
                                     color: Color(0xff5b5b5b),
@@ -483,7 +483,7 @@ class _RevenueScreenState extends State<RevenueScreen> {
                                               .toString() ??
                                           '0',
                                   style: TextStyle(
-                                    fontSize: 13 * ffem,
+                                    fontSize: 22 * ffem,
                                     fontWeight: FontWeight.w600,
                                     height: 1.2175 * ffem / fem,
                                     color: Color(0xff000000),
@@ -498,7 +498,7 @@ class _RevenueScreenState extends State<RevenueScreen> {
                         ),
                         Container(
                           padding: EdgeInsets.fromLTRB(
-                              13 * fem, 14 * fem, 13 * fem, 15 * fem),
+                              13 * fem, 14 * fem, 13 * fem, 0 * fem),
                           decoration: BoxDecoration(
                             color: Color(0xfff5f5f5),
                           ),
@@ -511,9 +511,8 @@ class _RevenueScreenState extends State<RevenueScreen> {
                                 child: Text(
                                   'Qua đêm',
                                   style: TextStyle(
-                                    fontSize: 12 * ffem,
+                                    fontSize: 18 * ffem,
                                     fontWeight: FontWeight.bold,
-                                    height: 1.175 * ffem / fem,
                                     color: Color(0xff5b5b5b),
                                   ),
                                 ),
@@ -530,9 +529,8 @@ class _RevenueScreenState extends State<RevenueScreen> {
                                               .toString() ??
                                           '0',
                                   style: TextStyle(
-                                    fontSize: 13 * ffem,
+                                    fontSize: 22 * ffem,
                                     fontWeight: FontWeight.w600,
-                                    height: 1.2175 * ffem / fem,
                                     color: Color(0xff000000),
                                   ),
                                 ),
@@ -549,7 +547,7 @@ class _RevenueScreenState extends State<RevenueScreen> {
                     child: Text(
                       'Lịch sử rút tiền',
                       style: TextStyle(
-                        fontSize: 19 * ffem,
+                        fontSize: 25 * ffem,
                         fontWeight: FontWeight.w400,
                         height: 1.175 * ffem / fem,
                         color: Color(0xff000000),
@@ -562,7 +560,7 @@ class _RevenueScreenState extends State<RevenueScreen> {
                       padding: EdgeInsets.fromLTRB(
                           14 * fem, 10 * fem, 14 * fem, 0 * fem),
                       width: double.infinity,
-                      height: 250 * fem,
+                      height: 300 * fem,
                       decoration: BoxDecoration(
                         color: Color(0xfff8f8f8),
                         borderRadius: BorderRadius.circular(6 * fem),

@@ -12,7 +12,7 @@ class TransactionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.fromLTRB(0 * fem, 0 * fem, 0 * fem, 15 * fem),
+      margin: EdgeInsets.fromLTRB(4 * fem, 0 * fem, 8 * fem, 15 * fem),
       width: double.infinity,
       height: 45 * fem,
       child: Row(
@@ -20,7 +20,7 @@ class TransactionCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
-            padding: EdgeInsets.fromLTRB(0 * fem, 3 * fem, 0 * fem, 5 * fem),
+            padding: EdgeInsets.fromLTRB(4 * fem, 3 * fem, 4 * fem, 5 * fem),
             height: double.infinity,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -42,7 +42,7 @@ class TransactionCard extends StatelessWidget {
                             child: Text(
                               transaction.title,
                               style: TextStyle(
-                                fontSize: 18 * ffem,
+                                fontSize: 24 * ffem,
                                 fontWeight: FontWeight.w600,
                                 height: 1.175 * ffem / fem,
                                 color: Color(0xff000000),
@@ -52,7 +52,7 @@ class TransactionCard extends StatelessWidget {
                           Text(
                             MyDateUtil.formatCheckInAndCheckOutDate(transaction.date),
                             style: TextStyle(
-                              fontSize: 14 * ffem,
+                              fontSize: 16 * ffem,
                               fontWeight: FontWeight.bold,
                               color: Color(0xff9e9e9e),
                             ),
@@ -71,7 +71,7 @@ class TransactionCard extends StatelessWidget {
             child: Text(
               '+ ${NumberFormat("#,##0", "en_US").format(transaction.amount)} đ',
               style: TextStyle(
-                fontSize: 18 * ffem,
+                fontSize: 20 * ffem,
                 fontWeight: FontWeight.bold,
                 height: 1.2175 * ffem / fem,
                 color: Colors.green,

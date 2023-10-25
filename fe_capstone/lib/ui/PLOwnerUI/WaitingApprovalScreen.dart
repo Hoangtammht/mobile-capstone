@@ -10,7 +10,7 @@ class WaitingApprovalScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: Text('Parco', style: TextStyle(
-          fontSize:  26*ffem,
+          fontSize:  30*ffem,
           fontWeight:  FontWeight.w500,
           height:  1.175*ffem/fem,
           fontStyle:  FontStyle.italic,
@@ -29,14 +29,14 @@ class WaitingApprovalScreen extends StatelessWidget {
             Padding(
               padding: EdgeInsets.only(top: 15 * fem),
               child: Text('Đơn đăng ký của bạn\nđang chờ kiểm duyệt', style: TextStyle(
-                fontSize: 18 * fem,
+                fontSize: 22 * fem,
                 fontWeight: FontWeight.bold
               ),),
             ),
             Padding(
               padding: EdgeInsets.only(top: 15 * fem),
               child: Text('Chúng tôi sẽ sớm liên hệ lại từ 12 - 24h', style: TextStyle(
-                  fontSize: 18 * fem,
+                  fontSize: 22 * fem,
                   fontWeight: FontWeight.bold
               ),),
             )

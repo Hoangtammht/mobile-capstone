@@ -37,7 +37,7 @@ class _ParkingCardState extends State<ParkingCard> {
                     widget.vehicleData.licensePlate,
                     style: TextStyle(
                         color: Colors.black,
-                        fontSize: 16 * fem,
+                        fontSize: 20 * fem,
                         fontWeight: FontWeight.w600),
                   ),
                 ),
@@ -49,7 +49,7 @@ class _ParkingCardState extends State<ParkingCard> {
                     'Trễ giờ',
                     style: TextStyle(
                         color: Colors.red,
-                        fontSize: 16 * fem,
+                        fontSize: 18 * fem,
                         fontWeight: FontWeight.w400),
                   ),
                 ),
@@ -61,7 +61,7 @@ class _ParkingCardState extends State<ParkingCard> {
                 widget.vehicleData.fullName,
                 style: TextStyle(
                     color: Colors.grey,
-                    fontSize: 12 * fem,
+                    fontSize: 18 * fem,
                     fontWeight: FontWeight.w600),
               ),
             ),
@@ -81,7 +81,7 @@ class _ParkingCardState extends State<ParkingCard> {
                       child: Text(
                         widget.vehicleData.methodName,
                         style: TextStyle(
-                          fontSize: 11 * ffem,
+                          fontSize: 16 * ffem,
                           fontWeight: FontWeight.w400,
                           height: 1.2175 * ffem / fem,
                           color: Color(0xff2b7031),
@@ -114,7 +114,7 @@ class _ParkingCardState extends State<ParkingCard> {
                           child: Text(
                             'Cập nhập đã tới',
                             style: TextStyle(
-                              fontSize: 18 * ffem,
+                              fontSize: 22 * ffem,
                               fontWeight: FontWeight.bold,
                               height: 1.175 * ffem / fem,
                               color: Color(0xffffffff),
@@ -147,7 +147,7 @@ class _ParkingCardState extends State<ParkingCard> {
                           child: Text(
                             'Cập nhập rời bãi',
                             style: TextStyle(
-                              fontSize: 18 * ffem,
+                              fontSize: 22 * ffem,
                               fontWeight: FontWeight.bold,
                               height: 1.175 * ffem / fem,
                               color: Color(0xffffffff),
@@ -160,7 +160,7 @@ class _ParkingCardState extends State<ParkingCard> {
                     Text(
                       '${MyDateUtil.formatDateTime(widget.vehicleData.startTime)} - ${MyDateUtil.formatDateTime(widget.vehicleData.endTime)}',
                       style: TextStyle(
-                        fontSize: 14 * ffem,
+                        fontSize: 20 * ffem,
                         fontWeight: FontWeight.w400,
                         height: 1.175 * ffem / fem,
                         color: Color(0xff000000),
@@ -333,7 +333,7 @@ class _ParkingCardState extends State<ParkingCard> {
                                 text: 'Cập nhập trạng thái',
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 18
+                                    fontSize: 22
                                 )
                             ),
                             TextSpan(
@@ -341,7 +341,7 @@ class _ParkingCardState extends State<ParkingCard> {
                                 style: TextStyle(
                                     color: Colors.red,
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 18
+                                    fontSize: 22
                                 )
                             )
                           ]
@@ -357,7 +357,7 @@ class _ParkingCardState extends State<ParkingCard> {
                       widget.vehicleData.licensePlate,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 18,
+                        fontSize: 22,
                       ),
                       textAlign: TextAlign.center,
                     ),
