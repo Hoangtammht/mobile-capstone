@@ -1,11 +1,17 @@
+import 'package:fe_capstone/apis/plo/ParkingAPI.dart';
 import 'package:fe_capstone/main.dart';
+import 'package:fe_capstone/ui/PLOwnerUI/BottomTabNavPlo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+
+import '../../models/RequestResgisterParking.dart';
 
 class RechargeWebViewScreen extends StatefulWidget {
   final String url;
+  final RequestRegisterParking request;
 
-  RechargeWebViewScreen(this.url);
+  RechargeWebViewScreen(this.url, this.request);
 
   @override
   State<RechargeWebViewScreen> createState() => _RechargeWebViewScreenState();
@@ -44,35 +50,41 @@ Widget build(BuildContext context) {
                 },
                 onLoadStop: (InAppWebViewController controller, Uri? url) async {
                   if (url.toString().contains('vnp_ResponseCode=00')) {
-                    Navigator.pop(context);
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text(
-                            'Thanh toán thành công',
-                            style: TextStyle(
-                              fontSize: 22 * fem,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          actions: <Widget>[
-                            TextButton(
-                              child: Text(
-                                'OK',
-                                style: TextStyle(
-                                  fontSize: 22 * fem,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                            ),
-                          ],
-                        );
-                      },
+                    await ParkingAPI.registerParking(widget.request);
+                    PersistentNavBarNavigator.pushNewScreen(
+                      context,
+                      screen: BottomTabNavPlo(),
+                      withNavBar: false,
+                      pageTransitionAnimation: PageTransitionAnimation.cupertino,
                     );
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text(
+                              'Thanh toán thành công',
+                              style: TextStyle(
+                                fontSize: 22 * fem,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            actions: <Widget>[
+                              TextButton(
+                                child: Text(
+                                  'OK',
+                                  style: TextStyle(
+                                    fontSize: 22 * fem,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
                   }
                   if (url.toString().contains('vnp_ResponseCode=24') || url.toString().contains('vnp_ResponseCode=01') || url.toString().contains('vnp_ResponseCode=02')
                       || url.toString().contains('vnp_ResponseCode=03') || url.toString().contains('vnp_ResponseCode=04') || url.toString().contains('vnp_ResponseCode=08')
