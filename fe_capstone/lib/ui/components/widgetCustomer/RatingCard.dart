@@ -20,7 +20,7 @@ class RatingCard extends StatelessWidget {
             child: Row(
               children: [
                 Text(fromBy, style: TextStyle(
-                  fontSize: 18 * fem,
+                  fontSize: 20 * fem,
                   fontWeight: FontWeight.bold
                 ),),
                 RatingStars(
@@ -32,7 +32,7 @@ class RatingCard extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(bottom: 5 * fem),
             child: Text(content, style: TextStyle(
-              fontSize: 15 * fem,
+              fontSize: 18 * fem,
               color: Colors.grey
             ),),
           ),

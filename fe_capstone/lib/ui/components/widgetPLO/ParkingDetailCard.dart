@@ -91,6 +91,19 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
               return Text('Error: ${snapshot.error}');
             } else {
               final reservationDetail = snapshot.data;
+              Color statusColor;
+
+              if (reservationDetail?.statusName == 'Checked In') {
+                statusColor = Colors.green;
+              } else if (reservationDetail?.statusName == 'Occupied') {
+                statusColor = Colors.green;
+              } else if (reservationDetail?.statusName == 'Overdue') {
+                statusColor = Colors.red;
+              } else if (reservationDetail?.statusName == 'Historical') {
+                statusColor = Colors.red;
+              } else {
+                statusColor = Colors.red;
+              }
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -116,8 +129,8 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
                             child: Text(
                               'Nhắn tin',
                               style: TextStyle(
-                                fontSize: 18 * ffem,
-                                fontWeight: FontWeight.w400,
+                                fontSize: 20 * ffem,
+                                fontWeight: FontWeight.bold,
                                 color: Color(0xff000000),
                               ),
                             ),
@@ -128,7 +141,7 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
                   Container(
                     margin: EdgeInsets.only(top: 25 * fem),
                     padding: EdgeInsets.fromLTRB(8 * fem, 0, 8 * fem, 16 * fem),
-                    width: 358 * fem,
+                    width: mq.width,
                     decoration: BoxDecoration(
                       color: Colors.grey[200],
                       borderRadius: BorderRadius.circular(16 * fem),
@@ -144,7 +157,7 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
                               Text(
                                 'Phí gửi xe',
                                 style: TextStyle(
-                                  fontSize: 15 * ffem,
+                                  fontSize: 22 * ffem,
                                   fontWeight: FontWeight.w400,
                                   color: Color(0xff5b5b5b),
                                 ),
@@ -157,7 +170,7 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
                                       ? '${NumberFormat("#,##0", "vi_VN").format(reservationDetail.price)} đ'
                                       : '${NumberFormat("#,##0", "vi_VN").format(0.0)} đ'),
                                 style: TextStyle(
-                                  fontSize: 15 * ffem,
+                                  fontSize: 22 * ffem,
                                   fontWeight: FontWeight.w600,
                                   color: Color(0xff000000),
                                 ),
@@ -173,17 +186,17 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
                               Text(
                                 'Trạng thái',
                                 style: TextStyle(
-                                  fontSize: 15 * ffem,
+                                  fontSize: 22 * ffem,
                                   fontWeight: FontWeight.w400,
                                   color: Color(0xff5b5b5b),
                                 ),
                               ),
                               Spacer(),
                               Container(
-                                width:  60* fem,
-                                height: 20 * fem,
+                                width:  100* fem,
+                                height: 25 * fem,
                                 decoration: BoxDecoration(
-                                  color: Color(0xfff5e4e4),
+                                  color: statusColor,
                                   borderRadius: BorderRadius.circular(100 * fem),
                                 ),
                                 child: Center(
@@ -204,9 +217,9 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
                                       }
                                     }(),
                                     style: TextStyle(
-                                      fontSize: 14 * ffem,
+                                      fontSize: 22 * ffem,
                                       fontWeight: FontWeight.w600,
-                                      color: Color(0xffcc5252),
+                                      color: Colors.white,
                                     ),
                                   ),
                                 ),
@@ -228,7 +241,7 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
                               Text(
                                 'Khách hàng',
                                 style: TextStyle(
-                                  fontSize: 15 * ffem,
+                                  fontSize: 22 * ffem,
                                   fontWeight: FontWeight.w400,
                                   color: Color(0xff5b5b5b),
                                 ),
@@ -237,7 +250,7 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
                               Text(
                                 snapshot.connectionState == ConnectionState.waiting ? 'Đang tải...' : reservationDetail?.fullName ?? '',
                                 style: TextStyle(
-                                  fontSize: 18 * ffem,
+                                  fontSize: 22 * ffem,
                                   fontWeight: FontWeight.w600,
                                   color: Colors.black,
                                 ),
@@ -253,7 +266,7 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
                               Text(
                                 'Số điện thoại',
                                 style: TextStyle(
-                                  fontSize: 13 * ffem,
+                                  fontSize: 22 * ffem,
                                   fontWeight: FontWeight.w400,
                                   height: 1.175 * ffem / fem,
                                   color: Color(0xff5b5b5b),
@@ -263,7 +276,7 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
                               Text(
                                 snapshot.connectionState == ConnectionState.waiting ? 'Đang tải...' : reservationDetail?.phoneNumber ?? '',
                                 style: TextStyle(
-                                  fontSize: 16 * ffem,
+                                  fontSize: 22 * ffem,
                                   fontWeight: FontWeight.w600,
                                   height: 1.2175 * ffem / fem,
                                   color: Color(0xff000000),
@@ -286,7 +299,7 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
                               Text(
                                 'Phương tiện',
                                 style: TextStyle(
-                                  fontSize: 15 * ffem,
+                                  fontSize: 22 * ffem,
                                   fontWeight: FontWeight.w400,
                                   color: Color(0xff5b5b5b),
                                 ),
@@ -295,7 +308,7 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
                               Text(
                                 snapshot.connectionState == ConnectionState.waiting ? 'Đang tải...' : reservationDetail?.licensePlate ?? '',
                                 style: TextStyle(
-                                  fontSize: 15 * ffem,
+                                  fontSize: 22 * ffem,
                                   fontWeight: FontWeight.w600,
                                   color: Color(0xff000000),
                                 ),
@@ -317,7 +330,7 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
                               Text(
                                 'Vào bãi',
                                 style: TextStyle(
-                                  fontSize: 15 * ffem,
+                                  fontSize: 22 * ffem,
                                   fontWeight: FontWeight.w400,
                                   color: Color(0xff5b5b5b),
                                 ),
@@ -328,7 +341,7 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
                                     ? 'Đang tải...'
                                     : MyDateUtil.formatCheckInAndCheckOutDate(reservationDetail?.checkIn) ?? '',
                                 style: TextStyle(
-                                  fontSize: 15 * ffem,
+                                  fontSize: 22 * ffem,
                                   fontWeight: FontWeight.w600,
                                   color: Color(0xff000000),
                                 ),
@@ -344,7 +357,7 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
                               Text(
                                 'Rời chỗ',
                                 style: TextStyle(
-                                  fontSize: 15 * ffem,
+                                  fontSize: 22 * ffem,
                                   fontWeight: FontWeight.w400,
                                   color: Color(0xff5b5b5b),
                                 ),
@@ -355,7 +368,7 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
                                     ? 'Đang tải...'
                                     : MyDateUtil.formatCheckInAndCheckOutDate(reservationDetail?.checkOut) ?? '',
                                 style: TextStyle(
-                                  fontSize: 15 * ffem,
+                                  fontSize: 22 * ffem,
                                   fontWeight: FontWeight.w600,
                                   color: Color(0xff000000),
                                 ),

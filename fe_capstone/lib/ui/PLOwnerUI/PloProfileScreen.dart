@@ -65,7 +65,7 @@ class _PloProfileScreenState extends State<PloProfileScreen> {
                     left: 0 * fem,
                     top: 0 * fem,
                     child: Container(
-                      width: 390 * fem,
+                      width: mq.width,
                       height: 120 * fem,
                       decoration: BoxDecoration(
                         color: Theme.of(context).primaryColor,
@@ -137,7 +137,7 @@ class _PloProfileScreenState extends State<PloProfileScreen> {
                                           child: Text(
                                             'Họ và tên',
                                             style: TextStyle(
-                                              fontSize: 16 * ffem,
+                                              fontSize: 22 * ffem,
                                               fontWeight: FontWeight.w400,
                                               height: 1.175 * ffem / fem,
                                               color: Color(0xff5b5b5b),
@@ -148,7 +148,7 @@ class _PloProfileScreenState extends State<PloProfileScreen> {
                                         Text(
                                           snapshot.connectionState == ConnectionState.waiting ? 'Đang tải...' : ploProfile?.fullName ?? '',
                                           style: TextStyle(
-                                            fontSize: 16 * ffem,
+                                            fontSize: 22 * ffem,
                                             fontWeight: FontWeight.w600,
                                             height: 1.175 * ffem / fem,
                                             color: Color(0xff000000),
@@ -177,7 +177,7 @@ class _PloProfileScreenState extends State<PloProfileScreen> {
                                           child: Text(
                                             'Số điện thoại',
                                             style: TextStyle(
-                                              fontSize: 16 * ffem,
+                                              fontSize: 22 * ffem,
                                               fontWeight: FontWeight.bold,
                                               height: 1.175 * ffem / fem,
                                               color: Color(0xff5b5b5b),
@@ -188,7 +188,7 @@ class _PloProfileScreenState extends State<PloProfileScreen> {
                                         Text(
                                           snapshot.connectionState == ConnectionState.waiting ? 'Đang tải...' : ploProfile?.phoneNumber ?? '',
                                           style: TextStyle(
-                                            fontSize: 16 * ffem,
+                                            fontSize: 22 * ffem,
                                             fontWeight: FontWeight.w500,
                                             height: 1.2175 * ffem / fem,
                                             color: Color(0xff000000),
@@ -217,7 +217,7 @@ class _PloProfileScreenState extends State<PloProfileScreen> {
                                         child: Text(
                                           'Email',
                                           style: TextStyle(
-                                            fontSize: 16 * ffem,
+                                            fontSize: 22 * ffem,
                                             fontWeight: FontWeight.w400,
                                             height: 1.175 * ffem / fem,
                                             color: Color(0xff5b5b5b),
@@ -228,7 +228,7 @@ class _PloProfileScreenState extends State<PloProfileScreen> {
                                       Text(
                                         snapshot.connectionState == ConnectionState.waiting ? 'Đang tải...' : ploProfile?.email ?? '',
                                         style: TextStyle(
-                                          fontSize: 16 * ffem,
+                                          fontSize: 22 * ffem,
                                           fontWeight: FontWeight.w600,
                                           height: 1.175 * ffem / fem,
                                           color: Color(0xff000000),
@@ -273,9 +273,8 @@ class _PloProfileScreenState extends State<PloProfileScreen> {
                           child: Text(
                             'Chỉnh sửa',
                             style: TextStyle(
-                              fontSize: 16 * ffem,
+                              fontSize: 25 * ffem,
                               fontWeight: FontWeight.w600,
-                              height: 1.175 * ffem / fem,
                               color: Color(0xffffffff),
                             ),
                           ),
@@ -361,7 +360,7 @@ class _PloProfileScreenState extends State<PloProfileScreen> {
                               child: Text(
                                 'Cập nhật số điện thoại',
                                 style: TextStyle(
-                                  fontSize: 19 * ffem,
+                                  fontSize: 25 * ffem,
                                   fontWeight: FontWeight.w600,
                                   height: 1.175 * ffem / fem,
                                   color: Color(0xff000000),
@@ -402,7 +401,7 @@ class _PloProfileScreenState extends State<PloProfileScreen> {
                               child: Text(
                                 'Thay đổi mật khẩu',
                                 style: TextStyle(
-                                  fontSize: 19 * ffem,
+                                  fontSize: 25 * ffem,
                                   fontWeight: FontWeight.w600,
                                   height: 1.175 * ffem / fem,
                                   color: Color(0xff000000),
@@ -445,7 +444,7 @@ class _PloProfileScreenState extends State<PloProfileScreen> {
                               child: Text(
                                 'Đăng xuất',
                                 style: TextStyle(
-                                  fontSize: 19 * ffem,
+                                  fontSize: 25 * ffem,
                                   fontWeight: FontWeight.w600,
                                   height: 1.175 * ffem / fem,
                                   color: Color(0xff000000),

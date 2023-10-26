@@ -19,19 +19,19 @@ class NotificationCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('Từ: ${notification.senderName}', style: TextStyle(
-                    fontSize: 16 * fem,
+                    fontSize: 20 * fem,
                     fontWeight: FontWeight.bold
                   ),),
                   Text(notification.content, style: TextStyle(
                     fontWeight: FontWeight.w400,
-                    fontSize: 15 * fem,
+                    fontSize: 20 * fem,
                     color: Colors.grey
                   ),),
                   Align(
                     alignment: Alignment.bottomRight,
                       child: Text(MyDateUtil.formatCheckInAndCheckOutDate(notification.createdAt), style: TextStyle(
                           fontWeight: FontWeight.w600,
-                          fontSize: 15 * fem,
+                          fontSize: 18 * fem,
                           color: Colors.grey
                       ),)),
                   Divider(

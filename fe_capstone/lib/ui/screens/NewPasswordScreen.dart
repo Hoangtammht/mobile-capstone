@@ -64,7 +64,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                       'Nhập mật khẩu mới',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontSize: 32 * ffem,
+                        fontSize: 35 * ffem,
                         fontWeight: FontWeight.w600,
                         height: 1.175 * ffem / fem,
                         color: Theme.of(context).primaryColor,
@@ -89,7 +89,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                             obscureText:
                                 isPasswordVisible ? false : true, // Ẩn mật khẩu
                             style: TextStyle(
-                              fontSize: 20 * ffem,
+                              fontSize: 22 * ffem,
                               fontWeight: FontWeight.w600,
                               height: 1.175 * ffem / fem,
                               color: Color(0xff000000),
@@ -140,7 +140,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                             obscureText:
                                 isConfirmPasswordVisible ? false : true,
                             style: TextStyle(
-                              fontSize: 20 * ffem,
+                              fontSize: 22 * ffem,
                               fontWeight: FontWeight.w600,
                               height: 1.175 * ffem / fem,
                               color: Color(0xff000000),
@@ -210,7 +210,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                           'XÁC NHẬN',
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: 16 * ffem,
+                            fontSize: 25 * ffem,
                             fontWeight: FontWeight.w600,
                             height: 1.175 * ffem / fem,
                             color: Color(0xffffffff),

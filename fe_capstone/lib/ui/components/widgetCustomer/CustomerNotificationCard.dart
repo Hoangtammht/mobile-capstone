@@ -44,7 +44,7 @@ class CustomerNotificationCard extends StatelessWidget {
                         notification.content,
                         style: TextStyle(
                             fontWeight: FontWeight.w400,
-                            fontSize: 15 * fem,
+                            fontSize: 20 * fem,
                             color: Colors.grey),
                       ),
                       Align(
@@ -53,7 +53,7 @@ class CustomerNotificationCard extends StatelessWidget {
                             formatDate,
                             style: TextStyle(
                                 fontWeight: FontWeight.w600,
-                                fontSize: 15 * fem,
+                                fontSize: 20 * fem,
                                 color: Colors.grey),
                           )),
                     ],

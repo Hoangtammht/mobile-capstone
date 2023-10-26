@@ -53,7 +53,7 @@ class _ParkingInformationState extends State<ParkingInformation> {
         title: Text(
           'THÔNG TIN BÃI XE GỬI XE',
           style: TextStyle(
-            fontSize: 26 * ffem,
+            fontSize: 30 * ffem,
             fontWeight: FontWeight.w700,
             height: 1.175 * ffem / fem,
             color: Color(0xffffffff),
@@ -78,7 +78,7 @@ class _ParkingInformationState extends State<ParkingInformation> {
                       children: [
                         snapshot.connectionState == ConnectionState.waiting ? Text('Đang xử lý...',
                             style: TextStyle(
-                          fontSize: 18 * fem,
+                          fontSize: 22 * fem,
                         )) :
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 5 * fem, vertical :5 * fem),
@@ -116,13 +116,13 @@ class _ParkingInformationState extends State<ParkingInformation> {
                                           text: 'Tên bãi: ',
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
-                                              fontSize: 18 * fem
+                                              fontSize: 22 * fem
                                           )
                                       ),
                                       TextSpan(
                                           text: snapshot.connectionState == ConnectionState.waiting ? 'Đang tải...' : parkingInformation?.parkingName ?? '',
                                           style: TextStyle(
-                                            fontSize: 18,
+                                            fontSize: 22,
                                           )
                                       )
                                     ]
@@ -144,13 +144,13 @@ class _ParkingInformationState extends State<ParkingInformation> {
                                             text: 'Địa chỉ: ',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,
-                                                fontSize: 18 * fem
+                                                fontSize: 22 * fem
                                             )
                                         ),
                                         TextSpan(
                                             text: snapshot.connectionState == ConnectionState.waiting ? 'Đang tải...' : parkingInformation?.address ?? '',
                                             style: TextStyle(
-                                              fontSize: 18 * fem,
+                                              fontSize: 22 * fem,
                                             )
                                         )
                                       ]
@@ -173,13 +173,13 @@ class _ParkingInformationState extends State<ParkingInformation> {
                                             text: 'Số chỗ đậu xe: ',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,
-                                                fontSize: 18 * fem
+                                                fontSize: 22 * fem
                                             )
                                         ),
                                         TextSpan(
                                             text: snapshot.connectionState == ConnectionState.waiting ? 'Đang tải...' : (parkingInformation?.slot ?? '').toString(),
                                             style: TextStyle(
-                                              fontSize: 18 * fem,
+                                              fontSize: 22 * fem,
                                             )
                                         )
                                       ]
@@ -202,13 +202,13 @@ class _ParkingInformationState extends State<ParkingInformation> {
                                             text: 'Chiều rộng (m): ',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,
-                                                fontSize: 18 * fem
+                                                fontSize: 22 * fem
                                             )
                                         ),
                                         TextSpan(
                                             text: snapshot.connectionState == ConnectionState.waiting ? 'Đang tải...' : (parkingInformation?.width ?? '').toString(),
                                             style: TextStyle(
-                                              fontSize: 18 * fem,
+                                              fontSize: 22 * fem,
                                             )
                                         )
                                       ]
@@ -231,13 +231,13 @@ class _ParkingInformationState extends State<ParkingInformation> {
                                             text: 'Chiều dài (m): ',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,
-                                                fontSize: 18 * fem
+                                                fontSize: 22 * fem
                                             )
                                         ),
                                         TextSpan(
                                             text: snapshot.connectionState == ConnectionState.waiting ? 'Đang tải...' : (parkingInformation?.length ?? '').toString(),
                                             style: TextStyle(
-                                              fontSize: 18 * fem,
+                                              fontSize: 22 * fem,
                                             )
                                         )
                                       ]
@@ -260,13 +260,13 @@ class _ParkingInformationState extends State<ParkingInformation> {
                                             text: 'Mô tả: ',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,
-                                                fontSize: 18 * fem
+                                                fontSize: 22 * fem
                                             )
                                         ),
                                         TextSpan(
                                             text: snapshot.connectionState == ConnectionState.waiting ? 'Đang tải...' : (parkingInformation?.description ?? '').toString(),
                                             style: TextStyle(
-                                              fontSize: 18 * fem,
+                                              fontSize: 22 * fem,
                                             )
                                         )
                                       ]
@@ -289,13 +289,13 @@ class _ParkingInformationState extends State<ParkingInformation> {
                                             text: 'Thời gian chờ: ',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,
-                                                fontSize: 18 * fem
+                                                fontSize: 22 * fem
                                             )
                                         ),
                                         TextSpan(
                                             text: snapshot.connectionState == ConnectionState.waiting ? 'Đang tải...' : (parkingInformation?.waitingTime ?? '').toString(),
                                             style: TextStyle(
-                                              fontSize: 18 * fem,
+                                              fontSize: 22 * fem,
                                             )
                                         )
                                       ]
@@ -318,13 +318,13 @@ class _ParkingInformationState extends State<ParkingInformation> {
                                             text: 'Thời gian hủy đặt chỗ: ',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,
-                                                fontSize: 18 * fem
+                                                fontSize: 22 * fem
                                             )
                                         ),
                                         TextSpan(
                                             text: snapshot.connectionState == ConnectionState.waiting ? 'Đang tải...' : (parkingInformation?.cancelBookingTime ?? '').toString(),
                                             style: TextStyle(
-                                              fontSize: 18 * fem,
+                                              fontSize: 22 * fem,
                                             )
                                         )
                                       ]
@@ -402,7 +402,7 @@ class _ParkingInformationState extends State<ParkingInformation> {
                     child: Text(
                       'Chỉnh sửa',
                       style: TextStyle(
-                        fontSize: 19 * ffem,
+                        fontSize: 25 * ffem,
                         fontWeight: FontWeight.w600,
                         height: 1.175 * ffem / fem,
                         color: Color(0xffffffff),

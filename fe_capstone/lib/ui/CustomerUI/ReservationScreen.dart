@@ -409,7 +409,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                     "Thêm biển đổ xe mới",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 18,
+                      fontSize: 25 * fem,
                     ),
                   ),
                 ),

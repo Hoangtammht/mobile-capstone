@@ -1,4 +1,5 @@
 import 'package:fe_capstone/apis/customer/WalletScreenAPI.dart';
+import 'package:fe_capstone/blocs/WalletDataProvider.dart';
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/models/ResponseWalletCustomer.dart';
 import 'package:fe_capstone/models/Transaction.dart';
@@ -7,7 +8,7 @@ import 'package:fe_capstone/ui/components/widgetCustomer/TransactionCard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:provider/provider.dart';
 
 class WalletScreen extends StatefulWidget {
   const WalletScreen({Key? key}) : super(key: key);
@@ -22,24 +23,13 @@ class _WalletScreenState extends State<WalletScreen> {
   late Future<ResponseWalletCustomer> responseWalletCustomer;
 
   List<Transaction> transactions = [];
+  late WalletDataProvider _walletDataProvider;
 
   @override
   void initState() {
     super.initState();
-    responseWalletCustomer = _getWalletCustomerFuture();
-    responseWalletCustomer.then((data) {
-      transactions = data.historyBalanceCustomerList
-          .map((history) => Transaction(
-              icon: Icons.account_balance_wallet_outlined,
-              title: "Nạp tiền",
-              date: history.rechargeTime,
-              amount: history.depositAmount))
-          .toList();
-    });
-  }
-
-  Future<ResponseWalletCustomer> _getWalletCustomerFuture() async {
-    return WalletScreenAPI.getWalletScreenData();
+    _walletDataProvider = Provider.of<WalletDataProvider>(context, listen: false);
+    responseWalletCustomer = _walletDataProvider.getTransactions();
   }
 
   @override
@@ -52,197 +42,210 @@ class _WalletScreenState extends State<WalletScreen> {
           color: Color(0xffffffff),
           borderRadius: BorderRadius.circular(26 * fem),
         ),
-        child: Stack(
-          children: [
-            Positioned(
-              left: 0 * fem,
-              top: 0 * fem,
-              child: Container(
-                width: 390 * fem,
-                height: 208 * fem,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor,
-                ),
-                child: Center(
-                  child: Text(
-                    'VÍ TIỀN',
-                    style: TextStyle(
-                      fontSize: 26 * ffem,
-                      fontWeight: FontWeight.w700,
-                      height: 1.175 * ffem / fem,
-                      color: Color(0xffffffff),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            Positioned(
-              left: 0 * fem,
-              right: 0 * fem,
-              top: 164 * fem,
-              child: Align(
-                child: SizedBox(
-                  width: 390 * fem,
-                  height: 678 * fem,
+        child: Consumer<WalletDataProvider>(
+          builder: (context, walletDataProvider, child) {
+            return Stack(
+              children: [
+                Positioned(
+                  left: 0 * fem,
+                  top: 0 * fem,
                   child: Container(
+                    width: mq.width,
+                    height: 208 * fem,
                     decoration: BoxDecoration(
-                      color: Color(0xffffffff),
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(23 * fem),
-                        topRight: Radius.circular(23 * fem),
-                      ),
+                      color: Theme.of(context).primaryColor,
                     ),
-                  ),
-                ),
-              ),
-            ),
-            Positioned(
-              left: 19 * fem,
-              top: 190 * fem,
-              child: Align(
-                child: SizedBox(
-                  width: 52 * fem,
-                  height: 23 * fem,
-                  child: Text(
-                    'Số dư',
-                    style: TextStyle(
-                      fontSize: 19 * ffem,
-                      fontWeight: FontWeight.w400,
-                      height: 1.175 * ffem / fem,
-                      color: Color(0xff9e9e9e),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            FutureBuilder<ResponseWalletCustomer>(
-              future: responseWalletCustomer,
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else {
-                  final balance = snapshot.data;
-                  return Positioned(
-                    left: 19 * fem,
-                    top: 232 * fem,
-                    child: Align(
-                      child: SizedBox(
-                        width: 191 * fem,
-                        height: 48 * fem,
-                        child: Text(
-                          snapshot.connectionState == ConnectionState.waiting
-                              ? 'Đang tải...'
-                              : (balance != null
-                                  ? '${NumberFormat("#,##0", "vi_VN").format(balance.walletBalance)} đ'
-                                  : '${NumberFormat("#,##0", "vi_VN").format(0.0)} đ'),
-                          style: TextStyle(
-                            fontSize: 30 * ffem,
-                            fontWeight: FontWeight.w600,
-                            height: 1.2175 * ffem / fem,
-                            color: Color(0xff000000),
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                }
-              },
-            ),
-            Positioned(
-              left: 14 * fem,
-              top: 289 * fem,
-              child: Container(
-                padding: EdgeInsets.fromLTRB(
-                    24.5 * fem, 14 * fem, 23 * fem, 15 * fem),
-                width: 160 * fem,
-                height: 52 * fem,
-                decoration: BoxDecoration(
-                  color: Color(0xff000000),
-                  borderRadius: BorderRadius.circular(9 * fem),
-                ),
-                child: InkWell(
-                  onTap: () {
-                    _showAddNewTransactionDialog(context);
-                  },
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.fromLTRB(
-                            0 * fem, 0 * fem, 12 * fem, 0 * fem),
-                        width: 22 * fem,
-                        height: 18 * fem,
-                        child: Icon(
-                          Icons.wallet,
-                          color: Colors.white,
-                          size: 25,
-                        ),
-                      ),
-                      Text(
-                        'Nạp tiền',
+                    child: Center(
+                      child: Text(
+                        'VÍ TIỀN',
                         style: TextStyle(
-                          fontSize: 19 * ffem,
-                          fontWeight: FontWeight.w600,
+                          fontSize: 40 * ffem,
+                          fontWeight: FontWeight.w700,
                           height: 1.175 * ffem / fem,
                           color: Color(0xffffffff),
                         ),
                       ),
-                    ],
+                    ),
                   ),
                 ),
-              ),
-            ),
-            Positioned(
-              left: 19 * fem,
-              right: 19 * fem,
-              top: 372 * fem,
-              child: Container(
-                width: 300 * fem,
-                height: 367 * fem,
-                decoration: BoxDecoration(
-                  color: Color(0xfff8f8f8),
-                  borderRadius: BorderRadius.circular(6 * fem),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.all(16 * fem),
-                      child: Text(
-                        'Lịch sử giao dịch',
-                        style: TextStyle(
-                          fontSize: 19 * ffem,
-                          fontWeight: FontWeight.w400,
-                          height: 1.175 * ffem / fem,
-                          color: Color(0xff5b5b5b),
+                Positioned(
+                  left: 0 * fem,
+                  right: 0 * fem,
+                  top: 164 * fem,
+                  child: Align(
+                    child: SizedBox(
+                      width: 390 * fem,
+                      height: 678 * fem,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Color(0xffffffff),
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(23 * fem),
+                            topRight: Radius.circular(23 * fem),
+                          ),
                         ),
                       ),
                     ),
-                    FutureBuilder<ResponseWalletCustomer>(
-                      future: responseWalletCustomer,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasError) {
-                          return Text('Error: ${snapshot.error}');
-                        } else {
-                          final balance = snapshot.data;
-                          return Expanded(
-                            child: ListView.builder(
-                              padding: EdgeInsets.only(top: 8),
-                              itemCount: transactions.length,
-                              itemBuilder: (context, index) {
-                                final transaction = transactions[index];
-                                return TransactionCard(transaction: transaction);
-                              },
-                            ),
-                          );
-                        }
-                      },
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-          ],
+                Positioned(
+                  left: 19 * fem,
+                  top: 190 * fem,
+                  child: Align(
+                    child: SizedBox(
+                      width: 52 * fem,
+                      height: 23 * fem,
+                      child: Text(
+                        'Số dư',
+                        style: TextStyle(
+                          fontSize: 25 * ffem,
+                          fontWeight: FontWeight.w400,
+                          height: 1.175 * ffem / fem,
+                          color: Color(0xff9e9e9e),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                FutureBuilder<ResponseWalletCustomer>(
+                  future: walletDataProvider.getTransactions(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else {
+                      final balance = snapshot.data;
+                      return Positioned(
+                        left: 19 * fem,
+                        top: 232 * fem,
+                        child: Align(
+                          child: SizedBox(
+                            width: 191 * fem,
+                            height: 48 * fem,
+                            child: Text(
+                              snapshot.connectionState == ConnectionState.waiting
+                                  ? 'Đang tải...'
+                                  : (balance != null
+                                  ? '${NumberFormat("#,##0", "vi_VN").format(balance.walletBalance)} đ'
+                                  : '${NumberFormat("#,##0", "vi_VN").format(0.0)} đ'),
+                              style: TextStyle(
+                                fontSize: 30 * ffem,
+                                fontWeight: FontWeight.w600,
+                                height: 1.2175 * ffem / fem,
+                                color: Color(0xff000000),
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                ),
+                Positioned(
+                  left: 14 * fem,
+                  top: 289 * fem,
+                  child: Container(
+                    padding: EdgeInsets.fromLTRB(
+                        24.5 * fem, 14 * fem, 23 * fem, 15 * fem),
+                    width: 160 * fem,
+                    height: 52 * fem,
+                    decoration: BoxDecoration(
+                      color: Color(0xff000000),
+                      borderRadius: BorderRadius.circular(9 * fem),
+                    ),
+                    child: InkWell(
+                      onTap: () {
+                        _showAddNewTransactionDialog(context);
+                      },
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            margin: EdgeInsets.fromLTRB(
+                                0 * fem, 0 * fem, 12 * fem, 8 * fem),
+                            width: 22 * fem,
+                            height: 18 * fem,
+                            child: Icon(
+                              Icons.wallet,
+                              color: Colors.white,
+                              size: 25,
+                            ),
+                          ),
+                          Text(
+                            'Nạp tiền',
+                            style: TextStyle(
+                              fontSize: 25 * ffem,
+                              fontWeight: FontWeight.w600,
+                              height: 1.175 * ffem / fem,
+                              color: Color(0xffffffff),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  left: 19 * fem,
+                  right: 19 * fem,
+                  top: 372 * fem,
+                  child: Container(
+                    width: 300 * fem,
+                    height: 367 * fem,
+                    decoration: BoxDecoration(
+                      color: Color(0xfff8f8f8),
+                      borderRadius: BorderRadius.circular(6 * fem),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.all(16 * fem),
+                          child: Text(
+                            'Lịch sử giao dịch',
+                            style: TextStyle(
+                              fontSize: 25 * ffem,
+                              fontWeight: FontWeight.w400,
+                              height: 1.175 * ffem / fem,
+                              color: Color(0xff5b5b5b),
+                            ),
+                          ),
+                        ),
+                        FutureBuilder<ResponseWalletCustomer>(
+                          future: walletDataProvider.getTransactions(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasError) {
+                              return Text('Error: ${snapshot.error}');
+                            } else {
+                              walletDataProvider.getTransactions().then((data) {
+                                transactions = data.historyBalanceCustomerList
+                                    .map((history) => Transaction(
+                                    icon: Icons.account_balance_wallet_outlined,
+                                    title: "Nạp tiền",
+                                    date: history.rechargeTime,
+                                    amount: history.depositAmount))
+                                    .toList();
+                              });
+                              return Expanded(
+                                child: ListView.builder(
+                                  shrinkWrap: true,
+                                  padding: EdgeInsets.only(top: 8),
+                                  itemCount: transactions.length,
+                                  itemBuilder: (context, index) {
+                                    final transaction = transactions[index];
+                                    return TransactionCard(transaction: transaction);
+                                  },
+                                ),
+                              );
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
@@ -312,7 +315,7 @@ class _WalletScreenState extends State<WalletScreen> {
                         children: [
                           Container(
                             height: 1,
-                            color: Color(0xffb3abab), // Đường thẳng ngang
+                            color: Color(0xffb3abab),
                           ),
                           TextButton(
                             onPressed: () {
@@ -335,7 +338,7 @@ class _WalletScreenState extends State<WalletScreen> {
                         Container(
                           width: 1,
                           height: 48,
-                          color: Color(0xffb3abab), // Đường thẳng dọc
+                          color: Color(0xffb3abab),
                         ),
                       ],
                     ),
@@ -344,7 +347,7 @@ class _WalletScreenState extends State<WalletScreen> {
                         children: [
                           Container(
                             height: 1,
-                            color: Color(0xffb3abab), // Đường thẳng ngang
+                            color: Color(0xffb3abab),
                           ),
                           TextButton(
                             onPressed: () {
@@ -396,7 +399,7 @@ class _WalletScreenState extends State<WalletScreen> {
                       "Nạp ${currencyFormat.format(amount)}đ vào tài khoản của bạn?",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 18,
+                        fontSize: 22,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -433,7 +436,7 @@ class _WalletScreenState extends State<WalletScreen> {
                         Container(
                           width: 1,
                           height: 48,
-                          color: Color(0xffb3abab), // Đường thẳng dọc
+                          color: Color(0xffb3abab),
                         ),
                       ],
                     ),
@@ -449,19 +452,13 @@ class _WalletScreenState extends State<WalletScreen> {
                               double amount = double.parse(_InputMoneyController
                                   .text
                                   .replaceAll(RegExp(r'[^\d]'), ''));
-                              try {
                                   String url = await WalletScreenAPI.createPayment(amount);
-                                  await launch(url, forceWebView: false);
-                                  // Navigator.push(
-                                  //   context,
-                                  //   MaterialPageRoute(
-                                  //     builder: (context) => RechargeWebViewScreen(url),
-                                  //   ),
-                                  // );
-                              } catch (e) {
-                                print(e);
-                              }
-                              Navigator.of(context).pop();
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => RechargeWebViewScreen(url),
+                                    ),
+                                  );
                             },
                             child: Text(
                               'Xác nhận',

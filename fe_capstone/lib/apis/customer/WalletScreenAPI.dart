@@ -27,7 +27,6 @@ class WalletScreenAPI{
       if (response.statusCode == 200) {
         Map<String, dynamic> responseData = Map<String, dynamic>.from(response.data);
         ResponseWalletCustomer walletCustomer = ResponseWalletCustomer.fromJson(responseData);
-        print(walletCustomer);
         return walletCustomer;
       } else {
         throw Exception('Failed to load wallet screen data');

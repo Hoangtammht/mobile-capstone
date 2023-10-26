@@ -25,7 +25,7 @@ class HistoryCard extends StatelessWidget {
               Text(
                 '${history.parkingName}',
                 style: TextStyle(
-                  fontSize: 18 * ffem,
+                  fontSize: 20 * ffem,
                   fontWeight: FontWeight.w600,
                   color: Color(0xff000000),
                 ),
@@ -34,7 +34,7 @@ class HistoryCard extends StatelessWidget {
               Text(
                 '${history.address}',
                 style: TextStyle(
-                  fontSize: 14 * ffem,
+                  fontSize: 18 * ffem,
                   fontWeight: FontWeight.w400,
                   color: Color(0xff969696),
                 ),
@@ -53,7 +53,7 @@ class HistoryCard extends StatelessWidget {
                   Text(
                     history.methodName,
                     style:  TextStyle (
-                      fontSize:  11*ffem,
+                      fontSize:  14*ffem,
                       fontWeight:  FontWeight.w400,
                       height:  1.2175*ffem/fem,
                       color:  Color(0xff2b7031),

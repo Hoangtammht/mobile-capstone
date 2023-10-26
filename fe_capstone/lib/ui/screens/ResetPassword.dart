@@ -93,7 +93,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       child: Text(
                         'Vui lòng nhập tài khoản bạn muốn lấy lại mật khẩu',
                         style: TextStyle(
-                          fontSize: 16 * ffem,
+                          fontSize: 20 * ffem,
                           fontWeight: FontWeight.w600,
                           height: 1.175 * ffem / fem,
                           color: Theme.of(context).primaryColor,
@@ -163,7 +163,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                             'TIẾP TỤC',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: 16 * ffem,
+                              fontSize: 24 * ffem,
                               fontWeight: FontWeight.w600,
                               height: 1.175 * ffem / fem,
                               color: Color(0xffffffff),
@@ -197,7 +197,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       title: Text(
         "Bạn là chủ bãi xe",
         style: TextStyle(
-          fontSize: 15 * ffem,
+          fontSize: 20 * ffem,
           fontWeight: FontWeight.w600,
           height: 1.175 * ffem / fem,
           color: Colors.grey,

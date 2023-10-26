@@ -17,11 +17,14 @@ class BottomTabNavPlo extends StatefulWidget {
   State<BottomTabNavPlo> createState() => _BottomTabNavPloState();
 }
 
-class _BottomTabNavPloState extends State<BottomTabNavPlo> {
+class _BottomTabNavPloState extends State<BottomTabNavPlo> with AutomaticKeepAliveClientMixin{
   final PersistentTabController _controller =
   PersistentTabController(initialIndex: 0);
   late Future<ParkingStatusInformation> statusParkingFuture;
   int parkingStatusID = 0;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -64,6 +67,11 @@ class _BottomTabNavPloState extends State<BottomTabNavPlo> {
             resizeToAvoidBottomInset: true,
             stateManagement: true,
             navBarStyle: NavBarStyle.style3,
+            onItemSelected: (int) {
+              setState(() {
+                statusParkingFuture = _getParkingInformationFuture();
+              });
+            },
           );
         }
       },
@@ -121,21 +129,5 @@ class _BottomTabNavPloState extends State<BottomTabNavPlo> {
       ),
     ];
   }
-
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   return PersistentTabView(
-  //     context,
-  //     controller: _controller,
-  //     screens: _buildScreens(),
-  //     items: _navBarsItems(),
-  //     confineInSafeArea: true,
-  //     backgroundColor: Colors.white,
-  //     handleAndroidBackButtonPress: true,
-  //     resizeToAvoidBottomInset: true,
-  //     stateManagement: true,
-  //     navBarStyle: NavBarStyle.style3,
-  //   );
-  // }
+  
 }

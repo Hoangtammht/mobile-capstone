@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:fe_capstone/apis/plo/ParkingAPI.dart';
 import 'package:fe_capstone/main.dart';
+import 'package:fe_capstone/models/PaymentResponse.dart';
 import 'package:fe_capstone/models/RequestResgisterParking.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/BottomTabNavPlo.dart';
+import 'package:fe_capstone/ui/PLOwnerUI/RegisterFeeWebView.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
@@ -43,7 +45,7 @@ class _RegistrationFeeScreenState extends State<RegistrationFeeScreen> {
         title: Text(
           'Phí đăng ký',
           style: TextStyle(
-            fontSize: 26 * ffem,
+            fontSize: 35 * ffem,
             fontWeight: FontWeight.w700,
             height: 1.175 * ffem / fem,
             color: Color(0xffffffff),
@@ -62,14 +64,22 @@ class _RegistrationFeeScreenState extends State<RegistrationFeeScreen> {
                   child: Text(
                     '350.000 VNĐ',
                     style: TextStyle(
-                        fontSize: 30 * fem, fontWeight: FontWeight.bold),
+                        fontSize: 35 * fem, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
               InkWell(
                 onTap: () async {
                     try {
-                      String newUUID = await ParkingAPI.makePayment();
+                      PaymentResponse paymentResponse = await ParkingAPI.makePayment();
+                      String newUUID = paymentResponse.uuid;
+                      String paymentUrl = paymentResponse.paymentUrl;
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => RechargeWebViewScreen(paymentUrl),
+                        ),
+                      );
                       setState(() {
                         request = RequestRegisterParking(
                             address: widget.requestRegisterParking.address,
@@ -99,7 +109,7 @@ class _RegistrationFeeScreenState extends State<RegistrationFeeScreen> {
                     child: Text(
                       'Đóng phí đăng kí',
                       style: TextStyle(
-                        fontSize: 19 * ffem,
+                        fontSize: 22 * ffem,
                         fontWeight: FontWeight.w600,
                         height: 1.175 * ffem / fem,
                         color: Color(0xffffffff),
@@ -120,11 +130,11 @@ class _RegistrationFeeScreenState extends State<RegistrationFeeScreen> {
                               text: 'Điều khoản hợp đồng: ',
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 18 * fem)),
+                                  fontSize: 22 * fem)),
                           TextSpan(
                               text: 'Trong hợp đồng',
                               style: TextStyle(
-                                fontSize: 18 * fem,
+                                fontSize: 22 * fem,
                               ))
                         ]),
                       ),
@@ -144,11 +154,11 @@ class _RegistrationFeeScreenState extends State<RegistrationFeeScreen> {
                               text: 'Lưu ý: ',
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 18 * fem)),
+                                  fontSize: 22 * fem)),
                           TextSpan(
                               text: 'Phí đăng kí sẽ được trừ vào tiền hợp đồng',
                               style: TextStyle(
-                                fontSize: 18 * fem,
+                                fontSize: 22 * fem,
                               ))
                         ]),
                       ),
@@ -188,7 +198,7 @@ class _RegistrationFeeScreenState extends State<RegistrationFeeScreen> {
                     child: Text(
                       'Gửi phiếu đăng kí',
                       style: TextStyle(
-                        fontSize: 19 * ffem,
+                        fontSize: 25 * ffem,
                         fontWeight: FontWeight.w600,
                         height: 1.175 * ffem / fem,
                         color: Color(0xffffffff),

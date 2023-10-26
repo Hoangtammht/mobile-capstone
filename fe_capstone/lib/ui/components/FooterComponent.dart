@@ -17,9 +17,8 @@ class FooterComponent extends StatelessWidget {
         Text(
           'Hotline: 0357280618',
           style:  TextStyle (
-            fontSize:  16*ffem,
-            fontWeight:  FontWeight.w500,
-            height:  1.2175*ffem/fem,
+            fontSize:  25*ffem,
+            fontWeight:  FontWeight.bold,
             color:  const Color(0xffffffff),
           ),
         ),

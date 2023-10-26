@@ -66,7 +66,7 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
         title: Text(
           'CHỈNH SỬA',
           style: TextStyle(
-            fontSize: 26 * ffem,
+            fontSize: 30 * ffem,
             fontWeight: FontWeight.w700,
             height: 1.175 * ffem / fem,
             color: Color(0xffffffff),
@@ -140,7 +140,7 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
                       child: Text(
                         'Tên bãi',
                         style: TextStyle(
-                          fontSize: 19 * ffem,
+                          fontSize: 22 * ffem,
                           fontWeight: FontWeight.w600,
                           height: 1.175 * ffem / fem,
                           color: Color(0xff000000),
@@ -162,7 +162,7 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
                       child: TextFormField(
                         controller: _parkingNameController,
                         style: TextStyle(
-                          fontSize: 16 * ffem,
+                          fontSize: 22 * ffem,
                           fontWeight: FontWeight.w400,
                           height: 1.175 * ffem / fem,
                           color: Color(0xff9e9e9e),
@@ -182,7 +182,7 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
                       child: Text(
                         'Mô tả',
                         style: TextStyle(
-                          fontSize: 19 * ffem,
+                          fontSize: 22 * ffem,
                           fontWeight: FontWeight.w600,
                           height: 1.175 * ffem / fem,
                           color: Color(0xff000000),
@@ -206,7 +206,7 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
                         minLines: 1,
                         maxLines: null,
                         style: TextStyle(
-                          fontSize: 16 * ffem,
+                          fontSize: 22 * ffem,
                           fontWeight: FontWeight.w400,
                           height: 1.175 * ffem / fem,
                           color: Color(0xff9e9e9e),
@@ -226,7 +226,7 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
                       child: Text(
                         'Số chỗ:',
                         style: TextStyle(
-                          fontSize: 19 * ffem,
+                          fontSize: 22 * ffem,
                           fontWeight: FontWeight.w600,
                           height: 1.175 * ffem / fem,
                           color: Color(0xff000000),
@@ -251,7 +251,7 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
                         maxLines: null,
                         keyboardType: TextInputType.number,
                         style: TextStyle(
-                          fontSize: 16 * ffem,
+                          fontSize: 22 * ffem,
                           fontWeight: FontWeight.w400,
                           height: 1.175 * ffem / fem,
                           color: Color(0xff9e9e9e),
@@ -271,7 +271,7 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
                       child: Text(
                         'Thời gian chờ:',
                         style: TextStyle(
-                          fontSize: 19 * ffem,
+                          fontSize: 22 * ffem,
                           fontWeight: FontWeight.w600,
                           height: 1.175 * ffem / fem,
                           color: Color(0xff000000),
@@ -302,7 +302,7 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
                             Text(
                               _waitingController.text,
                               style: TextStyle(
-                                fontSize: 16 * ffem,
+                                fontSize: 22 * ffem,
                               ),
                             ),
                           ],
@@ -319,7 +319,7 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
                       child: Text(
                         'Thời gian hủy đặt chỗ:',
                         style: TextStyle(
-                          fontSize: 19 * ffem,
+                          fontSize: 22 * ffem,
                           fontWeight: FontWeight.w600,
                           height: 1.175 * ffem / fem,
                           color: Color(0xff000000),
@@ -350,7 +350,7 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
                             Text(
                               _cancelBookingController.text,
                               style: TextStyle(
-                                fontSize: 16 * ffem,
+                                fontSize: 22 * ffem,
                               ),
                             ),
                           ],
@@ -424,7 +424,7 @@ class _EditParkingInformationState extends State<EditParkingInformation> {
                         child: Text(
                           'Chỉnh sửa',
                           style: TextStyle(
-                            fontSize: 19 * ffem,
+                            fontSize: 25 * ffem,
                             fontWeight: FontWeight.w600,
                             height: 1.175 * ffem / fem,
                             color: Color(0xffffffff),

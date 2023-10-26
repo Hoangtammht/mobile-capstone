@@ -53,7 +53,7 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
         title: Text(
           'CÀI ĐẶT BÃI XE',
           style: TextStyle(
-            fontSize: 26 * ffem,
+            fontSize: 30 * ffem,
             fontWeight: FontWeight.w700,
             height: 1.175 * ffem / fem,
             color: const Color(0xffffffff),
@@ -74,7 +74,7 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 5 * fem),
                     child: Text('Mức phí & hoạt động', style: TextStyle(
-                        fontSize: 18 * fem,
+                        fontSize: 22 * fem,
                         fontWeight: FontWeight.bold
                     ),),
                   ),
@@ -93,7 +93,7 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
                             'Ban ngày',
                             textAlign:  TextAlign.center,
                             style:  TextStyle (
-                              fontSize:  19*ffem,
+                              fontSize:  22*ffem,
                               fontWeight:  FontWeight.w500,
                               height:  1.175*ffem/fem,
                               color:  Color(0xff222222),
@@ -104,7 +104,7 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
                           padding: EdgeInsets.symmetric(vertical: 5 * fem),
                           child: Text('Mức phí', style: TextStyle(
                               color: Colors.grey,
-                              fontSize: 15 * fem,
+                              fontSize: 22 * fem,
                               fontWeight: FontWeight.w400
                           ),),
                         ),
@@ -119,7 +119,7 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
                             controller: _priceOfMethodOneController,
                             keyboardType: TextInputType.number,
                             style: TextStyle(
-                              fontSize: 16 * ffem,
+                              fontSize: 22 * ffem,
                               fontWeight: FontWeight.w400,
                               height: 1.175 * ffem / fem,
                               color: Color(0xff9e9e9e),
@@ -133,7 +133,7 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
                           padding: EdgeInsets.symmetric(vertical: 5 * fem),
                           child: Text('Thời gian hoạt động', style: TextStyle(
                               color: Colors.grey,
-                              fontSize: 15 * fem,
+                              fontSize: 22 * fem,
                               fontWeight: FontWeight.w400
                           ),
                           ),
@@ -157,7 +157,7 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
                                   Text(
                                     '6 AM',
                                     style:  TextStyle (
-                                      fontSize:  16*ffem,
+                                      fontSize:  22*ffem,
                                       fontWeight:  FontWeight.w400,
                                       height:  1.2175*ffem/fem,
                                       color:  Color(0x7f222222),
@@ -184,7 +184,7 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
                                   Text(
                                     '18 PM',
                                     style:  TextStyle (
-                                      fontSize:  16*ffem,
+                                      fontSize:  22*ffem,
                                       fontWeight:  FontWeight.w400,
                                       height:  1.2175*ffem/fem,
                                       color:  Color(0x7f222222),
@@ -222,7 +222,7 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
                             'Ban đêm',
                             textAlign:  TextAlign.center,
                             style:  TextStyle (
-                              fontSize:  19*ffem,
+                              fontSize:  22*ffem,
                               fontWeight:  FontWeight.w500,
                               height:  1.175*ffem/fem,
                               color:  Color(0xff222222),
@@ -233,7 +233,7 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
                           padding: EdgeInsets.symmetric(vertical: 5 * fem),
                           child: Text('Mức phí', style: TextStyle(
                               color: Colors.grey,
-                              fontSize: 15 * fem,
+                              fontSize: 22 * fem,
                               fontWeight: FontWeight.w400
                           ),),
                         ),
@@ -248,7 +248,7 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
                             controller: _priceOfMethodTwoController,
                             keyboardType: TextInputType.number,
                             style: TextStyle(
-                              fontSize: 16 * ffem,
+                              fontSize: 22 * ffem,
                               fontWeight: FontWeight.w400,
                               height: 1.175 * ffem / fem,
                               color: Color(0xff9e9e9e),
@@ -262,7 +262,7 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
                           padding: EdgeInsets.symmetric(vertical: 5 * fem),
                           child: Text('Thời gian hoạt động', style: TextStyle(
                               color: Colors.grey,
-                              fontSize: 15 * fem,
+                              fontSize: 22 * fem,
                               fontWeight: FontWeight.w400
                           ),
                           ),
@@ -286,7 +286,7 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
                                   Text(
                                     '18 PM',
                                     style:  TextStyle (
-                                      fontSize:  16*ffem,
+                                      fontSize:  22*ffem,
                                       fontWeight:  FontWeight.w400,
                                       height:  1.2175*ffem/fem,
                                       color:  Color(0x7f222222),
@@ -313,7 +313,7 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
                                   Text(
                                     '23 PM',
                                     style:  TextStyle (
-                                      fontSize:  16*ffem,
+                                      fontSize:  22*ffem,
                                       fontWeight:  FontWeight.w400,
                                       height:  1.2175*ffem/fem,
                                       color:  Color(0x7f222222),
@@ -324,28 +324,6 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
                             ],
                           ),
                         ),
-                        if(_firstAddClicked)
-                          InkWell(
-                            onTap: (){
-                              setState(() {
-                                isIconVisibleOne = true;
-                              });
-                            },
-                            child: Container(
-                              margin:  EdgeInsets.fromLTRB(0*fem, 25*fem, 0*fem, 0*fem),
-                              width:  361*fem,
-                              height:  51*fem,
-                              decoration:  BoxDecoration (
-                                color: Colors.red,
-                                borderRadius:  BorderRadius.circular(9*fem),
-                              ),
-                              child:
-                              Center(
-                                child:
-                                Icon(Icons.delete_forever_outlined, color: Colors.white,),
-                              ),
-                            ),
-                          ),
                       ],
                     ),
 
@@ -374,7 +352,7 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
                             'Qua đêm',
                             textAlign:  TextAlign.center,
                             style:  TextStyle (
-                              fontSize:  19*ffem,
+                              fontSize:  22*ffem,
                               fontWeight:  FontWeight.w500,
                               height:  1.175*ffem/fem,
                               color:  Color(0xff222222),
@@ -385,7 +363,7 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
                           padding: EdgeInsets.symmetric(vertical: 5 * fem),
                           child: Text('Mức phí', style: TextStyle(
                               color: Colors.grey,
-                              fontSize: 15 * fem,
+                              fontSize: 22 * fem,
                               fontWeight: FontWeight.w400
                           ),),
                         ),
@@ -401,7 +379,7 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
                             controller: _priceOfMethodThreeController,
                             keyboardType: TextInputType.number,
                             style: TextStyle(
-                              fontSize: 16 * ffem,
+                              fontSize: 22 * ffem,
                               fontWeight: FontWeight.w400,
                               height: 1.175 * ffem / fem,
                               color: Color(0xff9e9e9e),
@@ -416,7 +394,7 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
                           padding: EdgeInsets.symmetric(vertical: 5 * fem),
                           child: Text('Thời gian hoạt động', style: TextStyle(
                               color: Colors.grey,
-                              fontSize: 15 * fem,
+                              fontSize: 22 * fem,
                               fontWeight: FontWeight.w400
                           ),
                           ),
@@ -441,7 +419,7 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
                                   Text(
                                     '23 PM',
                                     style: TextStyle(
-                                      fontSize: 16 * ffem,
+                                      fontSize: 22 * ffem,
                                       fontWeight: FontWeight.w400,
                                       height: 1.2175 * ffem / fem,
                                       color: Color(0x7f222222),
@@ -469,7 +447,7 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
                                   Text(
                                     '11 PM',
                                     style: TextStyle(
-                                      fontSize: 16 * ffem,
+                                      fontSize: 22 * ffem,
                                       fontWeight: FontWeight.w400,
                                       height: 1.2175 * ffem / fem,
                                       color: Color(0x7f222222),
@@ -521,7 +499,7 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
                         Text(
                           'Lưu thay đổi',
                           style:  TextStyle (
-                            fontSize:  19*ffem,
+                            fontSize:  25*ffem,
                             fontWeight:  FontWeight.w600,
                             height:  1.175*ffem/fem,
                             color:  Color(0xffffffff),
@@ -590,7 +568,7 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
                       'Hệ thống đã lưu thay đổi của bạn !',
                       textAlign:  TextAlign.center,
                       style:  TextStyle (
-                        fontSize:  16*ffem,
+                        fontSize:  20*ffem,
                         fontWeight:  FontWeight.w400,
                         height:  1.2175*ffem/fem,
                         color:  Color(0xff999999),
@@ -624,7 +602,7 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
                             'Ok',
                             textAlign:  TextAlign.center,
                             style:  TextStyle (
-                              fontSize:  16*ffem,
+                              fontSize:  20*ffem,
                               fontWeight:  FontWeight.w600,
                               height:  1.175*ffem/fem,
                               color:  Color(0xffffffff),
@@ -694,7 +672,7 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
                       'Việc chuyển đổi dữ liệu đã thất bại !',
                       textAlign:  TextAlign.center,
                       style:  TextStyle (
-                        fontSize:  16*ffem,
+                        fontSize:  20*ffem,
                         fontWeight:  FontWeight.w400,
                         height:  1.2175*ffem/fem,
                         color:  Color(0xff999999),
@@ -728,7 +706,7 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
                             'Ok',
                             textAlign:  TextAlign.center,
                             style:  TextStyle (
-                              fontSize:  16*ffem,
+                              fontSize:  20*ffem,
                               fontWeight:  FontWeight.w600,
                               height:  1.175*ffem/fem,
                               color:  Color(0xffffffff),

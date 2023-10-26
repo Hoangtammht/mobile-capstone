@@ -10,7 +10,7 @@ class ContractExpiredScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: Text('Parco', style: TextStyle(
-          fontSize:  26*ffem,
+          fontSize:  35*ffem,
           fontWeight:  FontWeight.w500,
           height:  1.175*ffem/fem,
           fontStyle:  FontStyle.italic,
@@ -33,7 +33,7 @@ class ContractExpiredScreen extends StatelessWidget {
               child: Text('Hợp đồng bãi đỗ xe của bạn \nđã hết hiệu lực',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 20 * fem,
+                  fontSize: 22 * fem,
                   fontWeight: FontWeight.bold,
               ),
               ),
@@ -43,7 +43,7 @@ class ContractExpiredScreen extends StatelessWidget {
               child: Text('Liên hệ số điện thoại \n0912345678 \nđể được hỗ trợ',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 20 * fem,
+                  fontSize: 22 * fem,
                   fontWeight: FontWeight.w400
               ),),
             ),

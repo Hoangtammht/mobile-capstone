@@ -60,10 +60,10 @@ class HistoryAPI{
         HistoryDetail historyDetail = HistoryDetail.fromJson(data);
         return historyDetail;
       } else {
-        throw Exception('Failed to get HistoryList');
+        throw Exception('Failed to get History Detail');
       }
     } catch (e) {
-      throw Exception('Failed to get HistoryList: $e');
+      throw Exception('Failed to get History Detail: $e');
     }
   }
 

@@ -1,8 +1,6 @@
-import 'package:fe_capstone/blocs/WalletDataProvider.dart';
 import 'package:fe_capstone/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:provider/provider.dart';
 
 class RechargeWebViewScreen extends StatefulWidget {
   final String url;
@@ -47,17 +45,12 @@ Widget build(BuildContext context) {
                 onLoadStop: (InAppWebViewController controller, Uri? url) async {
                   if (url.toString().contains('vnp_ResponseCode=00')) {
                     Navigator.pop(context);
-                    Navigator.pop(context);
-
-                    final walletProvider = Provider.of<WalletDataProvider>(context, listen: false);
-                    await walletProvider.updateTransactions();
-
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
                           title: Text(
-                            'Nạp tiền thành công',
+                            'Thanh toán thành công',
                             style: TextStyle(
                               fontSize: 22 * fem,
                               fontWeight: FontWeight.bold,
@@ -81,21 +74,17 @@ Widget build(BuildContext context) {
                       },
                     );
                   }
-
-
                   if (url.toString().contains('vnp_ResponseCode=24') || url.toString().contains('vnp_ResponseCode=01') || url.toString().contains('vnp_ResponseCode=02')
                       || url.toString().contains('vnp_ResponseCode=03') || url.toString().contains('vnp_ResponseCode=04') || url.toString().contains('vnp_ResponseCode=08')
                       || url.toString().contains('vnp_ResponseCode=79') || url.toString().contains('vnp_ResponseCode=97')
                   ) {
-
-                    Navigator.pop(context);
                     Navigator.pop(context);
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
                           title: Text(
-                            'Nạp tiền thất bại',
+                            'Thanh toán thất bại',
                             style: TextStyle(
                               fontSize: 22 * fem,
                               fontWeight: FontWeight.bold,
@@ -120,8 +109,6 @@ Widget build(BuildContext context) {
                     );
 
                   }
-
-
                 },
                 onProgressChanged: (InAppWebViewController controller, int process){
                   setState(() {

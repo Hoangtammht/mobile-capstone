@@ -59,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Text(
                           'PARCO',
                           style: TextStyle(
-                            fontSize: 24 * ffem,
+                            fontSize: 30 * ffem,
                             fontWeight: FontWeight.w600,
                             height: 1.2175 * ffem / fem,
                             fontStyle: FontStyle.italic,
@@ -198,7 +198,7 @@ class HomeScreenContent extends StatelessWidget {
                         child: Text(
                           'BÃI ĐỖ GẦN ĐÂY (6)',
                           style: TextStyle(
-                            fontSize: 20 * ffem,
+                            fontSize: 25 * ffem,
                             fontWeight: FontWeight.w600,
                             height: 1.175 * ffem / fem,
                           ),
@@ -231,9 +231,8 @@ class HomeScreenContent extends StatelessWidget {
                                   child: Text(
                                     'Rẻ nhất',
                                     style: TextStyle(
-                                      fontSize: 9 * ffem,
+                                      fontSize: 14 * ffem,
                                       fontWeight: FontWeight.w600,
-                                      height: 1.175 * ffem / fem,
                                       color: Color(0xff5b5b5b),
                                     ),
                                   ),
@@ -253,9 +252,8 @@ class HomeScreenContent extends StatelessWidget {
                                   child: Text(
                                     'Gần nhất',
                                     style: TextStyle(
-                                      fontSize: 9 * ffem,
+                                      fontSize: 14 * ffem,
                                       fontWeight: FontWeight.w600,
-                                      height: 1.175 * ffem / fem,
                                       color: Color(0xff5b5b5b),
                                     ),
                                   ),
@@ -360,12 +358,12 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                         Text(
                           'Khách sạn Romactic',
                           style: TextStyle(
-                              fontSize: 24 * fem, fontWeight: FontWeight.bold),
+                              fontSize: 30 * fem, fontWeight: FontWeight.bold),
                         ),
                         IconButton(
                           onPressed: () {
                             widget
-                                .closeParkingDetail(); // Gọi hàm để đóng màn hình chi tiết
+                                .closeParkingDetail();
                           },
                           icon: Icon(Icons.close),
                         )
@@ -373,7 +371,7 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                     ),
                     Text(
                       '681A Đ. Nguyễn Huệ, Bến Nghé, Quận 1, TP HCM',
-                      style: TextStyle(fontSize: 15 * fem, color: Colors.grey),
+                      style: TextStyle(fontSize: 18 * fem, color: Colors.grey),
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 5 * fem),
@@ -400,7 +398,7 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                                   child: Text(
                                     'Sáng',
                                     style: TextStyle(
-                                      fontSize: 12 * ffem,
+                                      fontSize: 15 * ffem,
                                       fontWeight: FontWeight.w400,
                                       height: 1.175 * ffem / fem,
                                       color: Color(0xff5b5b5b),
@@ -438,7 +436,7 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                                   child: Text(
                                     'Tối',
                                     style: TextStyle(
-                                      fontSize: 12 * ffem,
+                                      fontSize: 15 * ffem,
                                       fontWeight: FontWeight.w400,
                                       height: 1.175 * ffem / fem,
                                       color: Color(0xff5b5b5b),
@@ -476,7 +474,7 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                                   child: Text(
                                     'Qua đêm',
                                     style: TextStyle(
-                                      fontSize: 12 * ffem,
+                                      fontSize: 15 * ffem,
                                       fontWeight: FontWeight.w400,
                                       height: 1.175 * ffem / fem,
                                       color: Color(0xff5b5b5b),
@@ -514,7 +512,7 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                                   child: Text(
                                     'Chỗ trống',
                                     style: TextStyle(
-                                      fontSize: 12 * ffem,
+                                      fontSize: 15 * ffem,
                                       fontWeight: FontWeight.w400,
                                       height: 1.175 * ffem / fem,
                                       color: Color(0xff5b5b5b),
@@ -552,7 +550,7 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                                   child: Text(
                                     'Cách',
                                     style: TextStyle(
-                                      fontSize: 12 * ffem,
+                                      fontSize: 15 * ffem,
                                       fontWeight: FontWeight.w400,
                                       height: 1.175 * ffem / fem,
                                       color: Color(0xff5b5b5b),
@@ -599,7 +597,7 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                                 child: Text(
                                   'Xem đánh giá',
                                   style: TextStyle(
-                                    fontSize: 16 * ffem,
+                                    fontSize: 20 * ffem,
                                     fontWeight: FontWeight.w600,
                                     height: 1.175 * ffem / fem,
                                     color: Color(0xff000000),
@@ -628,7 +626,7 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                                 child: Text(
                                   'Đặt chỗ gửi',
                                   style: TextStyle(
-                                    fontSize: 16 * ffem,
+                                    fontSize: 20 * ffem,
                                     fontWeight: FontWeight.w600,
                                     height: 1.175 * ffem / fem,
                                     color: Colors.white,

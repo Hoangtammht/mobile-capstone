@@ -65,7 +65,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       left: 0 * fem,
                       top: 0 * fem,
                       child: Container(
-                        width: 390 * fem,
+                        width: mq.width,
                         height: 120 * fem,
                         decoration: BoxDecoration(
                           color: Theme.of(context).primaryColor,
@@ -105,7 +105,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                               child: Text(
                                 'Mật khẩu cũ',
                                 style: TextStyle(
-                                  fontSize: 19 * ffem,
+                                  fontSize: 25 * ffem,
                                   fontWeight: FontWeight.w600,
                                   height: 1.175 * ffem / fem,
                                   color: Color(0xff000000),
@@ -127,9 +127,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                 obscureText:
                                     isOldPasswordVisible ? false : true,
                                 style: TextStyle(
-                                  fontSize: 20 * ffem,
+                                  fontSize: 22 * ffem,
                                   fontWeight: FontWeight.w600,
-                                  height: 1.175 * ffem / fem,
                                   color: Theme.of(context).primaryColor,
                                 ),
                                 decoration: InputDecoration(
@@ -160,7 +159,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                               child: Text(
                                 'Mật khẩu mới',
                                 style: TextStyle(
-                                  fontSize: 19 * ffem,
+                                  fontSize: 25 * ffem,
                                   fontWeight: FontWeight.w600,
                                   height: 1.175 * ffem / fem,
                                   color: Color(0xff000000),
@@ -184,9 +183,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                     ? false
                                     : true, // Để ẩn mật khẩu nếu đây là ô mật khẩu
                                 style: TextStyle(
-                                  fontSize: 20 * ffem,
+                                  fontSize: 22 * ffem,
                                   fontWeight: FontWeight.w600,
-                                  height: 1.175 * ffem / fem,
                                   color: Theme.of(context).primaryColor,
                                 ),
                                 decoration: InputDecoration(
@@ -220,7 +218,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                               child: Text(
                                 'Nhập lại mật khẩu mới',
                                 style: TextStyle(
-                                  fontSize: 19 * ffem,
+                                  fontSize: 25 * ffem,
                                   fontWeight: FontWeight.w600,
                                   height: 1.175 * ffem / fem,
                                   color: Color(0xff000000),
@@ -242,11 +240,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                 controller: _ReNewPasswordController,
                                 obscureText: isNewConfirmPasswordVisible
                                     ? false
-                                    : true, // Để ẩn mật khẩu nếu đây là ô mật khẩu
+                                    : true,
                                 style: TextStyle(
-                                  fontSize: 20 * ffem,
+                                  fontSize: 22 * ffem,
                                   fontWeight: FontWeight.w600,
-                                  height: 1.175 * ffem / fem,
                                   color: Theme.of(context).primaryColor,
                                 ),
                                 decoration: InputDecoration(
@@ -259,9 +256,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                     icon: Icon(
                                       isNewConfirmPasswordVisible
                                           ? Icons
-                                              .visibility // Hiển thị khi mật khẩu ẩn
+                                              .visibility
                                           : Icons
-                                              .visibility_off, // Màu của icon
+                                              .visibility_off,
                                     ),
                                     onPressed: () {
                                       setState(() {
@@ -313,7 +310,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                   child: Text(
                                     'Lưu mật khẩu',
                                     style: TextStyle(
-                                      fontSize: 16 * ffem,
+                                      fontSize: 25 * ffem,
                                       fontWeight: FontWeight.w600,
                                       height: 1.175 * ffem / fem,
                                       color: Color(0xffffffff),
@@ -370,7 +367,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     child: Text(
                       'Chúc mừng bạn!',
                       style: TextStyle(
-                        fontSize: 24 * ffem,
+                        fontSize: 30 * ffem,
                         fontWeight: FontWeight.w600,
                         height: 1.175 * ffem / fem,
                         color: Color(0xff000000),
@@ -384,7 +381,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       'Hệ thống đã lưu thay đổi của bạn!',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontSize: 16 * ffem,
+                        fontSize: 20 * ffem,
                         fontWeight: FontWeight.w400,
                         height: 1.2175 * ffem / fem,
                         color: Color(0xff999999),
@@ -415,7 +412,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                             'Ok',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: 16 * ffem,
+                              fontSize: 22 * ffem,
                               fontWeight: FontWeight.w600,
                               height: 1.175 * ffem / fem,
                               color: Color(0xffffffff),

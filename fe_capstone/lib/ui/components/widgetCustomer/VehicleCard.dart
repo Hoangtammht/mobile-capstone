@@ -1,11 +1,27 @@
 import 'package:fe_capstone/apis/customer/VehicleAPI.dart';
+import 'package:fe_capstone/blocs/VehicleProvider.dart';
+import 'package:fe_capstone/main.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class VehicleCard extends StatelessWidget {
+class VehicleCard extends StatefulWidget {
   final String vehicleNumber;
   final int vehicleID;
 
   const VehicleCard({Key? key, required this.vehicleNumber, required this.vehicleID}) : super(key: key);
+
+  @override
+  State<VehicleCard> createState() => _VehicleCardState();
+}
+
+class _VehicleCardState extends State<VehicleCard> {
+  late VehicleProvider _vehicleProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    _vehicleProvider = Provider.of<VehicleProvider>(context, listen: false);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,13 +35,13 @@ class VehicleCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      vehicleNumber,
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                      widget.vehicleNumber,
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22 * fem),
                     ),
                     IconButton(
                       icon: Icon(
                         Icons.delete,
-                        color: Colors.red, // Màu biểu tượng xóa có thể thay đổi
+                        color: Colors.red,
                       ),
                       onPressed: () {
                         _showDeleteConfirmationDialog(context);
@@ -49,7 +65,7 @@ class VehicleCard extends StatelessWidget {
 
   Future<void> _handleDeleteVehicle(BuildContext context) async {
     try {
-      await VehicleAPI.deleteNewLicencePlate(vehicleID);
+      await _vehicleProvider.deleteVehicle(widget.vehicleID);
       Navigator.of(context).pop();
 
     } catch (error) {
@@ -78,10 +94,10 @@ class VehicleCard extends StatelessWidget {
                     maxWidth: 300,
                   ),
                   child: Text(
-                    'Xóa biển số xe $vehicleNumber khỏi tài khoản của bạn?',
+                    'Xóa biển số xe ${widget.vehicleNumber} khỏi tài khoản của bạn?',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: 22,
                       fontWeight: FontWeight.w400,
                       color: Color(0xff000000),
                     ),
@@ -95,7 +111,7 @@ class VehicleCard extends StatelessWidget {
                         children: [
                           Container(
                             height: 1,
-                            color: Color(0xffb3abab), // Đường thẳng ngang
+                            color: Color(0xffb3abab),
                           ),
                           TextButton(
                             onPressed: () {
@@ -104,7 +120,7 @@ class VehicleCard extends StatelessWidget {
                             child: Text(
                               'Hủy',
                               style: TextStyle(
-                                fontSize: 20,
+                                fontSize: 22,
                                 fontWeight: FontWeight.w600,
                                 color: Color(0xff5767f5),
                               ),
@@ -118,7 +134,7 @@ class VehicleCard extends StatelessWidget {
                         Container(
                           width: 1,
                           height: 48,
-                          color: Color(0xffb3abab), // Đường thẳng dọc
+                          color: Color(0xffb3abab),
                         ),
                       ],
                     ),
@@ -136,7 +152,7 @@ class VehicleCard extends StatelessWidget {
                             child: Text(
                               'Xóa',
                               style: TextStyle(
-                                fontSize: 20,
+                                fontSize: 22,
                                 fontWeight: FontWeight.w600,
                                 color: Color(0xffff3737),
                               ),
@@ -155,5 +171,4 @@ class VehicleCard extends StatelessWidget {
       },
     );
   }
-
 }
