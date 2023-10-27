@@ -20,7 +20,6 @@ class _BottomTabNavCustomerState extends State<BottomTabNavCustomer> {
   @override
   void initState() {
     super.initState();
-    FirebaseAPI.getFirebaseMessagingToken();
   }
 
   List<Widget> _buildScreens() {

@@ -6,12 +6,13 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 class FirebaseAPI {
   static FirebaseMessaging fcmMessaging = FirebaseMessaging.instance;
 
-  static Future<void> getFirebaseMessagingToken() async {
+  static Future<String?> getFirebaseMessagingToken() async {
     await fcmMessaging.requestPermission();
     final fcmToken = await fcmMessaging.getToken();
     print('Token: $fcmToken');
     initPushNotifications();
     initLocalNotifications();
+    return fcmToken;
   }
 }
 

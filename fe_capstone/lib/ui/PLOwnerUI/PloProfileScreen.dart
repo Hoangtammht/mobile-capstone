@@ -419,7 +419,13 @@ class _PloProfileScreenState extends State<PloProfileScreen> {
                     ),
                     InkWell(
                       onTap: () async {
-                        await UserPreferences.logout();
+                        SharedPreferences prefs = await SharedPreferences.getInstance();
+                        String? deviceToken = prefs.getString('device_token');
+                        if (deviceToken != null) {
+                          await AuthAPIs.deleteDeviceToken(deviceToken);
+                          prefs.remove('device_token');
+                          await UserPreferences.logout();
+                        }
                         PersistentNavBarNavigator.pushNewScreen(context, screen: LoginScreen(), withNavBar: false, pageTransitionAnimation: PageTransitionAnimation.cupertino, );
                       },
                       child: Container(

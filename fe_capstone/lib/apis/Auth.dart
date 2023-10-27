@@ -1,8 +1,10 @@
 import 'package:dio/dio.dart';
+import 'package:fe_capstone/apis/FirebaseAPI.dart';
 import 'package:fe_capstone/blocs/UserPreferences.dart';
 import 'package:fe_capstone/models/CustomerDetail.dart';
 import 'package:fe_capstone/models/PloDetail.dart';
 import 'package:fe_capstone/models/UpdateProfileRequest.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class AuthAPIs {
@@ -26,12 +28,73 @@ class AuthAPIs {
 
       if (response.statusCode == 200) {
         await UserPreferences.setAccessToken(response.data['access_token']);
+        String? deviceToken = await FirebaseAPI.getFirebaseMessagingToken();
+        await AuthAPIs.addDeviceToken(deviceToken!);
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString("device_token", deviceToken);
       } else {
         throw Exception(
             'Tài khoản hoặc mật khẩu không đúng. Vui lòng đăng nhập lại.');
       }
     } catch (e) {
       throw Exception('Login failed. Please check your credentials.');
+    }
+  }
+
+  static Future<void> addDeviceToken(String deviceToken) async {
+    try {
+      String? token = await UserPreferences.getAccessToken();
+      if (token == null) {
+        throw Exception('Access token is null');
+      }
+      var response = await dio.post(
+        '$baseUrl/user/addDeviceToken',
+        data: {
+          "deviceToken": deviceToken,
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        print('Thêm device token thành công');
+      } else {
+        throw Exception('Failed to add device token.');
+      }
+    } catch (e) {
+      throw Exception('Failed to add device token: $e');
+    }
+  }
+
+  static Future<void> deleteDeviceToken(String deviceToken) async {
+    try {
+      String? token = await UserPreferences.getAccessToken();
+      if (token == null) {
+        throw Exception('Access token is null');
+      }
+      var response = await dio.delete(
+        '$baseUrl/user/deleteDeviceToken',
+        queryParameters: {
+          "deviceToken": deviceToken,
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json'
+          },
+        ),
+      );
+      if (response.statusCode == 200) {
+        print('Xóa device token thành công');
+      } else {
+        throw Exception('Failed to delete device token.');
+      }
+    } catch (e) {
+      throw Exception('Failed to delete device token: $e');
     }
   }
 
@@ -87,10 +150,10 @@ class AuthAPIs {
         CustomerProfile customerProfile = CustomerProfile.fromJson(data);
         return customerProfile;
       } else {
-        throw Exception('Failed to get PloProfile');
+        throw Exception('Failed to get customer');
       }
     } catch (e) {
-      throw Exception('Failed to get PloProfile: $e');
+      throw Exception('Failed to get customer: $e');
     }
   }
 
