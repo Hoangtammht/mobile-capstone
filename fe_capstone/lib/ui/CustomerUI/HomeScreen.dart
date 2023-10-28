@@ -1,4 +1,6 @@
+import 'package:fe_capstone/apis/customer/SearchParkingAPI.dart';
 import 'package:fe_capstone/main.dart';
+import 'package:fe_capstone/models/Parking.dart';
 import 'package:fe_capstone/ui/screens/ChatScreen.dart';
 import 'package:fe_capstone/ui/CustomerUI/RatingScreen.dart';
 import 'package:fe_capstone/ui/CustomerUI/ReservationScreen.dart';
@@ -10,6 +12,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:vietmap_flutter_gl/vietmap_flutter_gl.dart';
 import 'package:dio/dio.dart';
+
+typedef MethodCallback = void Function(int method);
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -34,14 +38,14 @@ class _HomeScreenState extends State<HomeScreen> {
   late double lat;
   late double long;
 
-  late TextEditingController _searchController;
+  late TextEditingController _searchController = TextEditingController();
   List<dynamic> autoSearchResults = [];
   bool showSearchResults = false;
+  late List<Parking> parkingList = [];
 
   @override
   void initState() {
     super.initState();
-    _searchController = TextEditingController();
   }
 
   @override
@@ -74,7 +78,6 @@ class _HomeScreenState extends State<HomeScreen> {
     if (!serverEnabled) {
       return Future.error('Location services are disabled');
     }
-
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
@@ -82,22 +85,11 @@ class _HomeScreenState extends State<HomeScreen> {
         return Future.error('Location services are disabled');
       }
     }
-
     if (permission == LocationPermission.deniedForever) {
       return Future.error(
           'Location permission are permanently denied disabled, We cannot request permission');
     }
-
     return await Geolocator.getCurrentPosition();
-  }
-
-  Future<void> _openMap(double lat, double long) async {
-    String googleURL =
-        'https://www.google.com/maps/search/?api=1&query=$lat,$long';
-
-    await canLaunchUrlString(googleURL)
-        ? await launchUrlString(googleURL)
-        : throw 'Could not launch $googleURL';
   }
 
   void performAutoSearch(String searchText) async {
@@ -108,7 +100,6 @@ class _HomeScreenState extends State<HomeScreen> {
       var response = await dio.get(url);
       if (response.statusCode == 200) {
         var data = response.data;
-        print('AutoSearch Result: $data');
         setState(() {
           autoSearchResults = data;
         });
@@ -120,6 +111,18 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  Future<void> _fetchParkingList(double latitude, double longitude, int method, double radius) async {
+    double radius = 5.0;
+    try {
+      List<Parking> fetchedParkingList = await SearchParkingAPI.findParkingList(latitude, longitude, method, radius);
+      setState(() {
+        parkingList = fetchedParkingList;
+      });
+    } catch (e) {
+      print('Error fetching parking list: $e');
+    }
+  }
+
   void getLatAndLong(String refId) async {
     String url = "https://maps.vietmap.vn/api/place/v3?apikey=c3d0f188ff669f89042771a20656579073cffec5a8a69747&refid=$refId";
     try {
@@ -127,7 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
       var response = await dio.get(url);
       if (response.statusCode == 200) {
         var data = response.data;
-        setState(() {
+        setState(() async {
           lat = data['lat'];
           long = data['lng'];
           showSearchResults = false;
@@ -153,6 +156,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               latLng: LatLng(lat, long)));
+          await _fetchParkingList(lat, long, 1, 5.0);
         });
       } else {
         print('AutoSearch Request Failed with status: ${response.statusCode}');
@@ -376,7 +380,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 );
               } else {
-                return HomeScreenContent(scrollController, showParkingDetailContent);
+                return HomeScreenContent(scrollController, showParkingDetailContent, parkingList, (int method) {
+                  setState(() {
+                    _fetchParkingList(lat, long, method, 5.0);
+                  });
+                },);
               }
             },
           ),
@@ -395,7 +403,7 @@ class _HomeScreenState extends State<HomeScreen> {
               tooltip: 'Vị trí hiện tại',
               backgroundColor: Colors.white,
               onPressed: () {
-                _getCurrentLocation().then((value) {
+                _getCurrentLocation().then((value) async {
                   lat = double.parse('${value.latitude}');
                   long = double.parse('${value.longitude}');
                   liveLocation();
@@ -419,6 +427,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                       latLng: LatLng(value.latitude, value.longitude)));
+                  await _fetchParkingList(lat, long, 1, 5.0);
                 });
               },
               child: Icon(Icons.location_searching, color: Colors.grey,),
@@ -432,11 +441,34 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class HomeScreenContent extends StatelessWidget {
+class HomeScreenContent extends StatefulWidget {
   final ScrollController scrollController;
   final Function showParkingDetail;
+  final List<Parking> parkingList;
+  final MethodCallback onMethodSelected;
 
-  const HomeScreenContent(this.scrollController, this.showParkingDetail);
+  const HomeScreenContent(this.scrollController, this.showParkingDetail, this.parkingList, this.onMethodSelected);
+
+  @override
+  State<HomeScreenContent> createState() => _HomeScreenContentState();
+}
+
+class _HomeScreenContentState extends State<HomeScreenContent> {
+  bool isNearestSelected = false;
+  bool isCheapestSelected = false;
+
+  void selectMethod(int method) {
+    setState(() {
+      if (method == 1) {
+        isNearestSelected = true;
+        isCheapestSelected = false;
+      } else {
+        isNearestSelected = false;
+        isCheapestSelected = true;
+      }
+      widget.onMethodSelected(method);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -445,19 +477,15 @@ class HomeScreenContent extends StatelessWidget {
       children: [
         Expanded(
           child: ListView(
-            controller: scrollController,
+            controller: widget.scrollController,
             children: [
               Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: Colors.grey[100],
+                  color: Colors.white,
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(26 * fem),
                     topRight: Radius.circular(26 * fem),
-                  ),
-                  border: Border.all(
-                    color: Colors.red,
-                    width: 2.0,
                   ),
                 ),
                 child: Column(
@@ -480,7 +508,7 @@ class HomeScreenContent extends StatelessWidget {
                       Padding(
                         padding: EdgeInsets.only(bottom: 5 * fem),
                         child: Text(
-                          'BÃI ĐỖ GẦN ĐÂY (6)',
+                          'BÃI ĐỖ GẦN ĐÂY (${widget.parkingList.length})',
                           style: TextStyle(
                             fontSize: 25 * ffem,
                             fontWeight: FontWeight.w600,
@@ -502,43 +530,76 @@ class HomeScreenContent extends StatelessWidget {
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Container(
-                                width: 64 * fem,
-                                height: 20 * fem,
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Color(0xff5b5b5b)),
-                                  color: Color(0xffffffff),
-                                  borderRadius:
-                                      BorderRadius.circular(100 * fem),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    'Rẻ nhất',
-                                    style: TextStyle(
-                                      fontSize: 14 * ffem,
-                                      fontWeight: FontWeight.w600,
-                                      color: Color(0xff5b5b5b),
+                              InkWell(
+                                onTap: (){
+                                  selectMethod(1);
+                                },
+                                child: Container(
+                                  margin: EdgeInsets.only(left: 5 * fem),
+                                  width: 70 * fem,
+                                  height: 25 * fem,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Color(0xff5b5b5b)),
+                                    color: Color(0xffffffff),
+                                    borderRadius:
+                                    BorderRadius.circular(100 * fem),
+                                  ),
+                                  child: Center(
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                      children: [
+                                        if (isNearestSelected)
+                                          Icon(
+                                            Icons.check,
+                                            color: Colors.green,
+                                            size: 16 * fem,
+                                          ),
+                                        Text(
+                                          'Gần nhất',
+                                          style: TextStyle(
+                                            fontSize: 16 * ffem,
+                                            fontWeight: FontWeight.w600,
+                                            color: Color(0xff5b5b5b),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
                               ),
-                              Container(
-                                margin: EdgeInsets.only(left: 5 * fem),
-                                width: 64 * fem,
-                                height: 20 * fem,
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Color(0xff5b5b5b)),
-                                  color: Color(0xffffffff),
-                                  borderRadius:
-                                      BorderRadius.circular(100 * fem),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    'Gần nhất',
-                                    style: TextStyle(
-                                      fontSize: 14 * ffem,
-                                      fontWeight: FontWeight.w600,
-                                      color: Color(0xff5b5b5b),
+                              SizedBox(width: 5 * fem,),
+                              InkWell(
+                                onTap: (){
+                                  selectMethod(2);
+                                },
+                                child: Container(
+                                  width: 70 * fem,
+                                  height: 25 * fem,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Color(0xff5b5b5b)),
+                                    color: Color(0xffffffff),
+                                    borderRadius:
+                                        BorderRadius.circular(100 * fem),
+                                  ),
+                                  child: Center(
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                      children: [
+                                        if (isCheapestSelected)
+                                          Icon(
+                                            Icons.check,
+                                            color: Colors.green,
+                                            size: 16 * fem,
+                                          ),
+                                        Text(
+                                          'Rẻ nhất',
+                                          style: TextStyle(
+                                            fontSize: 16 * ffem,
+                                            fontWeight: FontWeight.w600,
+                                            color: Color(0xff5b5b5b),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
@@ -550,19 +611,33 @@ class HomeScreenContent extends StatelessWidget {
                     ]),
               ),
               Container(
-                  height: 400 * fem,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[100],
+                height: 400 * fem,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                ),
+                child: widget.parkingList.isEmpty
+                    ? Center(
+                  child: Text(
+                    'Không có bãi đỗ xe',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  child: ListView.builder(
-                      itemCount: 5,
-                      itemBuilder: (context, index) {
-                        return InkWell(
-                            onTap: () {
-                              showParkingDetail();
-                            },
-                            child: ListParkingCard());
-                      }))
+                )
+                    : ListView.builder(
+                  itemCount: widget.parkingList.length,
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                      onTap: () {
+                        widget.showParkingDetail();
+                      },
+                      child: ListParkingCard(parkingInfor: widget.parkingList[index]),
+                    );
+                  },
+                ),
+              )
+
             ],
           ),
         ),
@@ -605,13 +680,10 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
               Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
+                  color: Colors.white,
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(26 * fem),
                     topRight: Radius.circular(26 * fem),
-                  ),
-                  border: Border.all(
-                    color: Colors.red,
-                    width: 2.0,
                   ),
                 ),
                 child: Column(
@@ -633,322 +705,329 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                       ),
                     ]),
               ),
-              Padding(
-                padding: EdgeInsets.only(
-                    left: 10 * fem, right: 10 * fem, top: 5 * fem),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Khách sạn Romactic',
-                          style: TextStyle(
-                              fontSize: 30 * fem, fontWeight: FontWeight.bold),
-                        ),
-                        IconButton(
-                          onPressed: () {
-                            widget
-                                .closeParkingDetail();
-                          },
-                          icon: Icon(Icons.close),
-                        )
-                      ],
-                    ),
-                    Text(
-                      '681A Đ. Nguyễn Huệ, Bến Nghé, Quận 1, TP HCM',
-                      style: TextStyle(fontSize: 18 * fem, color: Colors.grey),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 5 * fem),
-                      child: RatingStars(rating: 4),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 5 * fem),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
+              Container(
+                width: mq.width,
+                padding: EdgeInsets.only(bottom: 40* fem),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                ),
+                child: Padding(
+                  padding: EdgeInsets.only(
+                      left: 10 * fem, right: 10 * fem, top: 5 * fem),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Container(
-                            padding: EdgeInsets.fromLTRB(
-                                15 * fem, 10 * fem, 15 * fem, 8 * fem),
-                            height: 50 * fem,
-                            decoration: BoxDecoration(
-                              color: Colors.grey[350],
-                              borderRadius: BorderRadius.circular(6 * fem),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Container(
-                                  margin: EdgeInsets.only(bottom: 6 * fem),
-                                  child: Text(
-                                    'Sáng',
-                                    style: TextStyle(
-                                      fontSize: 15 * ffem,
-                                      fontWeight: FontWeight.w400,
-                                      height: 1.175 * ffem / fem,
-                                      color: Color(0xff5b5b5b),
-                                    ),
-                                  ),
-                                ),
-                                Text(
-                                  '3k',
-                                  style: TextStyle(
-                                    fontSize: 15 * ffem,
-                                    fontWeight: FontWeight.w600,
-                                    height: 1.2175 * ffem / fem,
-                                    color: Color(0xff000000),
-                                  ),
-                                ),
-                              ],
-                            ),
+                          Text(
+                            'Khách sạn Romactic',
+                            style: TextStyle(
+                                fontSize: 30 * fem, fontWeight: FontWeight.bold),
                           ),
-                          SizedBox(
-                            width: 10 * fem,
-                          ),
-                          Container(
-                            padding: EdgeInsets.fromLTRB(
-                                15 * fem, 10 * fem, 15 * fem, 8 * fem),
-                            height: 50 * fem,
-                            decoration: BoxDecoration(
-                              color: Colors.grey[350],
-                              borderRadius: BorderRadius.circular(6 * fem),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Container(
-                                  margin: EdgeInsets.only(bottom: 6 * fem),
-                                  child: Text(
-                                    'Tối',
-                                    style: TextStyle(
-                                      fontSize: 15 * ffem,
-                                      fontWeight: FontWeight.w400,
-                                      height: 1.175 * ffem / fem,
-                                      color: Color(0xff5b5b5b),
-                                    ),
-                                  ),
-                                ),
-                                Text(
-                                  '3k',
-                                  style: TextStyle(
-                                    fontSize: 15 * ffem,
-                                    fontWeight: FontWeight.w600,
-                                    height: 1.2175 * ffem / fem,
-                                    color: Color(0xff000000),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            width: 10 * fem,
-                          ),
-                          Container(
-                            padding: EdgeInsets.fromLTRB(
-                                15 * fem, 10 * fem, 15 * fem, 8 * fem),
-                            height: 50 * fem,
-                            decoration: BoxDecoration(
-                              color: Colors.grey[350],
-                              borderRadius: BorderRadius.circular(6 * fem),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Container(
-                                  margin: EdgeInsets.only(bottom: 6 * fem),
-                                  child: Text(
-                                    'Qua đêm',
-                                    style: TextStyle(
-                                      fontSize: 15 * ffem,
-                                      fontWeight: FontWeight.w400,
-                                      height: 1.175 * ffem / fem,
-                                      color: Color(0xff5b5b5b),
-                                    ),
-                                  ),
-                                ),
-                                Text(
-                                  '4k',
-                                  style: TextStyle(
-                                    fontSize: 15 * ffem,
-                                    fontWeight: FontWeight.w600,
-                                    height: 1.2175 * ffem / fem,
-                                    color: Color(0xff000000),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            width: 10 * fem,
-                          ),
-                          Container(
-                            padding: EdgeInsets.fromLTRB(
-                                12 * fem, 10 * fem, 12 * fem, 8 * fem),
-                            height: 50 * fem,
-                            decoration: BoxDecoration(
-                              color: Colors.grey[350],
-                              borderRadius: BorderRadius.circular(6 * fem),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Container(
-                                  margin: EdgeInsets.only(bottom: 6 * fem),
-                                  child: Text(
-                                    'Chỗ trống',
-                                    style: TextStyle(
-                                      fontSize: 15 * ffem,
-                                      fontWeight: FontWeight.w400,
-                                      height: 1.175 * ffem / fem,
-                                      color: Color(0xff5b5b5b),
-                                    ),
-                                  ),
-                                ),
-                                Text(
-                                  '11',
-                                  style: TextStyle(
-                                    fontSize: 15 * ffem,
-                                    fontWeight: FontWeight.w600,
-                                    height: 1.2175 * ffem / fem,
-                                    color: Color(0xff000000),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            width: 10 * fem,
-                          ),
-                          Container(
-                            padding: EdgeInsets.fromLTRB(
-                                20 * fem, 10 * fem, 20 * fem, 8 * fem),
-                            height: 50 * fem,
-                            decoration: BoxDecoration(
-                              color: Colors.grey[350],
-                              borderRadius: BorderRadius.circular(6 * fem),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Container(
-                                  margin: EdgeInsets.only(bottom: 6 * fem),
-                                  child: Text(
-                                    'Cách',
-                                    style: TextStyle(
-                                      fontSize: 15 * ffem,
-                                      fontWeight: FontWeight.w400,
-                                      height: 1.175 * ffem / fem,
-                                      color: Color(0xff5b5b5b),
-                                    ),
-                                  ),
-                                ),
-                                Text(
-                                  '5m',
-                                  style: TextStyle(
-                                    fontSize: 15 * ffem,
-                                    fontWeight: FontWeight.w600,
-                                    height: 1.2175 * ffem / fem,
-                                    color: Color(0xff000000),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                          IconButton(
+                            onPressed: () {
+                              widget
+                                  .closeParkingDetail();
+                            },
+                            icon: Icon(Icons.close),
+                          )
                         ],
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10 * fem),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => RatingScreen()));
-                            },
-                            child: Container(
-                              padding: EdgeInsets.fromLTRB(
-                                  10 * fem, 10 * fem, 10 * fem, 10 * fem),
-                              margin: EdgeInsets.only(right: 10 * fem),
-                              width: 137 * fem,
-                              decoration: BoxDecoration(
-                                color: Color(0xffdcdada),
-                                borderRadius: BorderRadius.circular(6 * fem),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  'Xem đánh giá',
-                                  style: TextStyle(
-                                    fontSize: 20 * ffem,
-                                    fontWeight: FontWeight.w600,
-                                    height: 1.175 * ffem / fem,
-                                    color: Color(0xff000000),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          ReservationScreen()));
-                            },
-                            child: Container(
-                              padding: EdgeInsets.fromLTRB(
-                                  10 * fem, 10 * fem, 10 * fem, 10 * fem),
-                              width: 137 * fem,
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).primaryColor,
-                                borderRadius: BorderRadius.circular(6 * fem),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  'Đặt chỗ gửi',
-                                  style: TextStyle(
-                                    fontSize: 20 * ffem,
-                                    fontWeight: FontWeight.w600,
-                                    height: 1.175 * ffem / fem,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
+                      Text(
+                        '681A Đ. Nguyễn Huệ, Bến Nghé, Quận 1, TP HCM',
+                        style: TextStyle(fontSize: 18 * fem, color: Colors.grey),
                       ),
-                    ),
-                    Container(
-                        height: 200 * fem,
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 5 * fem),
+                        child: RatingStars(rating: 4),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 5 * fem),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            for (var imageUrl in images)
-                              InkWell(
-                                onTap: () {},
-                                child: Padding(
-                                  padding:
-                                      EdgeInsets.symmetric(horizontal: 5 * fem),
-                                  child: ClipRRect(
-                                    borderRadius:
-                                        BorderRadius.circular(10 * fem),
-                                    child: Image.network(
-                                      imageUrl,
-                                      fit: BoxFit.cover,
+                            Container(
+                              padding: EdgeInsets.fromLTRB(
+                                  15 * fem, 10 * fem, 15 * fem, 8 * fem),
+                              height: 50 * fem,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[350],
+                                borderRadius: BorderRadius.circular(6 * fem),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: 6 * fem),
+                                    child: Text(
+                                      'Sáng',
+                                      style: TextStyle(
+                                        fontSize: 15 * ffem,
+                                        fontWeight: FontWeight.w400,
+                                        height: 1.175 * ffem / fem,
+                                        color: Color(0xff5b5b5b),
+                                      ),
+                                    ),
+                                  ),
+                                  Text(
+                                    '3k',
+                                    style: TextStyle(
+                                      fontSize: 15 * ffem,
+                                      fontWeight: FontWeight.w600,
+                                      height: 1.2175 * ffem / fem,
+                                      color: Color(0xff000000),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              width: 10 * fem,
+                            ),
+                            Container(
+                              padding: EdgeInsets.fromLTRB(
+                                  15 * fem, 10 * fem, 15 * fem, 8 * fem),
+                              height: 50 * fem,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[350],
+                                borderRadius: BorderRadius.circular(6 * fem),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: 6 * fem),
+                                    child: Text(
+                                      'Tối',
+                                      style: TextStyle(
+                                        fontSize: 15 * ffem,
+                                        fontWeight: FontWeight.w400,
+                                        height: 1.175 * ffem / fem,
+                                        color: Color(0xff5b5b5b),
+                                      ),
+                                    ),
+                                  ),
+                                  Text(
+                                    '3k',
+                                    style: TextStyle(
+                                      fontSize: 15 * ffem,
+                                      fontWeight: FontWeight.w600,
+                                      height: 1.2175 * ffem / fem,
+                                      color: Color(0xff000000),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              width: 10 * fem,
+                            ),
+                            Container(
+                              padding: EdgeInsets.fromLTRB(
+                                  15 * fem, 10 * fem, 15 * fem, 8 * fem),
+                              height: 50 * fem,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[350],
+                                borderRadius: BorderRadius.circular(6 * fem),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: 6 * fem),
+                                    child: Text(
+                                      'Qua đêm',
+                                      style: TextStyle(
+                                        fontSize: 15 * ffem,
+                                        fontWeight: FontWeight.w400,
+                                        height: 1.175 * ffem / fem,
+                                        color: Color(0xff5b5b5b),
+                                      ),
+                                    ),
+                                  ),
+                                  Text(
+                                    '4k',
+                                    style: TextStyle(
+                                      fontSize: 15 * ffem,
+                                      fontWeight: FontWeight.w600,
+                                      height: 1.2175 * ffem / fem,
+                                      color: Color(0xff000000),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              width: 10 * fem,
+                            ),
+                            Container(
+                              padding: EdgeInsets.fromLTRB(
+                                  12 * fem, 10 * fem, 12 * fem, 8 * fem),
+                              height: 50 * fem,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[350],
+                                borderRadius: BorderRadius.circular(6 * fem),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: 6 * fem),
+                                    child: Text(
+                                      'Chỗ trống',
+                                      style: TextStyle(
+                                        fontSize: 15 * ffem,
+                                        fontWeight: FontWeight.w400,
+                                        height: 1.175 * ffem / fem,
+                                        color: Color(0xff5b5b5b),
+                                      ),
+                                    ),
+                                  ),
+                                  Text(
+                                    '11',
+                                    style: TextStyle(
+                                      fontSize: 15 * ffem,
+                                      fontWeight: FontWeight.w600,
+                                      height: 1.2175 * ffem / fem,
+                                      color: Color(0xff000000),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              width: 10 * fem,
+                            ),
+                            Container(
+                              padding: EdgeInsets.fromLTRB(
+                                  20 * fem, 10 * fem, 20 * fem, 8 * fem),
+                              height: 50 * fem,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[350],
+                                borderRadius: BorderRadius.circular(6 * fem),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: 6 * fem),
+                                    child: Text(
+                                      'Cách',
+                                      style: TextStyle(
+                                        fontSize: 15 * ffem,
+                                        fontWeight: FontWeight.w400,
+                                        height: 1.175 * ffem / fem,
+                                        color: Color(0xff5b5b5b),
+                                      ),
+                                    ),
+                                  ),
+                                  Text(
+                                    '5m',
+                                    style: TextStyle(
+                                      fontSize: 15 * ffem,
+                                      fontWeight: FontWeight.w600,
+                                      height: 1.2175 * ffem / fem,
+                                      color: Color(0xff000000),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 10 * fem),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => RatingScreen()));
+                              },
+                              child: Container(
+                                padding: EdgeInsets.fromLTRB(
+                                    10 * fem, 10 * fem, 10 * fem, 10 * fem),
+                                margin: EdgeInsets.only(right: 10 * fem),
+                                width: 137 * fem,
+                                decoration: BoxDecoration(
+                                  color: Color(0xffdcdada),
+                                  borderRadius: BorderRadius.circular(6 * fem),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    'Xem đánh giá',
+                                    style: TextStyle(
+                                      fontSize: 20 * ffem,
+                                      fontWeight: FontWeight.w600,
+                                      height: 1.175 * ffem / fem,
+                                      color: Color(0xff000000),
                                     ),
                                   ),
                                 ),
                               ),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            ReservationScreen()));
+                              },
+                              child: Container(
+                                padding: EdgeInsets.fromLTRB(
+                                    10 * fem, 10 * fem, 10 * fem, 10 * fem),
+                                width: 137 * fem,
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).primaryColor,
+                                  borderRadius: BorderRadius.circular(6 * fem),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    'Đặt chỗ gửi',
+                                    style: TextStyle(
+                                      fontSize: 20 * ffem,
+                                      fontWeight: FontWeight.w600,
+                                      height: 1.175 * ffem / fem,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
                           ],
-                        ))
-                  ],
+                        ),
+                      ),
+                      Container(
+                          height: 200 * fem,
+                          child: ListView(
+                            scrollDirection: Axis.horizontal,
+                            children: [
+                              for (var imageUrl in images)
+                                InkWell(
+                                  onTap: () {},
+                                  child: Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 5 * fem),
+                                    child: ClipRRect(
+                                      borderRadius:
+                                          BorderRadius.circular(10 * fem),
+                                      child: Image.network(
+                                        imageUrl,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ))
+                    ],
+                  ),
                 ),
               )
             ],
