@@ -128,14 +128,6 @@ class _VehicleScreenState extends State<VehicleScreen> {
     );
   }
 
-
-  Future<void> _saveNewVehicle(String licencePlate, BuildContext context) async {
-      await _vehicleProvider.addNewVehicle(licencePlate);
-      Navigator.of(context).pop();
-  }
-
-
-
   Future<void> _showAddVehicleDialog(BuildContext context) async {
     await showDialog(
       context: context,
@@ -208,7 +200,7 @@ class _VehicleScreenState extends State<VehicleScreen> {
                         Container(
                           width: 1,
                           height: 48,
-                          color: Color(0xffb3abab), // Đường thẳng dọc
+                          color: Color(0xffb3abab),
                         ),
                       ],
                     ),
@@ -217,14 +209,22 @@ class _VehicleScreenState extends State<VehicleScreen> {
                         children: [
                           Container(
                             height: 1,
-                            color: Color(0xffb3abab), // Đường thẳng ngang
+                            color: Color(0xffb3abab),
                           ),
                           TextButton(
-                            onPressed: () {
-                              // Navigator.of(context).pop(); //
+                            onPressed: () async {
                               String newVehicle = _vehicleNumberController.text;
                               if (newVehicle.isNotEmpty) {
-                                _saveNewVehicle(newVehicle, context );
+                               try{
+                                 await _vehicleProvider.addNewVehicle(newVehicle);
+                                 Navigator.of(context).pop();
+                               }catch(e){
+                                 ScaffoldMessenger.of(context).showSnackBar(
+                                   SnackBar(
+                                     content: Text('Thêm xe thất bại'),
+                                   ),
+                                 );
+                               }
                               }
                             },
                             child: Text(

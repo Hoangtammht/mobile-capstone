@@ -1,8 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:fe_capstone/blocs/UserPreferences.dart';
-import 'package:fe_capstone/models/PloDetail.dart';
 import 'package:fe_capstone/models/RevenueModel.dart';
-import 'package:fe_capstone/models/UpdateProfileRequest.dart';
 
 class AuthPloAPIs{
   static Dio dio = Dio();

@@ -14,7 +14,7 @@ class Dialogs {
           ),
         ),
         backgroundColor: Colors.blue.withOpacity(.8),
-        behavior: SnackBarBehavior.floating,
+        behavior: SnackBarBehavior.fixed,
         margin: EdgeInsets.only(bottom: 100.0 * fem),
       ),
     );

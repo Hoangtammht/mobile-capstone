@@ -6,6 +6,10 @@ import 'package:fe_capstone/ui/components/widgetCustomer/ListParkingCard.dart';
 import 'package:fe_capstone/ui/components/widgetCustomer/RatingStars.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:url_launcher/url_launcher_string.dart';
+import 'package:vietmap_flutter_gl/vietmap_flutter_gl.dart';
+import 'package:dio/dio.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -23,108 +27,341 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  VietmapController? _mapController;
+  List<Marker> temp = [];
+  UserLocation? userLocation;
+
+  late double lat;
+  late double long;
+
+  late TextEditingController _searchController;
+  List<dynamic> autoSearchResults = [];
+  bool showSearchResults = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _onMapCreated(VietmapController controller) {
+    setState(() {
+      _mapController = controller;
+    });
+  }
+
+  void liveLocation() {
+    LocationSettings locationSettings = const LocationSettings(
+      accuracy: LocationAccuracy.high,
+      distanceFilter: 100,
+    );
+
+    Geolocator.getPositionStream(locationSettings: locationSettings)
+        .listen((Position position) {
+      lat = position.latitude;
+      long = position.longitude;
+    });
+  }
+
+  Future<Position> _getCurrentLocation() async {
+    bool serverEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serverEnabled) {
+      return Future.error('Location services are disabled');
+    }
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location services are disabled');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error(
+          'Location permission are permanently denied disabled, We cannot request permission');
+    }
+
+    return await Geolocator.getCurrentPosition();
+  }
+
+  Future<void> _openMap(double lat, double long) async {
+    String googleURL =
+        'https://www.google.com/maps/search/?api=1&query=$lat,$long';
+
+    await canLaunchUrlString(googleURL)
+        ? await launchUrlString(googleURL)
+        : throw 'Could not launch $googleURL';
+  }
+
+  void performAutoSearch(String searchText) async {
+    double circleRadius = 200.0;
+    String url = 'https://maps.vietmap.vn/api/autocomplete/v3?apikey=c3d0f188ff669f89042771a20656579073cffec5a8a69747&text=$searchText';
+    try {
+      var dio = Dio();
+      var response = await dio.get(url);
+      if (response.statusCode == 200) {
+        var data = response.data;
+        print('AutoSearch Result: $data');
+        setState(() {
+          autoSearchResults = data;
+        });
+      } else {
+        print('AutoSearch Request Failed with status: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('AutoSearch Request Failed with error: $e');
+    }
+  }
+
+  void getLatAndLong(String refId) async {
+    String url = "https://maps.vietmap.vn/api/place/v3?apikey=c3d0f188ff669f89042771a20656579073cffec5a8a69747&refid=$refId";
+    try {
+      var dio = Dio();
+      var response = await dio.get(url);
+      if (response.statusCode == 200) {
+        var data = response.data;
+        setState(() {
+          lat = data['lat'];
+          long = data['lng'];
+          showSearchResults = false;
+          temp.clear();
+          _mapController?.animateCamera(CameraUpdate.newCameraPosition(
+              CameraPosition(
+                  target: LatLng(lat, long),
+                  zoom: 15,
+                  tilt: 60)));
+
+
+          temp.add(Marker(
+              alignment: Alignment.bottomCenter,
+              width: 50,
+              height: 50,
+              child: Container(
+                width: 50,
+                height: 50,
+                child: Icon(
+                  Icons.location_on_outlined,
+                  color: Colors.red,
+                  size: 40,
+                ),
+              ),
+              latLng: LatLng(lat, long)));
+        });
+      } else {
+        print('AutoSearch Request Failed with status: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('AutoSearch Request Failed with error: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
-          Container(
-            margin:
-                EdgeInsets.fromLTRB(0 * fem, 0 * fem, 0 * fem, 189.84 * fem),
-            padding:
-                EdgeInsets.fromLTRB(14 * fem, 72 * fem, 14 * fem, 36 * fem),
-            width: double.infinity,
-            height: 220 * fem,
-            decoration: BoxDecoration(
-              color: Color(0xff6ec2f7),
-              borderRadius: BorderRadius.only(
-                bottomRight: Radius.circular(23 * fem),
-                bottomLeft: Radius.circular(23 * fem),
+          Positioned(
+            top: 180 * fem,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
+              height: 400 * fem,
+              child: VietmapGL(
+                myLocationEnabled: true,
+                styleString:
+                'https://maps.vietmap.vn/api/maps/light/styles.json?apikey=c3d0f188ff669f89042771a20656579073cffec5a8a69747',
+                trackCameraPosition: true,
+                onMapCreated: _onMapCreated,
+                compassEnabled: false,
+                onMapRenderedCallback: () {
+                  _mapController?.animateCamera(CameraUpdate.newCameraPosition(
+                      CameraPosition(
+                          target: LatLng(10.739031, 106.680524),
+                          zoom: 10,
+                          tilt: 60)));
+                },
+                onUserLocationUpdated: (location) {
+                  setState(() {
+                    userLocation = location;
+                  });
+                },
+                initialCameraPosition:
+                CameraPosition(target: LatLng(10.739031, 106.680524), zoom: 14),
+                onMapClick: (point, coordinates) async {
+                  var data = await _mapController?.queryRenderedFeatures(point: point);
+                },
               ),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  margin:
-                      EdgeInsets.fromLTRB(0 * fem, 0 * fem, 0 * fem, 40 * fem),
-                  width: double.infinity,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.fromLTRB(
-                            0 * fem, 0 * fem, 248.88 * fem, 0 * fem),
-                        child: Text(
-                          'PARCO',
-                          style: TextStyle(
-                            fontSize: 30 * ffem,
-                            fontWeight: FontWeight.w600,
-                            height: 1.2175 * ffem / fem,
-                            fontStyle: FontStyle.italic,
-                            color: Color(0xffffffff),
+          ),
+          if (_mapController != null)
+            Positioned(
+              top: 200 * fem,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: MarkerLayer(
+                ignorePointer: true,
+                mapController: _mapController!,
+                markers: [],
+              ),
+            ),
+          if (_mapController != null)
+            Positioned(
+              top: 200 * fem,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: MarkerLayer(
+                ignorePointer: true,
+                mapController: _mapController!,
+                markers: temp,
+              ),
+            ),
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              padding: EdgeInsets.fromLTRB(14 * fem, 62 * fem, 14 * fem, 26 * fem),
+              width: double.infinity,
+              height: 200 * fem,
+              decoration: BoxDecoration(
+                color: Color(0xff6ec2f7),
+                borderRadius: BorderRadius.only(
+                  bottomRight: Radius.circular(23 * fem),
+                  bottomLeft: Radius.circular(23 * fem),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    margin: EdgeInsets.fromLTRB(0 * fem, 0 * fem, 0 * fem, 30 * fem),
+                    width: double.infinity,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          margin: EdgeInsets.fromLTRB(0 * fem, 0 * fem, 248.88 * fem, 0 * fem),
+                          child: Text(
+                            'PARCO',
+                            style: TextStyle(
+                              fontSize: 30 * ffem,
+                              fontWeight: FontWeight.w600,
+                              height: 1.2175 * ffem / fem,
+                              fontStyle: FontStyle.italic,
+                              color: Color(0xffffffff),
+                            ),
                           ),
                         ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.fromLTRB(
-                            0 * fem, 0 * fem, 0 * fem, 1 * fem),
-                        width: 25 * fem,
-                        height: 24 * fem,
-                        child: Icon(Icons.wallet),
-                      ),
-                    ],
+                        Container(
+                          margin: EdgeInsets.fromLTRB(0 * fem, 0 * fem, 0 * fem, 1 * fem),
+                          width: 25 * fem,
+                          height: 24 * fem,
+                          child: Icon(Icons.wallet),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                Container(
-                  margin:
-                      EdgeInsets.fromLTRB(2 * fem, 0 * fem, 0 * fem, 0 * fem),
-                  padding:
-                      EdgeInsets.fromLTRB(19 * fem, 0 * fem, 14 * fem, 0 * fem),
-                  decoration: BoxDecoration(
-                    color: Color(0xffffffff),
-                    borderRadius: BorderRadius.circular(9 * fem),
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        height: 46 * fem,
-                        width: 280 * fem,
-                        child: TextFormField(
-                          maxLines: 1, // Chỉ cho phép nhập 1 dòng chữ
-                          decoration: InputDecoration(
-                            hintText: 'Bạn muốn đi đến đâu?',
-                            border: InputBorder.none,
+                  Container(
+                    margin: EdgeInsets.fromLTRB(2 * fem, 0 * fem, 0 * fem, 0 * fem),
+                    padding: EdgeInsets.fromLTRB(19 * fem, 0 * fem, 14 * fem, 0 * fem),
+                    decoration: BoxDecoration(
+                      color: Color(0xffffffff),
+                      borderRadius: BorderRadius.circular(9 * fem),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          height: 46 * fem,
+                          width: 320 * fem,
+                          child: TextFormField(
+                            maxLines: 1, // Chỉ cho phép nhập 1 dòng chữ
+                            decoration: InputDecoration(
+                              hintText: 'Bạn muốn đi đến đâu?',
+                              border: InputBorder.none,
+                            ),
+                            onChanged: (value) {
+                              performAutoSearch(value);
+                              setState(() {
+                                showSearchResults = true;
+                              });
+                            },
                           ),
                         ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.fromLTRB(
-                            0 * fem, 0 * fem, 9 * fem, 0 * fem),
-                        width: 1 * fem,
-                        height: 46 * fem,
-                        decoration: BoxDecoration(
-                          color: Color(0x7f000000),
+                        Container(
+                          margin: EdgeInsets.fromLTRB(0 * fem, 0 * fem, 9 * fem, 0 * fem),
+                          width: 1 * fem,
+                          height: 46 * fem,
+                          decoration: BoxDecoration(
+                            color: Color(0x7f000000),
+                          ),
                         ),
-                      ),
-                      Container(
-                        width: 16 * fem,
-                        height: 16 * fem,
-                        child: Icon(
-                          Icons.search,
+                        InkWell(
+                          onTap: (){
+                            performAutoSearch(_searchController.text);
+                            setState(() {
+                              showSearchResults = true;
+                            });
+                          },
+                          child: Container(
+                            width: 16 * fem,
+                            height: 16 * fem,
+                            child: Icon(
+                              Icons.search,
+                            ),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
+          Positioned(
+            top: 165,
+            left: 0,
+            right: 0,
+            child: showSearchResults
+                ? Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16 * fem),
+                  child: Container(
+              height: 220 * fem,
+              decoration: BoxDecoration(
+                  color: Colors.white
+              ),
+              child: ListView.builder(
+                  shrinkWrap: true,
+                  padding: EdgeInsets.zero,
+                  itemCount: autoSearchResults.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text(autoSearchResults[index]['name']),
+                      subtitle: Text(autoSearchResults[index]['address']),
+                      onTap: () {
+                        var selectedResult = autoSearchResults[index]['ref_id'];
+                        getLatAndLong(selectedResult);
+                      },
+                    );
+                  },
+              ),
+            ),
+                )
+                : SizedBox.shrink(),),
           DraggableScrollableSheet(
             initialChildSize: 0.3,
-            minChildSize: 0.3,
+            minChildSize: 0.2,
             maxChildSize: 0.7,
             builder: (context, scrollController) {
               // return CheckOutContent(scrollController);
@@ -143,6 +380,52 @@ class _HomeScreenState extends State<HomeScreen> {
               }
             },
           ),
+        ],
+      ),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            height: 35 * fem,
+            width: 35 * fem,
+            decoration: BoxDecoration(
+              color: Colors.transparent
+            ),
+            child: FloatingActionButton(
+              tooltip: 'Vị trí hiện tại',
+              backgroundColor: Colors.white,
+              onPressed: () {
+                _getCurrentLocation().then((value) {
+                  lat = double.parse('${value.latitude}');
+                  long = double.parse('${value.longitude}');
+                  liveLocation();
+                  temp.clear();
+                  _mapController?.animateCamera(CameraUpdate.newCameraPosition(
+                      CameraPosition(
+                          target: LatLng(value.latitude, value.longitude),
+                          zoom: 15,
+                          tilt: 60)));
+                  temp.add(Marker(
+                      alignment: Alignment.bottomCenter,
+                      width: 50,
+                      height: 50,
+                      child: Container(
+                        width: 50,
+                        height: 50,
+                        child: Icon(
+                          Icons.location_on_outlined,
+                          color: Colors.red,
+                          size: 40,
+                        ),
+                      ),
+                      latLng: LatLng(value.latitude, value.longitude)));
+                });
+              },
+              child: Icon(Icons.location_searching, color: Colors.grey,),
+            ),
+          ),
+          SizedBox(height: 270),
+
         ],
       ),
     );
@@ -167,6 +450,7 @@ class HomeScreenContent extends StatelessWidget {
               Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
+                  color: Colors.grey[100],
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(26 * fem),
                     topRight: Radius.circular(26 * fem),
@@ -194,7 +478,7 @@ class HomeScreenContent extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(bottom: 15 * fem),
+                        padding: EdgeInsets.only(bottom: 5 * fem),
                         child: Text(
                           'BÃI ĐỖ GẦN ĐÂY (6)',
                           style: TextStyle(
@@ -266,7 +550,10 @@ class HomeScreenContent extends StatelessWidget {
                     ]),
               ),
               Container(
-                  height: 350 * fem,
+                  height: 400 * fem,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                  ),
                   child: ListView.builder(
                       itemCount: 5,
                       itemBuilder: (context, index) {

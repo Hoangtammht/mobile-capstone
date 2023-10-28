@@ -14,22 +14,22 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  late Future<CustomerProfile> customerProfileFuture;
+  late Future<UserProfile> customerProfileFuture;
   TextEditingController _fullNameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    customerProfileFuture = _getCustomerProfileFuture();
+    customerProfileFuture = _getUserProfileFuture();
     customerProfileFuture.then((data) {
       _fullNameController.text = data?.fullName ?? '';
       _emailController.text = data?.email ?? '';
     });
   }
 
-  Future<CustomerProfile> _getCustomerProfileFuture() async {
-      return AuthAPIs.getCustomerProfile();
+  Future<UserProfile> _getUserProfileFuture() async {
+      return AuthAPIs.getUserProfile();
   }
 
 
@@ -64,7 +64,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             color: Color(0xffffffff),
             borderRadius: BorderRadius.circular(26 * fem),
           ),
-          child: FutureBuilder<CustomerProfile>(
+          child: FutureBuilder<UserProfile>(
             future: customerProfileFuture,
             builder: (context, snapshot) {
               if (snapshot.hasError) {

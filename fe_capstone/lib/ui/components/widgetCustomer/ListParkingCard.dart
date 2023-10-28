@@ -9,7 +9,7 @@ class ListParkingCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 12 * fem, horizontal: 15 * fem),
+        padding: EdgeInsets.only(top: 12 * fem, left: 15 * fem, right: 15 * fem),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
