@@ -109,7 +109,7 @@ class _RebookingState extends State<Rebooking> {
                                 Text(
                                   'Phí gửi xe',
                                   style: TextStyle(
-                                    fontSize: 18 * ffem,
+                                    fontSize: 22 * ffem,
                                     fontWeight: FontWeight.w400,
                                     color: Color(0xff5b5b5b),
                                   ),
@@ -122,7 +122,7 @@ class _RebookingState extends State<Rebooking> {
                                       ? '${NumberFormat("#,##0", "vi_VN").format(historyDetail.fee)} đ'
                                       : '${NumberFormat("#,##0", "vi_VN").format(0.0)} đ'),
                                   style: TextStyle(
-                                    fontSize: 18 * ffem,
+                                    fontSize: 22 * ffem,
                                     fontWeight: FontWeight.w600,
                                     color: Color(0xff000000),
                                   ),
@@ -138,7 +138,7 @@ class _RebookingState extends State<Rebooking> {
                                 Text(
                                   'Trạng thái',
                                   style: TextStyle(
-                                    fontSize: 18 * ffem,
+                                    fontSize: 22 * ffem,
                                     fontWeight: FontWeight.w400,
                                     color: Color(0xff5b5b5b),
                                   ),
@@ -169,7 +169,7 @@ class _RebookingState extends State<Rebooking> {
                                         }
                                       }(),
                                       style: TextStyle(
-                                        fontSize: 18 * ffem,
+                                        fontSize: 22 * ffem,
                                         fontWeight: FontWeight.w600,
                                         color: Colors.white,
                                       ),
@@ -193,7 +193,7 @@ class _RebookingState extends State<Rebooking> {
                                 Text(
                                   'Bãi đỗ',
                                   style: TextStyle(
-                                    fontSize: 18 * ffem,
+                                    fontSize: 22 * ffem,
                                     fontWeight: FontWeight.w400,
                                     color: Color(0xff5b5b5b),
                                   ),
@@ -202,7 +202,7 @@ class _RebookingState extends State<Rebooking> {
                                 Text(
                                   historyDetail.parkingName,
                                   style: TextStyle(
-                                    fontSize: 18 * ffem,
+                                    fontSize: 22 * ffem,
                                     fontWeight: FontWeight.w600,
                                     color: Color(0xff000000),
                                   ),
@@ -218,7 +218,7 @@ class _RebookingState extends State<Rebooking> {
                                 Text(
                                   'Phương thức',
                                   style: TextStyle(
-                                    fontSize: 18 * ffem,
+                                    fontSize: 22 * ffem,
                                     fontWeight: FontWeight.w400,
                                     height: 1.175 * ffem / fem,
                                     color: Color(0xff5b5b5b),
@@ -228,7 +228,7 @@ class _RebookingState extends State<Rebooking> {
                                 Text(
                                   historyDetail.methodName,
                                   style: TextStyle(
-                                    fontSize: 18 * ffem,
+                                    fontSize: 22 * ffem,
                                     fontWeight: FontWeight.w600,
                                     height: 1.2175 * ffem / fem,
                                     color: Color(0xff000000),
@@ -251,7 +251,7 @@ class _RebookingState extends State<Rebooking> {
                                 Text(
                                   'Phương tiện',
                                   style: TextStyle(
-                                    fontSize: 18 * ffem,
+                                    fontSize: 22 * ffem,
                                     fontWeight: FontWeight.w400,
                                     color: Color(0xff5b5b5b),
                                   ),
@@ -260,7 +260,7 @@ class _RebookingState extends State<Rebooking> {
                                 Text(
                                   historyDetail.licensePlate,
                                   style: TextStyle(
-                                    fontSize: 18 * ffem,
+                                    fontSize: 22 * ffem,
                                     fontWeight: FontWeight.w600,
                                     color: Color(0xff000000),
                                   ),
@@ -283,13 +283,13 @@ class _RebookingState extends State<Rebooking> {
                                         Text(
                                             'Địa chỉ: ',
                                             style: TextStyle(
-                                                fontSize: 18 * fem
+                                                fontSize: 22 * fem
                                             )
                                         ),
                                         Text(
                                             historyDetail.address,
                                             style: TextStyle(
-                                              fontSize: 18 * fem,
+                                              fontSize: 22 * fem,
                                               fontWeight: FontWeight.bold,
                                             )
                                   ),
@@ -312,7 +312,7 @@ class _RebookingState extends State<Rebooking> {
                         child: Text(
                           'Đặt lại',
                           style: TextStyle(
-                            fontSize: 19 * ffem,
+                            fontSize: 25 * ffem,
                             fontWeight: FontWeight.w600,
                             height: 1.175 * ffem / fem,
                             color: Color(0xffffffff),

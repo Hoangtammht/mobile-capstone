@@ -260,7 +260,20 @@ class _LoginScreenState extends State<LoginScreen> {
                                 );
                               }
                             }).catchError((error) {
-                              Dialogs.showSnackbar(context, "Tài khoản hoặc mật khẩu không đúng. Vui lòng đăng nhập lại.");
+                              final snackBar = SnackBar(
+                                content: Text(
+                                  'Tài khoản hoặc mật khẩu không đúng. Vui lòng đăng nhập lại.',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontSize: 18 * fem),
+                                ),
+                                behavior: SnackBarBehavior.fixed,
+                              );
+
+                              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+                              Future.delayed(Duration(milliseconds: 1500), () {
+                                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                              });
                             });
                           } else {
                             Dialogs.showSnackbar(context, "Tài khoản hoặc mật khẩu không được để trống.");

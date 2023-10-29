@@ -1,5 +1,5 @@
-class CustomerProfile {
-  CustomerProfile({
+class UserProfile {
+  UserProfile({
     required this.fullName,
     required this.phoneNumber,
     required this.email,
@@ -8,7 +8,7 @@ class CustomerProfile {
   late final String phoneNumber;
   late final String email;
 
-  CustomerProfile.fromJson(Map<String, dynamic> json){
+  UserProfile.fromJson(Map<String, dynamic> json){
     fullName = json['fullName'] ?? '';
     phoneNumber = json['phoneNumber'] ?? '';
     email = json['email'] ?? '';

@@ -18,11 +18,13 @@ class _VehicleScreenState extends State<VehicleScreen> {
   TextEditingController _vehicleNumberController = TextEditingController();
   int vehicleID = 0;
   late VehicleProvider _vehicleProvider;
+  late Future<List<ListVehicleCustomer>> vehicleFuture;
 
   @override
   void initState() {
     super.initState();
     _vehicleProvider = Provider.of<VehicleProvider>(context, listen: false);
+    vehicleFuture = _vehicleProvider.getVehicleList();
   }
 
   @override
@@ -52,82 +54,79 @@ class _VehicleScreenState extends State<VehicleScreen> {
       ),
       body: Consumer<VehicleProvider>(
         builder: (context, vehicleProvider, child) {
-          if (vehicleProvider.vehicles.isEmpty) {
-            return InkWell(
-              onTap: () {
-                _showAddVehicleDialog(context);
-              },
-              child: Container(
-                margin: EdgeInsets.only(left: 20, top: 20),
-                width: 138 * fem,
-                height: 42 * fem,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor,
-                  borderRadius: BorderRadius.circular(9 * fem),
-                ),
-                child: Center(
-                  child: Text(
-                    'Thêm xe',
-                    style: TextStyle(
-                      fontSize: 25 * ffem,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xffffffff),
+          return FutureBuilder<List<ListVehicleCustomer>>(
+            future: vehicleProvider.getVehicleList(),
+            builder: (context, snapshot) {
+              if (vehicleProvider.vehicles.isEmpty) {
+                return InkWell(
+                  onTap: () {
+                    _showAddVehicleDialog(context);
+                  },
+                  child: Container(
+                    margin: EdgeInsets.only(left: 20, top: 20),
+                    width: 138 * fem,
+                    height: 42 * fem,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).primaryColor,
+                      borderRadius: BorderRadius.circular(9 * fem),
                     ),
-                  ),
-                ),
-              ),
-            );
-          }
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: vehicleProvider.vehicles.length,
-                itemBuilder: (context, index) {
-                  return VehicleCard(
-                    vehicleNumber: vehicleProvider.vehicles[index].licencePlate, vehicleID: vehicleProvider.vehicles[index].licencePlateID,
-                  );
-                },
-              ),
-              InkWell(
-                onTap: () {
-                  _showAddVehicleDialog(context);
-                },
-                child: Container(
-                  margin: EdgeInsets.only(left: 20, top: 20),
-                  width: 138 * fem,
-                  height: 42 * fem,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor,
-                    borderRadius: BorderRadius.circular(9 * fem),
-                  ),
-                  child: Center(
-                    child: Text(
-                      'Thêm xe',
-                      style: TextStyle(
-                        fontSize: 25 * ffem,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xffffffff),
+                    child: Center(
+                      child: Text(
+                        'Thêm xe',
+                        style: TextStyle(
+                          fontSize: 25 * ffem,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xffffffff),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ),
-            ],
+                );
+              }
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: vehicleProvider.vehicles.length,
+                    itemBuilder: (context, index) {
+                      return VehicleCard(
+                        vehicleNumber: vehicleProvider.vehicles[index].licencePlate, vehicleID: vehicleProvider.vehicles[index].licencePlateID,
+                      );
+                    },
+                  ),
+                  InkWell(
+                    onTap: () {
+                      _showAddVehicleDialog(context);
+                    },
+                    child: Container(
+                      margin: EdgeInsets.only(left: 20, top: 20),
+                      width: 138 * fem,
+                      height: 42 * fem,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColor,
+                        borderRadius: BorderRadius.circular(9 * fem),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Thêm xe',
+                          style: TextStyle(
+                            fontSize: 25 * ffem,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xffffffff),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
           );
         },
       ),
     );
   }
-
-
-  Future<void> _saveNewVehicle(String licencePlate, BuildContext context) async {
-      await _vehicleProvider.addNewVehicle(licencePlate);
-      Navigator.of(context).pop();
-  }
-
-
 
   Future<void> _showAddVehicleDialog(BuildContext context) async {
     await showDialog(
@@ -201,7 +200,7 @@ class _VehicleScreenState extends State<VehicleScreen> {
                         Container(
                           width: 1,
                           height: 48,
-                          color: Color(0xffb3abab), // Đường thẳng dọc
+                          color: Color(0xffb3abab),
                         ),
                       ],
                     ),
@@ -210,14 +209,22 @@ class _VehicleScreenState extends State<VehicleScreen> {
                         children: [
                           Container(
                             height: 1,
-                            color: Color(0xffb3abab), // Đường thẳng ngang
+                            color: Color(0xffb3abab),
                           ),
                           TextButton(
-                            onPressed: () {
-                              // Navigator.of(context).pop(); //
+                            onPressed: () async {
                               String newVehicle = _vehicleNumberController.text;
                               if (newVehicle.isNotEmpty) {
-                                _saveNewVehicle(newVehicle, context );
+                               try{
+                                 await _vehicleProvider.addNewVehicle(newVehicle);
+                                 Navigator.of(context).pop();
+                               }catch(e){
+                                 ScaffoldMessenger.of(context).showSnackBar(
+                                   SnackBar(
+                                     content: Text('Thêm xe thất bại'),
+                                   ),
+                                 );
+                               }
                               }
                             },
                             child: Text(

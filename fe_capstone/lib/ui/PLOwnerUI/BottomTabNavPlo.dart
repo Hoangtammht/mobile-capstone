@@ -29,7 +29,6 @@ class _BottomTabNavPloState extends State<BottomTabNavPlo> with AutomaticKeepAli
   @override
   void initState() {
     super.initState();
-    FirebaseAPI.getFirebaseMessagingToken();
     statusParkingFuture = _getParkingInformationFuture();
   }
 

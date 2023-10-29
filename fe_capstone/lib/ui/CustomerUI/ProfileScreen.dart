@@ -1,7 +1,7 @@
 import 'package:fe_capstone/apis/Auth.dart';
+import 'package:fe_capstone/blocs/UserPreferences.dart';
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/models/CustomerDetail.dart';
-import 'package:fe_capstone/models/PloDetail.dart';
 import 'package:fe_capstone/ui/screens/ChangePasswordScreen.dart';
 import 'package:fe_capstone/ui/screens/EditProfileScreen.dart';
 import 'package:fe_capstone/ui/CustomerUI/VechicleScreen.dart';
@@ -18,7 +18,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  late Future<CustomerProfile> customerProfileFuture;
+  late Future<UserProfile> customerProfileFuture;
 
   @override
   void initState() {
@@ -26,8 +26,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     customerProfileFuture = _getCustomerProfileFuture();
   }
 
-  Future<CustomerProfile> _getCustomerProfileFuture() async {
-    return AuthAPIs.getCustomerProfile();
+  Future<UserProfile> _getCustomerProfileFuture() async {
+    return AuthAPIs.getUserProfile();
   }
 
 
@@ -93,7 +93,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ],
                       ),
-                      child: FutureBuilder<CustomerProfile>(
+                      child: FutureBuilder<UserProfile>(
                         future: customerProfileFuture,
                         builder: (context, snapshot) {
                           if (snapshot.hasError) {
@@ -380,7 +380,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     InkWell(
                       onTap: () async {
                         SharedPreferences prefs = await SharedPreferences.getInstance();
-                        prefs.remove('access_token');
+                        String? deviceToken = prefs.getString('device_token');
+                        if (deviceToken != null) {
+                          await AuthAPIs.deleteDeviceToken(deviceToken);
+                          prefs.remove('device_token');
+                          await UserPreferences.logout();
+                        }
                         PersistentNavBarNavigator.pushNewScreen( context, screen: LoginScreen(), withNavBar: false, pageTransitionAnimation: PageTransitionAnimation.cupertino, );
                       },
                       child: Container(

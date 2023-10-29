@@ -67,11 +67,9 @@ class _VehicleCardState extends State<VehicleCard> {
     try {
       await _vehicleProvider.deleteVehicle(widget.vehicleID);
       Navigator.of(context).pop();
-
     } catch (error) {
       print('Lỗi khi xóa xe: $error');
     }
-
   }
 
   Future<void> _showDeleteConfirmationDialog(BuildContext context) async {

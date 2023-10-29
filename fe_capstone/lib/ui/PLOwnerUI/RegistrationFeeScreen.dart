@@ -68,56 +68,6 @@ class _RegistrationFeeScreenState extends State<RegistrationFeeScreen> {
                   ),
                 ),
               ),
-              InkWell(
-                onTap: () async {
-                    try {
-                      PaymentResponse paymentResponse = await ParkingAPI.makePayment();
-                      String newUUID = paymentResponse.uuid;
-                      String paymentUrl = paymentResponse.paymentUrl;
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => RechargeWebViewScreen(paymentUrl),
-                        ),
-                      );
-                      setState(() {
-                        request = RequestRegisterParking(
-                            address: widget.requestRegisterParking.address,
-                            description: widget.requestRegisterParking.description,
-                            images: widget.requestRegisterParking.images,
-                            length: widget.requestRegisterParking.length,
-                            parkingName: widget.requestRegisterParking.parkingName,
-                            slot: widget.requestRegisterParking.slot,
-                            uuid: newUUID,
-                            width: widget.requestRegisterParking.width
-                        );
-                      });
-                    } catch (e) {
-                      print('Error: $e');
-                    }
-                },
-                child: Container(
-                  margin: EdgeInsets.fromLTRB(
-                      10 * fem, 0 * fem, 10 * fem, 10 * fem),
-                  height: 40 * fem,
-                  width: 150 * fem,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor,
-                    borderRadius: BorderRadius.circular(9 * fem),
-                  ),
-                  child: Center(
-                    child: Text(
-                      'Đóng phí đăng kí',
-                      style: TextStyle(
-                        fontSize: 22 * ffem,
-                        fontWeight: FontWeight.w600,
-                        height: 1.175 * ffem / fem,
-                        color: Color(0xffffffff),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
               Padding(
                 padding: EdgeInsets.only(top: 40 * fem, bottom: 20 * fem),
                 child: Row(
@@ -168,23 +118,31 @@ class _RegistrationFeeScreenState extends State<RegistrationFeeScreen> {
               ),
               InkWell(
                 onTap: () async {
-                    try {
-                      print(request.toJson());
-                      await ParkingAPI.registerParking(request);
-                      PersistentNavBarNavigator.pushNewScreen(
-                        context,
-                        screen: BottomTabNavPlo(),
-                        withNavBar: false,
-                        pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                  try {
+                    PaymentResponse paymentResponse = await ParkingAPI.makePayment();
+                    String newUUID = paymentResponse.uuid;
+                    String paymentUrl = paymentResponse.paymentUrl;
+                    setState(() {
+                      request = RequestRegisterParking(
+                          address: widget.requestRegisterParking.address,
+                          description: widget.requestRegisterParking.description,
+                          images: widget.requestRegisterParking.images,
+                          length: widget.requestRegisterParking.length,
+                          parkingName: widget.requestRegisterParking.parkingName,
+                          slot: widget.requestRegisterParking.slot,
+                          uuid: newUUID,
+                          width: widget.requestRegisterParking.width
                       );
-                    } catch (e) {
-                      print('Error: $e');
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Đăng kí thông tin bãi xe thất bại'),
-                        ),
-                      );
-                    }
+                    });
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => RechargeWebViewScreen(paymentUrl, request),
+                      ),
+                    );
+                  } catch (e) {
+                    print('Error: $e');
+                  }
                 },
                 child: Container(
                   margin: EdgeInsets.fromLTRB(
@@ -196,7 +154,7 @@ class _RegistrationFeeScreenState extends State<RegistrationFeeScreen> {
                   ),
                   child: Center(
                     child: Text(
-                      'Gửi phiếu đăng kí',
+                      'Nộp phí đăng kí',
                       style: TextStyle(
                         fontSize: 25 * ffem,
                         fontWeight: FontWeight.w600,

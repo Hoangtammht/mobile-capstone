@@ -181,7 +181,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                 controller: _NewPasswordController,
                                 obscureText: isNewPasswordVisible
                                     ? false
-                                    : true, // Để ẩn mật khẩu nếu đây là ô mật khẩu
+                                    : true,
                                 style: TextStyle(
                                   fontSize: 22 * ffem,
                                   fontWeight: FontWeight.w600,
@@ -197,16 +197,15 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                     icon: Icon(
                                       isNewPasswordVisible
                                           ? Icons
-                                              .visibility // Hiển thị khi mật khẩu ẩn
+                                              .visibility
                                           : Icons
-                                              .visibility_off, // Màu của icon
+                                              .visibility_off,
                                     ),
                                     onPressed: () {
                                       setState(() {
                                         isNewPasswordVisible =
                                             !isNewPasswordVisible;
                                       });
-                                      // Xử lý khi nhấn vào biểu tượng ẩn/mở mật khẩu
                                     },
                                   ),
                                 ),
@@ -286,11 +285,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                       _showFailureDialog(context);
                                     });
                                 }
-
                                 _OldPasswordController.clear();
                                 _NewPasswordController.clear();
                                 _ReNewPasswordController.clear();
-
                               },
                               child: Container(
                                 width: 322 * fem,

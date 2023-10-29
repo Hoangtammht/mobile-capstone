@@ -1,8 +1,9 @@
 import 'package:dio/dio.dart';
+import 'package:fe_capstone/apis/FirebaseAPI.dart';
 import 'package:fe_capstone/blocs/UserPreferences.dart';
 import 'package:fe_capstone/models/CustomerDetail.dart';
-import 'package:fe_capstone/models/PloDetail.dart';
 import 'package:fe_capstone/models/UpdateProfileRequest.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class AuthAPIs {
@@ -26,6 +27,10 @@ class AuthAPIs {
 
       if (response.statusCode == 200) {
         await UserPreferences.setAccessToken(response.data['access_token']);
+        String? deviceToken = await FirebaseAPI.getFirebaseMessagingToken();
+        AuthAPIs.addDeviceToken(deviceToken!);
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString("device_token", deviceToken);
       } else {
         throw Exception(
             'Tài khoản hoặc mật khẩu không đúng. Vui lòng đăng nhập lại.');
@@ -35,15 +40,17 @@ class AuthAPIs {
     }
   }
 
-  static Future<PloProfile> getPloProfile() async {
+  static Future<void> addDeviceToken(String deviceToken) async {
     try {
       String? token = await UserPreferences.getAccessToken();
       if (token == null) {
         throw Exception('Access token is null');
       }
-
-      final response = await dio.get(
-        '$baseUrl/PLO/profile',
+      var response = await dio.post(
+        '$baseUrl/user/addDeviceToken',
+        data: {
+          "deviceToken": deviceToken,
+        },
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -53,19 +60,44 @@ class AuthAPIs {
       );
 
       if (response.statusCode == 200) {
-        final Map<String, dynamic> data = response.data;
-        PloProfile ploProfile = PloProfile.fromJson(data);
-        return ploProfile;
+        print('Thêm device token thành công');
       } else {
-        throw Exception('Failed to get PloProfile');
+        throw Exception('Failed to add device token.');
       }
     } catch (e) {
-      throw Exception('Failed to get PloProfile: $e');
+      throw Exception('Failed to add device token: $e');
     }
   }
 
+  static Future<void> deleteDeviceToken(String deviceToken) async {
+    try {
+      String? token = await UserPreferences.getAccessToken();
+      if (token == null) {
+        throw Exception('Access token is null');
+      }
+      var response = await dio.delete(
+        '$baseUrl/user/deleteDeviceToken',
+        queryParameters: {
+          "deviceToken": deviceToken,
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json'
+          },
+        ),
+      );
+      if (response.statusCode == 200) {
+        print('Xóa device token thành công');
+      } else {
+        throw Exception('Failed to delete device token.');
+      }
+    } catch (e) {
+      throw Exception('Failed to delete device token: $e');
+    }
+  }
 
-  static Future<CustomerProfile> getCustomerProfile() async {
+  static Future<UserProfile> getUserProfile() async {
     try {
       String? token = await UserPreferences.getAccessToken();
       if (token == null) {
@@ -73,7 +105,7 @@ class AuthAPIs {
       }
 
       final response = await dio.get(
-        '$baseUrl/customer/getProfile',
+        '$baseUrl/user/getProfileUser',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -84,13 +116,13 @@ class AuthAPIs {
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = response.data;
-        CustomerProfile customerProfile = CustomerProfile.fromJson(data);
-        return customerProfile;
+        UserProfile userProfile = UserProfile.fromJson(data);
+        return userProfile;
       } else {
-        throw Exception('Failed to get PloProfile');
+        throw Exception('Failed to get user profile');
       }
     } catch (e) {
-      throw Exception('Failed to get PloProfile: $e');
+      throw Exception('Failed to get user profile: $e');
     }
   }
 
@@ -112,7 +144,7 @@ class AuthAPIs {
       };
 
       final response = await dio.put(
-        '$baseUrl/PLO/changePassword',
+        '$baseUrl/user/changePassword',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -139,7 +171,7 @@ class AuthAPIs {
         throw Exception('Access token is null');
       }
       final response = await dio.put(
-        '$baseUrl/PLO/updateProfile',
+        '$baseUrl/user/updateProfileUser',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',

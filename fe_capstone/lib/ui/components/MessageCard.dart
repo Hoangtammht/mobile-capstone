@@ -55,7 +55,7 @@ class _MessageCardState extends State<MessageCard> {
           ClipRRect(
             borderRadius: BorderRadius.circular(15),
             child: CachedNetworkImage(
-              imageUrl: widget.message.msg,
+              imageUrl: 'https://fiftyfifty.b-cdn.net/eparking/scaled_Screenshot_20231022-095624_Animal Puzzle.jpg',
               placeholder: (context, url) => const Padding(
                 padding: EdgeInsets.all(8.0),
                 child: Padding(
@@ -130,7 +130,7 @@ class _MessageCardState extends State<MessageCard> {
           ClipRRect(
             borderRadius: BorderRadius.circular(15),
             child: CachedNetworkImage(
-              imageUrl: widget.message.msg,
+              imageUrl: 'https://fiftyfifty.b-cdn.net/eparking/scaled_Screenshot_20231022-095624_Animal Puzzle.jpg',
               placeholder: (context, url) => const Padding(
                 padding: EdgeInsets.all(8.0),
                 child: Padding(

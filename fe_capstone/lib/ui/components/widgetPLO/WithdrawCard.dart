@@ -62,7 +62,7 @@ class WithdrawCard extends StatelessWidget {
                             child: Text(
                               MyDateUtil.formatCheckInAndCheckOutDate(time),
                               style: TextStyle(
-                                fontSize: 22 * ffem,
+                                fontSize: 20 * ffem,
                                 fontWeight: FontWeight.bold,
                                 color: Color(0xff9e9e9e),
                               ),
