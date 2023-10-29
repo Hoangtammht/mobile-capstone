@@ -9,7 +9,6 @@ import 'package:fe_capstone/ui/components/widgetCustomer/RatingStars.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 import 'package:vietmap_flutter_gl/vietmap_flutter_gl.dart';
 import 'package:dio/dio.dart';
 
@@ -24,42 +23,10 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool showParkingDetail = false;
-  String selectParkinglot = '';
-  bool firstLoad = true;
-  int status = 1;
-  List<ParkingHomeScreen> fakeData = [
-    ParkingHomeScreen(
-        ploID: "PL0934328813",
-        address: "678 đường 672 Phước Long B quận 9",
-        parkingName: "Bãi xe Thịnh Nguyễn",
-        slot: 10),
-    ParkingHomeScreen(
-        ploID: "PL0934328813",
-        address: "678 đường  9",
-        parkingName: "Bãi xe Thịnh Nguyễn",
-        slot: 2),
-    ParkingHomeScreen(
-        ploID: "PL0934328813",
-        address: " Phước Long B quận 9",
-        parkingName: "Bãi xe Thịnh Nguyễn",
-        slot: 6),
-    ParkingHomeScreen(
-        ploID: "PL0934328813",
-        address: "678 đường Long B quận 9",
-        parkingName: "Bãi xe Thịnh Nguyễn",
-        slot: 9),
-    ParkingHomeScreen(
-        ploID: "PL0934328813",
-        address: "678 đường 672 Phước Long ",
-        parkingName: "Bãi xe Thịnh Nguyễn",
-        slot: 11)
-  ];
 
-
-  void showParkingDetailContent(String ploID) {
+  void showParkingDetailContent() {
     setState(() {
       showParkingDetail = true;
-      selectParkinglot = ploID;
     });
   }
 
@@ -371,13 +338,13 @@ class _HomeScreenState extends State<HomeScreen> {
             right: 0,
             child: showSearchResults
                 ? Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16 * fem),
-                  child: Container(
-              height: 220 * fem,
-              decoration: BoxDecoration(
-                  color: Colors.white
-              ),
-              child: ListView.builder(
+              padding: EdgeInsets.symmetric(horizontal: 16 * fem),
+              child: Container(
+                height: 220 * fem,
+                decoration: BoxDecoration(
+                    color: Colors.white
+                ),
+                child: ListView.builder(
                   shrinkWrap: true,
                   padding: EdgeInsets.zero,
                   itemCount: autoSearchResults.length,
@@ -391,19 +358,26 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                     );
                   },
+                ),
               ),
-            ),
-                )
+            )
                 : SizedBox.shrink(),),
           DraggableScrollableSheet(
             initialChildSize: 0.3,
             minChildSize: 0.2,
             maxChildSize: 0.7,
             builder: (context, scrollController) {
-              if (status == 2) {
-                return CheckInContent(scrollController);
-              } else if (status == 3) {
-                return CheckOutContent(scrollController);
+              // return CheckOutContent(scrollController);
+              if (showParkingDetail) {
+                return ParkingDetailContent(
+                  scrollController: scrollController,
+                  showParkingDetailContent: showParkingDetailContent,
+                  closeParkingDetail: () {
+                    setState(() {
+                      showParkingDetail = false;
+                    });
+                  },
+                );
               } else {
                 return HomeScreenContent(scrollController, showParkingDetailContent, parkingList, (int method) {
                   setState(() {
@@ -422,7 +396,7 @@ class _HomeScreenState extends State<HomeScreen> {
             height: 35 * fem,
             width: 35 * fem,
             decoration: BoxDecoration(
-              color: Colors.transparent
+                color: Colors.transparent
             ),
             child: FloatingActionButton(
               tooltip: 'Vị trí hiện tại',
@@ -497,7 +471,6 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
 
   @override
   Widget build(BuildContext context) {
-    final count = widget.fakeData.length;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -605,7 +578,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                                     border: Border.all(color: Color(0xff5b5b5b)),
                                     color: Color(0xffffffff),
                                     borderRadius:
-                                        BorderRadius.circular(100 * fem),
+                                    BorderRadius.circular(100 * fem),
                                   ),
                                   child: Center(
                                     child: Row(
@@ -629,10 +602,11 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                                     ),
                                   ),
                                 ),
-                              ],
-                            )
-                          ],
-                        )
+                              ),
+                            ],
+                          )
+                        ],
+                      )
                     ]),
               ),
               Container(
@@ -675,37 +649,24 @@ class ParkingDetailContent extends StatefulWidget {
   final ScrollController scrollController;
   final Function showParkingDetailContent;
   final Function closeParkingDetail;
-  final String ploID;
 
   const ParkingDetailContent({
     required this.scrollController,
     required this.showParkingDetailContent,
     required this.closeParkingDetail,
-    required this.ploID,
   });
 
   @override
   State<ParkingDetailContent> createState() => _ParkingDetailContentState();
 }
 
-//Detail Parking lot
 class _ParkingDetailContentState extends State<ParkingDetailContent> {
-  late String ploID;
-  Future<ParkingLotDetail>? parkingLotFuture;
+  List<String> images = [
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTeET9OkThGxXQWnPrfXR_2NY45Xn1cqtKJwXhtNx2bjjW8rM8fUwW-ChoZM-3FyzI0MmQ&usqp=CAU",
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTeET9OkThGxXQWnPrfXR_2NY45Xn1cqtKJwXhtNx2bjjW8rM8fUwW-ChoZM-3FyzI0MmQ&usqp=CAU",
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTeET9OkThGxXQWnPrfXR_2NY45Xn1cqtKJwXhtNx2bjjW8rM8fUwW-ChoZM-3FyzI0MmQ&usqp=CAU"
+  ];
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    parkingLotFuture = _getParkingLotFuture();
-    ploID = widget.ploID;
-  }
-
-  Future<ParkingLotDetail> _getParkingLotFuture() async {
-    return ParkingAPI.getParkingLotDetail(widget.ploID);
-  }
-
-  @override
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -728,35 +689,18 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Container(
-                        width: double.infinity,
+                        margin: EdgeInsets.only(
+                          top: 20 * fem,
+                          bottom: 25 * fem,
+                        ),
+                        width: 85 * fem,
+                        height: 3 * fem,
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(26 * fem),
-                            topRight: Radius.circular(26 * fem),
-                          ),
-                          border: Border.all(
-                            color: Colors.red,
-                            width: 2.0,
+                          color: Colors.grey,
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(25 * fem),
                           ),
                         ),
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Container(
-                                margin: EdgeInsets.only(
-                                  top: 20 * fem,
-                                  bottom: 25 * fem,
-                                ),
-                                width: 85 * fem,
-                                height: 3 * fem,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey,
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(25 * fem),
-                                  ),
-                                ),
-                              ),
-                            ]),
                       ),
                     ]),
               ),
@@ -871,35 +815,6 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                                       height: 1.2175 * ffem / fem,
                                       color: Color(0xff000000),
                                     ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Container(
-                                          margin:
-                                              EdgeInsets.only(bottom: 6 * fem),
-                                          child: Text(
-                                            'Sáng',
-                                            style: TextStyle(
-                                              fontSize: 15 * ffem,
-                                              fontWeight: FontWeight.w400,
-                                              height: 1.175 * ffem / fem,
-                                              color: Color(0xff5b5b5b),
-                                            ),
-                                          ),
-                                        ),
-                                        Text(
-                                          parkingLotDetail.morningFee
-                                              .toString(),
-                                          style: TextStyle(
-                                            fontSize: 15 * ffem,
-                                            fontWeight: FontWeight.w600,
-                                            height: 1.2175 * ffem / fem,
-                                            color: Color(0xff000000),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
                                   ),
                                 ],
                               ),
@@ -937,35 +852,6 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                                       fontWeight: FontWeight.w600,
                                       height: 1.2175 * ffem / fem,
                                       color: Color(0xff000000),
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Container(
-                                          margin:
-                                              EdgeInsets.only(bottom: 6 * fem),
-                                          child: Text(
-                                            'Tối',
-                                            style: TextStyle(
-                                              fontSize: 15 * ffem,
-                                              fontWeight: FontWeight.w400,
-                                              height: 1.175 * ffem / fem,
-                                              color: Color(0xff5b5b5b),
-                                            ),
-                                          ),
-                                        ),
-                                        Text(
-                                          parkingLotDetail.eveningFee
-                                              .toString(),
-                                          style: TextStyle(
-                                            fontSize: 15 * ffem,
-                                            fontWeight: FontWeight.w600,
-                                            height: 1.2175 * ffem / fem,
-                                            color: Color(0xff000000),
-                                          ),
-                                        ),
-                                      ],
                                     ),
                                   ),
                                 ],
@@ -1005,35 +891,6 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                                       height: 1.2175 * ffem / fem,
                                       color: Color(0xff000000),
                                     ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Container(
-                                          margin:
-                                              EdgeInsets.only(bottom: 6 * fem),
-                                          child: Text(
-                                            'Qua đêm',
-                                            style: TextStyle(
-                                              fontSize: 15 * ffem,
-                                              fontWeight: FontWeight.w400,
-                                              height: 1.175 * ffem / fem,
-                                              color: Color(0xff5b5b5b),
-                                            ),
-                                          ),
-                                        ),
-                                        Text(
-                                          parkingLotDetail.overnightFee
-                                              .toString(),
-                                          style: TextStyle(
-                                            fontSize: 15 * ffem,
-                                            fontWeight: FontWeight.w600,
-                                            height: 1.2175 * ffem / fem,
-                                            color: Color(0xff000000),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
                                   ),
                                 ],
                               ),
@@ -1072,35 +929,6 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                                       height: 1.2175 * ffem / fem,
                                       color: Color(0xff000000),
                                     ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Container(
-                                          margin:
-                                              EdgeInsets.only(bottom: 6 * fem),
-                                          child: Text(
-                                            'Chỗ trống',
-                                            style: TextStyle(
-                                              fontSize: 15 * ffem,
-                                              fontWeight: FontWeight.w400,
-                                              height: 1.175 * ffem / fem,
-                                              color: Color(0xff5b5b5b),
-                                            ),
-                                          ),
-                                        ),
-                                        Text(
-                                          parkingLotDetail.currentSlot
-                                              .toString(),
-                                          style: TextStyle(
-                                            fontSize: 15 * ffem,
-                                            fontWeight: FontWeight.w600,
-                                            height: 1.2175 * ffem / fem,
-                                            color: Color(0xff000000),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
                                   ),
                                 ],
                               ),
@@ -1118,7 +946,7 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => RatingScreen()));
+                                        builder: (context) => RatingScreen(ploID: "PL0934328813",)));
                               },
                               child: Container(
                                 padding: EdgeInsets.fromLTRB(
@@ -1139,7 +967,7 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                                       color: Color(0xff000000),
                                     ),
                                   ),
-                                ],
+                                ),
                               ),
                             ),
                             InkWell(
@@ -1184,10 +1012,10 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                                   onTap: () {},
                                   child: Padding(
                                     padding:
-                                        EdgeInsets.symmetric(horizontal: 5 * fem),
+                                    EdgeInsets.symmetric(horizontal: 5 * fem),
                                     child: ClipRRect(
                                       borderRadius:
-                                          BorderRadius.circular(10 * fem),
+                                      BorderRadius.circular(10 * fem),
                                       child: Image.network(
                                         imageUrl,
                                         fit: BoxFit.cover,
@@ -1209,7 +1037,6 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
   }
 }
 
-//Status = 2
 class CheckInContent extends StatelessWidget {
   final ScrollController scrollController;
 
@@ -1251,8 +1078,7 @@ class CheckInContent extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(
-                            left: 10 * fem, right: 10 * fem, top: 15 * fem),
+                        padding: EdgeInsets.only(left: 10 * fem, right: 10 * fem, top: 15 * fem),
                         child: Text(
                           'Đang trên đường tới...',
                           style: TextStyle(
@@ -1263,8 +1089,7 @@ class CheckInContent extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                        padding:
-                            EdgeInsets.only(left: 10 * fem, right: 10 * fem),
+                        padding: EdgeInsets.only(left: 10 * fem, right: 10 * fem),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -1298,8 +1123,8 @@ class CheckInContent extends StatelessWidget {
                                 ),
                                 Padding(
                                   padding: EdgeInsets.only(left: 2 * fem),
-                                  child: Image.asset(
-                                      'assets/images/chatImage.png'),
+                                  child:
+                                  Image.asset('assets/images/chatImage.png'),
                                 ),
                               ],
                             )
@@ -1307,8 +1132,7 @@ class CheckInContent extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                        padding:
-                            EdgeInsets.only(left: 10 * fem, right: 10 * fem),
+                        padding: EdgeInsets.only(left: 10 * fem, right: 10 * fem),
                         child: Container(
                           margin: EdgeInsets.only(top: 10 * fem),
                           padding: EdgeInsets.only(
@@ -1330,7 +1154,7 @@ class CheckInContent extends StatelessWidget {
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  MainAxisAlignment.spaceBetween,
                                   children: [
                                     Container(
                                       child: Text(
@@ -1362,7 +1186,7 @@ class CheckInContent extends StatelessWidget {
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  MainAxisAlignment.spaceBetween,
                                   children: [
                                     Container(
                                       child: Text(
@@ -1380,7 +1204,7 @@ class CheckInContent extends StatelessWidget {
                                       decoration: BoxDecoration(
                                         color: Color(0xfff9f7e4),
                                         borderRadius:
-                                            BorderRadius.circular(100 * fem),
+                                        BorderRadius.circular(100 * fem),
                                       ),
                                       child: Center(
                                         child: Text(
@@ -1407,7 +1231,7 @@ class CheckInContent extends StatelessWidget {
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  MainAxisAlignment.spaceBetween,
                                   children: [
                                     Container(
                                       child: Text(
@@ -1437,7 +1261,7 @@ class CheckInContent extends StatelessWidget {
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  MainAxisAlignment.spaceBetween,
                                   children: [
                                     Container(
                                       child: Text(
@@ -1467,7 +1291,7 @@ class CheckInContent extends StatelessWidget {
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  MainAxisAlignment.spaceBetween,
                                   children: [
                                     Container(
                                       child: Text(
@@ -1499,7 +1323,7 @@ class CheckInContent extends StatelessWidget {
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  MainAxisAlignment.spaceBetween,
                                   children: [
                                     Container(
                                       child: Text(
@@ -1527,10 +1351,9 @@ class CheckInContent extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                        padding:
-                            EdgeInsets.only(left: 10 * fem, right: 10 * fem),
+                        padding: EdgeInsets.only(left: 10 * fem, right: 10 * fem),
                         child: Container(
-                          margin: EdgeInsets.only(top: 15 * fem),
+                          margin: EdgeInsets.only(top: 15* fem),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -1541,16 +1364,16 @@ class CheckInContent extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(
-                            left: 10 * fem, right: 10 * fem, bottom: 10 * fem),
+                        padding: EdgeInsets.only(left: 10 * fem, right: 10 * fem, bottom: 10 * fem),
                         child: Center(
                             child: Text(
-                          'Check-in',
-                          style: TextStyle(
-                              fontSize: 24 * fem,
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context).primaryColor),
-                        )),
+                              'Check-in',
+                              style: TextStyle(
+                                  fontSize: 24 * fem,
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).primaryColor
+                              ),
+                            )),
                       ),
                     ]),
               ),
@@ -1562,7 +1385,6 @@ class CheckInContent extends StatelessWidget {
   }
 }
 
-//Status = 3
 class CheckOutContent extends StatelessWidget {
   final ScrollController scrollController;
 
@@ -1604,8 +1426,7 @@ class CheckOutContent extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(
-                            left: 10 * fem, right: 10 * fem, top: 15 * fem),
+                        padding: EdgeInsets.only(left: 10 * fem, right: 10 * fem, top: 15 * fem),
                         child: Text(
                           'Đang trong bãi...',
                           style: TextStyle(
@@ -1616,8 +1437,7 @@ class CheckOutContent extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                        padding:
-                            EdgeInsets.only(left: 10 * fem, right: 10 * fem),
+                        padding: EdgeInsets.only(left: 10 * fem, right: 10 * fem),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -1647,23 +1467,16 @@ class CheckOutContent extends StatelessWidget {
                                 Padding(
                                   padding: EdgeInsets.only(right: 2 * fem),
                                   child: Image.asset(
-                                    'assets/images/directionImageGreen.png',
-                                  ),
+                                    'assets/images/directionImageGreen.png',),
                                 ),
                                 InkWell(
-                                  onTap: () {
-                                    PersistentNavBarNavigator.pushNewScreen(
-                                      context,
-                                      screen: ChatScreen(),
-                                      withNavBar: false,
-                                      pageTransitionAnimation:
-                                          PageTransitionAnimation.cupertino,
-                                    );
+                                  onTap: (){
+                                    PersistentNavBarNavigator.pushNewScreen( context, screen: ChatScreen(), withNavBar: false, pageTransitionAnimation: PageTransitionAnimation.cupertino, );
                                   },
                                   child: Padding(
                                     padding: EdgeInsets.only(left: 2 * fem),
-                                    child: Image.asset(
-                                        'assets/images/chatImageGreen.png'),
+                                    child:
+                                    Image.asset('assets/images/chatImageGreen.png'),
                                   ),
                                 ),
                               ],
@@ -1672,8 +1485,7 @@ class CheckOutContent extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                        padding:
-                            EdgeInsets.only(left: 10 * fem, right: 10 * fem),
+                        padding: EdgeInsets.only(left: 10 * fem, right: 10 * fem),
                         child: Container(
                           margin: EdgeInsets.only(top: 10 * fem),
                           padding: EdgeInsets.only(
@@ -1695,7 +1507,7 @@ class CheckOutContent extends StatelessWidget {
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  MainAxisAlignment.spaceBetween,
                                   children: [
                                     Container(
                                       child: Text(
@@ -1727,7 +1539,7 @@ class CheckOutContent extends StatelessWidget {
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  MainAxisAlignment.spaceBetween,
                                   children: [
                                     Container(
                                       child: Text(
@@ -1745,7 +1557,7 @@ class CheckOutContent extends StatelessWidget {
                                       decoration: BoxDecoration(
                                         color: Color(0xFFE4F6E6),
                                         borderRadius:
-                                            BorderRadius.circular(100 * fem),
+                                        BorderRadius.circular(100 * fem),
                                       ),
                                       child: Center(
                                         child: Text(
@@ -1772,7 +1584,7 @@ class CheckOutContent extends StatelessWidget {
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  MainAxisAlignment.spaceBetween,
                                   children: [
                                     Container(
                                       child: Text(
@@ -1802,7 +1614,7 @@ class CheckOutContent extends StatelessWidget {
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  MainAxisAlignment.spaceBetween,
                                   children: [
                                     Container(
                                       child: Text(
@@ -1832,7 +1644,7 @@ class CheckOutContent extends StatelessWidget {
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  MainAxisAlignment.spaceBetween,
                                   children: [
                                     Container(
                                       child: Text(
@@ -1864,7 +1676,7 @@ class CheckOutContent extends StatelessWidget {
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  MainAxisAlignment.spaceBetween,
                                   children: [
                                     Container(
                                       child: Text(
@@ -1892,18 +1704,18 @@ class CheckOutContent extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(
-                            left: 10 * fem, right: 10 * fem, top: 20 * fem),
+                        padding: EdgeInsets.only(left: 10 * fem, right: 10 * fem, top: 20 * fem),
                         child: Align(
                           alignment: Alignment.bottomCenter,
                           child: Center(
                               child: Text(
-                            'Check-out',
-                            style: TextStyle(
-                                fontSize: 24 * fem,
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).primaryColor),
-                          )),
+                                'Check-out',
+                                style: TextStyle(
+                                    fontSize: 24 * fem,
+                                    fontWeight: FontWeight.bold,
+                                    color: Theme.of(context).primaryColor
+                                ),
+                              )),
                         ),
                       ),
                     ]),
@@ -1915,3 +1727,4 @@ class CheckOutContent extends StatelessWidget {
     );
   }
 }
+

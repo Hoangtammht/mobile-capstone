@@ -11,7 +11,6 @@ class ListParkingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final slot = fakeData.slot;
     return InkWell(
       child: Padding(
         padding: EdgeInsets.only(top: 12 * fem, left: 15 * fem, right: 15 * fem),
