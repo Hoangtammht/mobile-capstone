@@ -6,7 +6,8 @@ class RatingCard extends StatelessWidget {
   final String fromBy;
   final int star;
   final String content;
-  const RatingCard({Key? key, required this.fromBy, required this.star, required this.content}) : super(key: key);
+  final String? feedbackDate;
+  const RatingCard({Key? key, required this.fromBy, required this.star, required this.content, this.feedbackDate}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +36,19 @@ class RatingCard extends StatelessWidget {
               fontSize: 18 * fem,
               color: Colors.grey
             ),),
+          ),
+          Padding(
+            padding: EdgeInsets.only(bottom: 5 * fem),
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                feedbackDate!,
+                style: TextStyle(
+                  fontSize: 15 * fem,
+                  color: Colors.black,
+                ),
+              ),
+            ),
           ),
           Divider(
             thickness: 1,

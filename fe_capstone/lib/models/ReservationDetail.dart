@@ -11,6 +11,7 @@ class ReservationDetail {
     required this.checkIn,
     required this.checkOut,
   });
+
   late final String licensePlate;
   late final double price;
   late final String methodName;
@@ -45,6 +46,50 @@ class ReservationDetail {
     _data['statusName'] = statusName;
     _data['startTime'] = startTime;
     _data['endTime'] = endTime;
+    _data['checkIn'] = checkIn;
+    _data['checkOut'] = checkOut;
+    return _data;
+  }
+}
+
+
+class ReservationByLicensePlate {
+  ReservationByLicensePlate({
+    required this.customerName,
+    required this.methodName,
+    required this.status,
+    required this.statusName,
+    required this.checkIn,
+    required this.checkOut,
+    required this.licensePlate,
+  });
+
+  late final String customerName;
+  late final String methodName;
+  late final int status;
+  late final String statusName;
+  late final String checkIn;
+  late final String checkOut;
+  late final String licensePlate;
+
+  ReservationByLicensePlate.fromJson
+      (Map<String, dynamic> json){
+    customerName = json['customerName'] ?? '';
+    methodName = json['methodName'] ?? '';
+    status = json['status'] ?? 0;
+    statusName = json['statusName'] ?? '';
+    checkIn = json['checkIn'] ?? '';
+    checkOut = json['checkOut'] ?? '';
+    licensePlate = json['licensePlate'] ?? '';
+  }
+
+  Map<String, dynamic> toJson() {
+    final _data = <String, dynamic>{};
+    _data['customerName'] = customerName;
+    _data['licensePlate'] = licensePlate;
+    _data['methodName'] = methodName;
+    _data['status'] = status;
+    _data['statusName'] = statusName;
     _data['checkIn'] = checkIn;
     _data['checkOut'] = checkOut;
     return _data;

@@ -6,6 +6,8 @@ class UserPreferences {
 
   static const _keyAccessToken = 'access_token';
 
+  static const _keyUserData = 'PLO';
+
   static final _storage = FlutterSecureStorage();
 
   static Future init() async {
@@ -14,6 +16,14 @@ class UserPreferences {
 
   static Future<void> setAccessToken(String value) async {
     await _storage.write(key: _keyAccessToken, value: value);
+  }
+
+  static Future<void> setUserName(String value) async {
+    await _storage.write(key: _keyUserData, value: value);
+  }
+
+  static Future<dynamic> getUserName() async {
+    return await _storage.read(key: _keyUserData);
   }
 
   static Future<String?> getAccessToken() async {

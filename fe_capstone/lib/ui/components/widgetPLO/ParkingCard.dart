@@ -282,10 +282,21 @@ class _ParkingCardState extends State<ParkingCard> {
                                 int reservationID = int.parse(widget.vehicleData.reservationID);
                                 try {
                                   await ParkingAPI.checkInReservation(reservationID);
-                                  Navigator.pop(context);
+
                                   widget.updateUI();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Check-in thành công'),
+                                    ),
+                                  );
                                 } catch (e) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Việc check-in thất bại'),
+                                    ),
+                                  );
                                 }
+                                Navigator.of(context).pop();
                             },
                             child: Text(
                               'Xác nhận',
@@ -430,11 +441,21 @@ class _ParkingCardState extends State<ParkingCard> {
                                 int reservationID = int.parse(widget.vehicleData.reservationID);
                                 try {
                                   await ParkingAPI.checkoutReservation(reservationID);
-                                  Navigator.pop(context);
-                                  widget.updateUI();
-                                } catch (e) {
 
+                                  widget.updateUI();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Check-out thành công'),
+                                    ),
+                                  );
+                                } catch (e) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Việc check-out thất bại'),
+                                    ),
+                                  );
                                 }
+                                Navigator.of(context).pop();
                             },
                             child: Text(
                               'Xác nhận',

@@ -1,25 +1,29 @@
+
 import 'package:fe_capstone/main.dart';
-import 'package:fe_capstone/ui/CustomerUI/ParkingDetail.dart';
+import 'package:fe_capstone/models/ParkingInformationModel.dart';
 import 'package:flutter/material.dart';
 
+
 class ListParkingCard extends StatelessWidget {
-  const ListParkingCard({Key? key}) : super(key: key);
+  final ParkingHomeScreen  fakeData ;
+  const ListParkingCard(this.fakeData, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final slot = fakeData.slot;
     return InkWell(
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: 12 * fem, horizontal: 15 * fem),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Khách sạn Romantic', style: TextStyle(
-              fontSize: 20 * fem,
-              fontWeight: FontWeight.bold
+            Text(fakeData.parkingName, style: TextStyle(
+                fontSize: 20 * fem,
+                fontWeight: FontWeight.bold
             ),),
             Padding(
               padding: EdgeInsets.only(top: 5 * fem, bottom: 10 * fem),
-              child: Text('681A Đ. Nguyễn Huệ, Bến Nghé, Quận 1, TP HCM', style: TextStyle(
+              child: Text(fakeData.address, style: TextStyle(
                 color: Colors.grey,
                 fontSize: 18 * fem,
               ),),
@@ -37,7 +41,7 @@ class ListParkingCard extends StatelessWidget {
                   ),
                   child: Center(
                     child: Text(
-                      'Còn 11 chỗ',
+                      'Còn $slot chỗ',
                       style:  TextStyle (
                         fontSize:  15*ffem,
                         fontWeight:  FontWeight.w400,

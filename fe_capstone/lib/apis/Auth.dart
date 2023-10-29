@@ -26,6 +26,13 @@ class AuthAPIs {
 
       if (response.statusCode == 200) {
         await UserPreferences.setAccessToken(response.data['access_token']);
+
+        final ploData = response.data['PLO'];
+        if (ploData != null && ploData.containsKey('role')) {
+          final fullName = ploData['fullName'];
+          await UserPreferences.setUserName(fullName);
+          print(fullName);
+        }
       } else {
         throw Exception(
             'Tài khoản hoặc mật khẩu không đúng. Vui lòng đăng nhập lại.');

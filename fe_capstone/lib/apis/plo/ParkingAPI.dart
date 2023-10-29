@@ -151,7 +151,8 @@ class ParkingAPI {
     }
   }
 
-  static Future<List<ListVehicleInParking>> fetchListVehicleInParking(int statusID) async {
+  static Future<List<ListVehicleInParking>> fetchListVehicleInParking(
+      int statusID) async {
     try {
       String? token = await UserPreferences.getAccessToken();
       if (token == null) {
@@ -211,7 +212,8 @@ class ParkingAPI {
     }
   }
 
-  static Future<void> updateParkingSetting(List<Map<String, dynamic>> data) async {
+  static Future<void> updateParkingSetting(
+      List<Map<String, dynamic>> data) async {
     try {
       String? token = await UserPreferences.getAccessToken();
       if (token == null) {
@@ -238,6 +240,7 @@ class ParkingAPI {
   }
 
   static Future<void> checkoutReservation(int reservationID) async {
+  print(reservationID);
     try {
       String? token = await UserPreferences.getAccessToken();
       if (token == null) {
@@ -289,7 +292,8 @@ class ParkingAPI {
     }
   }
 
-  static Future<ReservationDetail> getReservationDetail(int reservationID) async {
+  static Future<ReservationDetail> getReservationDetail(
+      int reservationID) async {
     try {
       String? token = await UserPreferences.getAccessToken();
       if (token == null) {
@@ -345,7 +349,8 @@ class ParkingAPI {
     }
   }
 
-  static Future<void> checkOTPcodeTransferParking(String otpCode, String phoneNumber) async {
+  static Future<void> checkOTPcodeTransferParking(
+      String otpCode, String phoneNumber) async {
     try {
       String? token = await UserPreferences.getAccessToken();
       if (token == null) {
@@ -499,7 +504,8 @@ class ParkingAPI {
         ),
       );
       if (response.statusCode == 200) {
-        final Map<String, dynamic> responseData = response.data['Payment']['body'];
+        final Map<String, dynamic> responseData =
+            response.data['Payment']['body'];
         String paymentUrl = responseData['url'];
         String uuid = response.data['UUID'];
         return PaymentResponse(paymentUrl, uuid);
@@ -537,7 +543,8 @@ class ParkingAPI {
     }
   }
 
-  static Future<void> checkinReservationWithLicensePlate(String licensePlate) async {
+  static Future<void> checkinReservationWithLicensePlate(
+      String licensePlate) async {
     try {
       String? token = await UserPreferences.getAccessToken();
       if (token == null) {
@@ -563,7 +570,8 @@ class ParkingAPI {
     }
   }
 
-  static Future<void> checkoutReservationWithLicensePlate(String licensePlate) async {
+  static Future<void> checkoutReservationWithLicensePlate(
+      String licensePlate) async {
     try {
       String? token = await UserPreferences.getAccessToken();
       if (token == null) {
@@ -589,7 +597,8 @@ class ParkingAPI {
     }
   }
 
-  static Future<double> getSumByDate(String startTime, String startTime2nd) async {
+  static Future<double> getSumByDate(
+      String startTime, String startTime2nd) async {
     try {
       String? token = await UserPreferences.getAccessToken();
       if (token == null) {
@@ -620,7 +629,8 @@ class ParkingAPI {
     }
   }
 
-  static Future<void> requestWithdrawal(double amount, String method1, String method2) async {
+  static Future<void> requestWithdrawal(
+      double amount, String method1, String method2) async {
     try {
       String? token = await UserPreferences.getAccessToken();
       if (token == null) {
@@ -650,5 +660,96 @@ class ParkingAPI {
     }
   }
 
+  static Future<ParkingLotDetail> getParkingLotDetail(String ploID) async {
+    try {
+      String? token = await UserPreferences.getAccessToken();
+      if (token == null) {
+        throw Exception('Access token is null');
+      }
+      final response =
+          await dio.get('$baseUrl/customer/detailPloForCustomer?ploID=$ploID',
+              options: Options(
+                headers: {
+                  'Authorization': 'Bearer $token',
+                  'Content-Type': 'application/json',
+                },
+              ));
+      if (response.statusCode == 200) {
+        print("getParkingLotDetail successful");
+        final data = response.data['data'];
+        ParkingLotDetail parkingLotDetail = ParkingLotDetail.fromJson(data);
+        return parkingLotDetail;
+      } else {
+        throw Exception('Failed to rgetParkingLotDetail');
+      }
+    } catch (e) {
+      throw Exception('Failed to getParkingLotDetail: $e');
+    }
+  }
+
+  static Future<List<CustomerRating>> getRatingParkingLot(String ploID) async {
+    try {
+      String? token = await UserPreferences.getAccessToken();
+      if (token == null) {
+        throw Exception('Access token is null');
+      }
+      final response =
+          await dio.get('$baseUrl/rating/getRatingOfCustomer?ploID=$ploID',
+              options: Options(
+                headers: {
+                  'Authorization': 'Bearer $token',
+                  'Content-Type': 'application/json',
+                },
+              ));
+
+      if (response.statusCode == 200) {
+        print("get RatingList successful");
+        final List<dynamic> data = response.data['data'];
+        List<CustomerRating> ratingList;
+        ratingList = data.map((item) => CustomerRating.fromJson(item)).toList();
+
+        return ratingList;
+      } else {
+        throw Exception('Failed to get RatingList');
+      }
+    } catch (e) {
+      throw Exception('Failed to get RatingList: $e');
+    }
+  }
+
+  static Future<ReservationByLicensePlate> getReservationByLicensePlate(String licensePlate) async {
+
+    try {
+      String? token = await UserPreferences.getAccessToken();
+      if (token == null) {
+        throw Exception('Access token is null');
+      }
+      final response =
+      await dio.get('$baseUrl/reservation/getInforReservationByLicensePlate?licensePlate=$licensePlate',
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer $token',
+              'Content-Type': 'application/json',
+            },
+          ));
+
+      if (response.statusCode == 200) {
+        ReservationByLicensePlate reservationByLicensePlate = ReservationByLicensePlate(customerName: '', licensePlate: '', methodName: '', status: 0, statusName: '', checkIn: '', checkOut: '');
+        final status = response.data['status'];
+
+        if(status == 200){
+          print("get reservation by LicensePlate  successful");
+          final data = response.data['data'];
+          reservationByLicensePlate  = ReservationByLicensePlate.fromJson(data);
+        }
+        print(reservationByLicensePlate);
+        return reservationByLicensePlate;
+      } else {
+        throw Exception('Failed to get RatingList');
+      }
+    } catch (e) {
+      throw Exception('Failed to get RatingList: $e');
+    }
+  }
 
 }
