@@ -1,10 +1,31 @@
+import 'package:fe_capstone/apis/plo/ParkingAPI.dart';
+import 'package:fe_capstone/models/RatingModel.dart';
 import 'package:fe_capstone/ui/components/widgetCustomer/RatingCard.dart';
 import 'package:fe_capstone/ui/components/widgetCustomer/RatingStars.dart';
 import 'package:flutter/material.dart';
 import 'package:fe_capstone/main.dart';
 
-class RatingScreen extends StatelessWidget {
-  const RatingScreen({Key? key}) : super(key: key);
+class RatingScreen extends StatefulWidget {
+  final String ploID;
+
+  RatingScreen({required this.ploID});
+
+  @override
+  _RatingScreenState createState() => _RatingScreenState();
+}
+
+class _RatingScreenState extends State<RatingScreen> {
+  Future<List<CustomerRating>>? ratingList;
+
+  @override
+  void initState() {
+    super.initState();
+    ratingList = _getRatingListFuture();
+  }
+
+  Future<List<CustomerRating>> _getRatingListFuture() async {
+    return ParkingAPI.getRatingParkingLot(widget.ploID);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,14 +52,37 @@ class RatingScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: Container(
-        margin: EdgeInsets.only(top: 10 * fem),
-        child: ListView.builder(
-            scrollDirection: Axis.vertical,
-            itemCount: 4,
-            itemBuilder: (context, index){
-          return RatingCard(fromBy: "Mai Hoàng Tâm",star: 5,content: "Thoái mái, sạch sẽ",);
-        }),
+      body: FutureBuilder<List<CustomerRating>>(
+        future: ratingList,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
+            );
+          } else {
+            final List<CustomerRating> ratings = snapshot.data!;
+
+            return Container(
+              margin: EdgeInsets.only(top: 10 * fem),
+              child: ListView.builder(
+                scrollDirection: Axis.vertical,
+                itemCount: ratings.length,
+                itemBuilder: (context, index) {
+                  return RatingCard(
+                    fromBy: ratings[index].customerName,
+                    star: ratings[index].rating,
+                    content: ratings[index].content,
+                    feedbackDate: ratings[index].feedbackDate,
+                  );
+                },
+              ),
+            );
+          }
+        },
       ),
     );
   }

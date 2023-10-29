@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fe_capstone/apis/plo/ParkingAPI.dart';
+import 'package:fe_capstone/blocs/UserPreferences.dart';
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/models/RequestResgisterParking.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/RegistrationFeeScreen.dart';
@@ -22,6 +23,7 @@ class _RegisterParkingState extends State<RegisterParking> {
   bool isCheckOne = false;
   bool isCheckTwo = false;
   bool canSubmit = false;
+  String userName = '';
   List<String> images = [];
 
   String? _image;
@@ -40,6 +42,23 @@ class _RegisterParkingState extends State<RegisterParking> {
         canSubmit = false;
       }
     });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getName();
+  }
+
+  void getName() async {
+    String? name = await UserPreferences.getUserName();
+
+    if (userName != null) {
+      setState(() {
+        userName = name!;
+      });
+    }
   }
 
   @override
@@ -119,7 +138,7 @@ class _RegisterParkingState extends State<RegisterParking> {
                           fontSize: 22 * fem,
                           fontWeight: FontWeight.bold,
                         )),
-                    Text('Huỳnh Bá Quốc',
+                    Text(userName,
                         style: TextStyle(
                           fontSize: 22 * fem,
                           fontWeight: FontWeight.bold,

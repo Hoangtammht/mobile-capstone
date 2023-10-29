@@ -1,7 +1,9 @@
+
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/models/Parking.dart';
 import 'package:fe_capstone/ui/CustomerUI/ParkingDetail.dart';
 import 'package:flutter/material.dart';
+
 
 class ListParkingCard extends StatelessWidget {
   final Parking parkingInfor;
@@ -9,6 +11,7 @@ class ListParkingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final slot = fakeData.slot;
     return InkWell(
       child: Padding(
         padding: EdgeInsets.only(top: 12 * fem, left: 15 * fem, right: 15 * fem),

@@ -25,6 +25,7 @@ class _HistoryListState extends State<HistoryList> {
     super.didChangeDependencies();
     historyListFuture = _getListHistoryFuture();
   }
+
   Future<List<History>> _getListHistoryFuture() async {
     return HistoryAPI.getHistoryList();
   }

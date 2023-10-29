@@ -31,6 +31,13 @@ class AuthAPIs {
         AuthAPIs.addDeviceToken(deviceToken!);
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString("device_token", deviceToken);
+
+        final ploData = response.data['PLO'];
+        if (ploData != null && ploData.containsKey('role')) {
+          final fullName = ploData['fullName'];
+          await UserPreferences.setUserName(fullName);
+          print(fullName);
+        }
       } else {
         throw Exception(
             'Tài khoản hoặc mật khẩu không đúng. Vui lòng đăng nhập lại.');
