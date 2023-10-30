@@ -1,6 +1,8 @@
 import 'package:fe_capstone/apis/customer/SearchParkingAPI.dart';
+import 'package:fe_capstone/apis/customer/WalletScreenAPI.dart';
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/models/Parking.dart';
+import 'package:fe_capstone/models/ResponseWalletCustomer.dart';
 import 'package:fe_capstone/ui/screens/ChatScreen.dart';
 import 'package:fe_capstone/ui/CustomerUI/RatingScreen.dart';
 import 'package:fe_capstone/ui/CustomerUI/ReservationScreen.dart';
@@ -23,6 +25,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool showParkingDetail = false;
+  bool isCheckedAccount = false;
 
   void showParkingDetailContent() {
     setState(() {
@@ -41,16 +44,58 @@ class _HomeScreenState extends State<HomeScreen> {
   List<dynamic> autoSearchResults = [];
   bool showSearchResults = false;
   late List<Parking> parkingList = [];
+  late double accountBalance;
+  FocusNode _searchFocusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
+    Future.delayed(Duration(seconds: 4), () async {
+      if (!isCheckedAccount) {
+        await checkWalletCustomer();
+        checkAccount();
+        isCheckedAccount = true;
+      }
+    });
+  }
+
+  Future<double> checkWalletCustomer() async {
+    ResponseWalletCustomer responseWalletCustomer = await WalletScreenAPI.getWalletScreenData();
+    accountBalance = responseWalletCustomer.walletBalance;
+    print('Số tiền trong ví là: $accountBalance');
+    return accountBalance;
   }
 
   @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
+  }
+
+  void checkAccount() {
+    if (accountBalance < 10000) {
+      String formattedBalance = accountBalance.toStringAsFixed(0).replaceAllMapped(
+          new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+              (Match m) => '${m[1]}.');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Thông báo",style: TextStyle(fontSize: 24 * fem)),
+            content: Text(
+                "Số dư tài khoản của bạn chỉ còn $formattedBalanceđ. Vui lòng nạp tiền!", style: TextStyle(fontSize: 20 * fem)),
+            actions: <Widget>[
+              TextButton(
+                child: Text("Đóng", style: TextStyle(fontSize: 18 * fem)),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 
   void _onMapCreated(VietmapController controller) {
@@ -289,7 +334,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           height: 46 * fem,
                           width: 320 * fem,
                           child: TextFormField(
-                            maxLines: 1, // Chỉ cho phép nhập 1 dòng chữ
+                            controller: _searchController,
+                            focusNode: _searchFocusNode,
+                            maxLines: 1,
                             decoration: InputDecoration(
                               hintText: 'Bạn muốn đi đến đâu?',
                               border: InputBorder.none,
@@ -355,6 +402,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       onTap: () {
                         var selectedResult = autoSearchResults[index]['ref_id'];
                         getLatAndLong(selectedResult);
+                        setState(() {
+                            _searchController.text = autoSearchResults[index]['name'];
+                        });
+                        FocusScope.of(context).requestFocus(FocusNode());
                       },
                     );
                   },
