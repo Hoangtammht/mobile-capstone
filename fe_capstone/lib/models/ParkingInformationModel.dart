@@ -157,7 +157,6 @@ class ParkingLotDetail {
 
 
   ParkingLotDetail.fromJson(Map<String, dynamic> json){
-
     parkingName = json['parkingName'];
     address = json['address'];
     morningFee = json['morningFee'];

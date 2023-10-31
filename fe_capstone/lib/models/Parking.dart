@@ -5,6 +5,8 @@ class Parking {
     required this.currentSlot,
     required this.address,
     required this.distance,
+    required this.latitude,
+    required this.longitude,
     required this.price,
     required this.currentTime,
     required this.methodName,
@@ -15,6 +17,8 @@ class Parking {
   late final int currentSlot;
   late final String address;
   late final double distance;
+  late final double latitude;
+  late final double longitude;
   late final double price;
   late final String currentTime;
   late final String methodName;
@@ -27,6 +31,8 @@ class Parking {
     address = json['address'] ?? '';
     distance = json['distance'] ?? 0.0;
     price = json['price'] ?? 0.0;
+    latitude = json['latitude'] ?? 0.0;
+    longitude = json['longitude'] ?? 0.0;
     currentTime = json['currentTime'] ?? '';
     methodName = json['methodName'] ?? '';
     slot = json['slot'] ?? 0;
@@ -42,6 +48,8 @@ class Parking {
     _data['price'] = price;
     _data['currentTime'] = currentTime;
     _data['methodName'] = methodName;
+    _data['latitude'] = latitude;
+    _data['longitude'] = longitude;
     _data['slot'] = slot;
     return _data;
   }

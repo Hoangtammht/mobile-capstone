@@ -386,7 +386,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           prefs.remove('device_token');
                           await UserPreferences.logout();
                         }
-                        PersistentNavBarNavigator.pushNewScreen( context, screen: LoginScreen(), withNavBar: false, pageTransitionAnimation: PageTransitionAnimation.cupertino, );
+                        PersistentNavBarNavigator.pushNewScreen(context, screen: LoginScreen(), withNavBar: false, pageTransitionAnimation: PageTransitionAnimation.cupertino, );
                       },
                       child: Container(
                         margin:

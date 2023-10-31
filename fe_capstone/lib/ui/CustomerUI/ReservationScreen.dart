@@ -1,21 +1,22 @@
 import 'package:fe_capstone/apis/customer/ReservationAPI.dart';
 import 'package:fe_capstone/blocs/VehicleProvider.dart';
+import 'package:fe_capstone/blocs/WalletDataProvider.dart';
 import 'package:fe_capstone/models/ListVehicleCustomer.dart';
 import 'package:fe_capstone/models/ParkingInformationModel.dart';
 import 'package:fe_capstone/models/ReservationDetail.dart';
-import 'package:fe_capstone/ui/CustomerUI/HomeScreen.dart';
-
 import 'package:flutter/material.dart';
 import 'package:fe_capstone/main.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class ReservationScreen extends StatefulWidget {
-  final ParkingLotDetail parlinglotDetail;
+  final ParkingLotDetail parkinglotDetail;
+  final Function refreshHomeScreen;
   final String ploID;
 
   const ReservationScreen({
-    required this.parlinglotDetail,
-    required this.ploID,
+    required this.parkinglotDetail,
+    required this.ploID, required this.refreshHomeScreen,
   });
 
   @override
@@ -32,9 +33,11 @@ class _ReservationScreenState extends State<ReservationScreen> {
   late String dropdownType = '';
   late String dropdownVehicle = '';
 
+  final formatCurrency = NumberFormat.simpleCurrency(locale: 'vi_VN');
+
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _vehicleProvider = Provider.of<VehicleProvider>(context, listen: false);
     vehicleFuture = _vehicleProvider.getVehicleList();
@@ -54,7 +57,6 @@ class _ReservationScreenState extends State<ReservationScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).primaryColor,
@@ -71,7 +73,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
           title: Text(
             'Đặt chỗ',
             style: TextStyle(
-              fontSize: 26 * ffem,
+              fontSize: 30 * ffem,
               fontWeight: FontWeight.w700,
               height: 1.175 * ffem / fem,
               color: const Color(0xffffffff),
@@ -99,24 +101,24 @@ class _ReservationScreenState extends State<ReservationScreen> {
                     children: [
                       Padding(
                         padding: EdgeInsets.only(top: 25 * fem),
-                        child: Text(widget.parlinglotDetail.parkingName,
+                        child: Text(widget.parkinglotDetail.parkingName,
                             style: TextStyle(
-                                fontSize: 20 * fem,
+                                fontSize: 22 * fem,
                                 fontWeight: FontWeight.bold)),
                       ),
                       Padding(
                         padding:
                             EdgeInsets.only(top: 2 * fem, bottom: 15 * fem),
                         child: Text(
-                          widget.parlinglotDetail.address,
+                          widget.parkinglotDetail.address,
                           style:
-                              TextStyle(fontSize: 15 * fem, color: Colors.grey),
+                              TextStyle(fontSize: 20 * fem, color: Colors.grey),
                         ),
                       ),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          if(widget.parlinglotDetail.morningFee != 0)
+                          if(widget.parkinglotDetail.morningFee != 0)
                           Container(
                             padding: EdgeInsets.fromLTRB(
                                 15 * fem, 10 * fem, 15 * fem, 8 * fem),
@@ -134,7 +136,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                   child: Text(
                                     'Sáng',
                                     style: TextStyle(
-                                      fontSize: 13 * ffem,
+                                      fontSize: 18 * ffem,
                                       fontWeight: FontWeight.w400,
                                       height: 1.175 * ffem / fem,
                                       color: const Color(0xff5b5b5b),
@@ -142,9 +144,9 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                   ),
                                 ),
                                 Text(
-                                  widget.parlinglotDetail.morningFee.toString(),
+                                  '${formatCurrency.format(widget.parkinglotDetail.morningFee)}',
                                   style: TextStyle(
-                                    fontSize: 15 * ffem,
+                                    fontSize: 16 * ffem,
                                     fontWeight: FontWeight.w600,
                                     height: 1.2175 * ffem / fem,
                                     color: const Color(0xff000000),
@@ -156,7 +158,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                           SizedBox(
                             width: 10 * fem,
                           ),
-                          if(widget.parlinglotDetail.eveningFee != 0)
+                          if(widget.parkinglotDetail.eveningFee != 0)
                           Container(
                             padding: EdgeInsets.fromLTRB(
                                 15 * fem, 10 * fem, 15 * fem, 8 * fem),
@@ -173,7 +175,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                   child: Text(
                                     'Tối',
                                     style: TextStyle(
-                                      fontSize: 13 * ffem,
+                                      fontSize: 18 * ffem,
                                       fontWeight: FontWeight.w400,
                                       height: 1.175 * ffem / fem,
                                       color: const Color(0xff5b5b5b),
@@ -181,9 +183,9 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                   ),
                                 ),
                                 Text(
-                                  widget.parlinglotDetail.eveningFee.toString(),
+                                  '${formatCurrency.format(widget.parkinglotDetail.eveningFee)}',
                                   style: TextStyle(
-                                    fontSize: 15 * ffem,
+                                    fontSize: 16 * ffem,
                                     fontWeight: FontWeight.w600,
                                     height: 1.2175 * ffem / fem,
                                     color: const Color(0xff000000),
@@ -195,7 +197,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                           SizedBox(
                             width: 10 * fem,
                           ),
-                          if(widget.parlinglotDetail.overnightFee != 0)
+                          if(widget.parkinglotDetail.overnightFee != 0)
                           Container(
                             padding: EdgeInsets.fromLTRB(
                                 12 * fem, 10 * fem, 12 * fem, 8 * fem),
@@ -212,7 +214,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                   child: Text(
                                     'Qua đêm',
                                     style: TextStyle(
-                                      fontSize: 13 * ffem,
+                                      fontSize: 18 * ffem,
                                       fontWeight: FontWeight.w400,
                                       height: 1.175 * ffem / fem,
                                       color: const Color(0xff5b5b5b),
@@ -220,10 +222,9 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                   ),
                                 ),
                                 Text(
-                                  widget.parlinglotDetail.overnightFee
-                                      .toString(),
+                                  '${formatCurrency.format(widget.parkinglotDetail.overnightFee)}',
                                   style: TextStyle(
-                                    fontSize: 15 * ffem,
+                                    fontSize: 16 * ffem,
                                     fontWeight: FontWeight.w600,
                                     height: 1.2175 * ffem / fem,
                                     color: const Color(0xff000000),
@@ -251,7 +252,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                   child: Text(
                                     'Chỗ trống',
                                     style: TextStyle(
-                                      fontSize: 13 * ffem,
+                                      fontSize: 18 * ffem,
                                       fontWeight: FontWeight.w400,
                                       height: 1.175 * ffem / fem,
                                       color: const Color(0xff5b5b5b),
@@ -259,10 +260,10 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                   ),
                                 ),
                                 Text(
-                                  widget.parlinglotDetail.currentSlot
+                                  widget.parkinglotDetail.currentSlot
                                       .toString(),
                                   style: TextStyle(
-                                    fontSize: 15 * ffem,
+                                    fontSize: 16 * ffem,
                                     fontWeight: FontWeight.w600,
                                     height: 1.2175 * ffem / fem,
                                     color: const Color(0xff000000),
@@ -290,7 +291,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                   child: Text(
                                     'Cách',
                                     style: TextStyle(
-                                      fontSize: 13 * ffem,
+                                      fontSize: 18 * ffem,
                                       fontWeight: FontWeight.w400,
                                       height: 1.175 * ffem / fem,
                                       color: const Color(0xff5b5b5b),
@@ -298,9 +299,9 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                   ),
                                 ),
                                 Text(
-                                  '5m',
+                                  '5 m',
                                   style: TextStyle(
-                                    fontSize: 15 * ffem,
+                                    fontSize: 16 * ffem,
                                     fontWeight: FontWeight.w600,
                                     height: 1.2175 * ffem / fem,
                                     color: const Color(0xff000000),
@@ -435,7 +436,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                           child: Text(
                             'Thời gian chờ là 15 phút',
                             style: TextStyle(
-                                fontSize: 15 * fem,
+                                fontSize: 20 * fem,
                                 fontWeight: FontWeight.w600),
                           ),
                         ),
@@ -457,20 +458,22 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                 Column(
                                   children: [
                                     Text(
-                                      price.toString(),
+                                      '${formatCurrency.format(price)}',
                                       style: TextStyle(
-                                          fontSize: 18 * fem,
+                                          fontSize: 22 * fem,
                                           fontWeight: FontWeight.bold),
                                     ),
                                     SizedBox(
                                       height: 4 * fem,
                                     ),
-                                    Text(dropdownType)
+                                    Text(dropdownType, style: TextStyle(
+                                      fontSize: 20 * fem,
+                                    ),)
                                   ],
                                 ),
                                 InkWell(
                                   onTap: () {
-                                    _showAddReservationDialog(context);
+                                    _showAddReservationDialog(context, widget.refreshHomeScreen);
                                   },
                                   child: Container(
                                     padding: EdgeInsets.fromLTRB(
@@ -484,7 +487,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                       child: Text(
                                         'Đặt chỗ',
                                         style: TextStyle(
-                                          fontSize: 16 * ffem,
+                                          fontSize: 20 * ffem,
                                           fontWeight: FontWeight.w600,
                                           height: 1.175 * ffem / fem,
                                           color: Colors.white,
@@ -554,7 +557,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                         children: [
                           Container(
                             height: 1,
-                            color: const Color(0xffb3abab), // Đường thẳng ngang
+                            color: const Color(0xffb3abab),
                           ),
                           TextButton(
                             onPressed: () {
@@ -627,7 +630,10 @@ class _ReservationScreenState extends State<ReservationScreen> {
     );
   }
 
-  Future<void> _showAddReservationDialog(BuildContext context) async {
+  Future<void> _showAddReservationDialog(BuildContext context, Function refreshHomeScreen) async {
+
+    final formatCurrency = NumberFormat.simpleCurrency(locale: 'vi_VN');
+
     int methodID;
     if (dropdownType.contains('Ban ngày')) {
       methodID = 1;
@@ -656,7 +662,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                     child: Text(
                       'THÔNG TIN ĐẶT XE',
                       style: TextStyle(
-                        fontSize: 15 * fem,
+                        fontSize: 20 * fem,
                         fontWeight: FontWeight.w600,
                         color: const Color(0xff000000),
                       ),
@@ -672,15 +678,15 @@ class _ReservationScreenState extends State<ReservationScreen> {
                       Text(
                         'Tên bãi:  ',
                         style: TextStyle(
-                          fontSize: 13 * fem,
+                          fontSize: 18 * fem,
                           fontWeight: FontWeight.w600,
                           color: const Color(0xff000000),
                         ),
                       ),
                       Text(
-                        widget.parlinglotDetail.parkingName,
+                        widget.parkinglotDetail.parkingName,
                         style: TextStyle(
-                          fontSize: 13 * fem,
+                          fontSize: 18 * fem,
                           fontWeight: FontWeight.w600,
                           color: const Color(0xff000000),
                         ),
@@ -702,7 +708,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                           child: Text(
                             'Phương thức gửi: ',
                             style: TextStyle(
-                              fontSize: 13 * fem,
+                              fontSize: 18 * fem,
                               fontWeight: FontWeight.w600,
                               color: const Color(0xff000000),
                             ),
@@ -711,7 +717,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                         Text(
                           dropdownType,
                           style: TextStyle(
-                            fontSize: 13 * fem,
+                            fontSize: 18 * fem,
                             fontWeight: FontWeight.w600,
                             color: const Color(0xff000000),
                           ),
@@ -728,7 +734,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                     child: Text(
                       'Biển số xe: ',
                       style: TextStyle(
-                        fontSize: 13 * fem,
+                        fontSize: 18 * fem,
                         fontWeight: FontWeight.w600,
                         color: const Color(0xff000000),
                       ),
@@ -747,7 +753,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                     child: Text(
                       dropdownVehicle,
                       style: TextStyle(
-                        fontSize: 15 * ffem,
+                        fontSize: 18 * ffem,
                         fontWeight: FontWeight.w600,
                         height: 1.2175 * ffem / fem,
                         color: const Color(0xff2b7031),
@@ -767,14 +773,14 @@ class _ReservationScreenState extends State<ReservationScreen> {
                         child: Text(
                           'Số tiền: ',
                           style: TextStyle(
-                            fontSize: 13 * fem,
+                            fontSize: 18 * fem,
                             fontWeight: FontWeight.w600,
                             color: const Color(0xff000000),
                           ),
                         ),
                       ),
                       Text(
-                        price.toString(),
+                        '${formatCurrency.format(price)}',
                         style: TextStyle(
                           fontSize: 18 * fem,
                           fontWeight: FontWeight.w600,
@@ -831,17 +837,15 @@ class _ReservationScreenState extends State<ReservationScreen> {
                               try {
                                 await ReservationAPI.getBooking(
                                     dropdownVehicle, methodID, widget.ploID);
-                                // Navigator.push(context, MaterialPageRoute(
-                                //   builder: (BuildContext) => HomeScreen()
-                                // ));
-                                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => HomeScreen()));
-                                // Navigator.of(context).pop();
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text('Đặt chỗ thành công'),
                                   ),
                                 );
-
+                                final walletProvider = Provider.of<WalletDataProvider>(context, listen: false);
+                                await walletProvider.updateTransactions();
+                                refreshHomeScreen();
+                                Navigator.of(context).pop();
                               } catch (e) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
