@@ -2,10 +2,12 @@ import 'package:fe_capstone/apis/customer/HomeAPI.dart';
 import 'package:fe_capstone/apis/customer/ReservationAPI.dart';
 import 'package:fe_capstone/apis/customer/SearchParkingAPI.dart';
 import 'package:fe_capstone/apis/plo/ParkingAPI.dart';
+import 'package:fe_capstone/apis/customer/WalletScreenAPI.dart';
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/models/CustomerHome.dart';
 import 'package:fe_capstone/models/Parking.dart';
 import 'package:fe_capstone/models/ParkingInformationModel.dart';
+import 'package:fe_capstone/models/ResponseWalletCustomer.dart';
 import 'package:fe_capstone/ui/screens/ChatScreen.dart';
 import 'package:fe_capstone/ui/CustomerUI/RatingScreen.dart';
 import 'package:fe_capstone/ui/CustomerUI/ReservationScreen.dart';
@@ -30,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool showParkingDetail = false;
   String selectParkinglot = '';
   bool isSendRating = false;
+  bool isCheckedAccount = false;
 
   void showParkingDetailContent(String ploID) {
     setState(() {
@@ -52,6 +55,8 @@ class _HomeScreenState extends State<HomeScreen> {
   late List<Parking> parkingList = [];
   bool isRatingDialogDisplayed = false;
   Future<CustomerHome>? customerHome;
+  late double accountBalance;
+  FocusNode _searchFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -71,6 +76,20 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       }
     });
+    Future.delayed(Duration(seconds: 4), () async {
+      if (!isCheckedAccount) {
+        await checkWalletCustomer();
+        checkAccount();
+        isCheckedAccount = true;
+      }
+    });
+  }
+
+  Future<double> checkWalletCustomer() async {
+    ResponseWalletCustomer responseWalletCustomer = await WalletScreenAPI.getWalletScreenData();
+    accountBalance = responseWalletCustomer.walletBalance;
+    print('Số tiền trong ví là: $accountBalance');
+    return accountBalance;
   }
 
   void handleRating() {
@@ -87,6 +106,32 @@ class _HomeScreenState extends State<HomeScreen> {
   void dispose() {
     _searchController.dispose();
     super.dispose();
+  }
+
+  void checkAccount() {
+    if (accountBalance < 10000) {
+      String formattedBalance = accountBalance.toStringAsFixed(0).replaceAllMapped(
+          new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+              (Match m) => '${m[1]}.');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Thông báo",style: TextStyle(fontSize: 24 * fem)),
+            content: Text(
+                "Số dư tài khoản của bạn chỉ còn $formattedBalanceđ. Vui lòng nạp tiền!", style: TextStyle(fontSize: 20 * fem)),
+            actions: <Widget>[
+              TextButton(
+                child: Text("Đóng", style: TextStyle(fontSize: 18 * fem)),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 
   void _onMapCreated(VietmapController controller) {
@@ -333,7 +378,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           height: 46 * fem,
                           width: 320 * fem,
                           child: TextFormField(
-                            maxLines: 1, // Chỉ cho phép nhập 1 dòng chữ
+                            controller: _searchController,
+                            focusNode: _searchFocusNode,
+                            maxLines: 1,
                             decoration: InputDecoration(
                               hintText: 'Bạn muốn đi đến đâu?',
                               border: InputBorder.none,
@@ -383,30 +430,31 @@ class _HomeScreenState extends State<HomeScreen> {
             right: 0,
             child: showSearchResults
                 ? Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16 * fem),
-                    child: Container(
-                      height: 220 * fem,
-                      decoration: BoxDecoration(color: Colors.white),
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        padding: EdgeInsets.zero,
-                        itemCount: autoSearchResults.length,
-                        itemBuilder: (context, index) {
-                          return ListTile(
-                            title: Text(autoSearchResults[index]['name']),
-                            subtitle: Text(autoSearchResults[index]['address']),
-                            onTap: () {
-                              var selectedResult =
-                                  autoSearchResults[index]['ref_id'];
-                              getLatAndLong(selectedResult);
-                            },
-                          );
-                        },
-                      ),
-                    ),
-                  )
-                : SizedBox.shrink(),
-          ),
+              padding: EdgeInsets.symmetric(horizontal: 16 * fem),
+              child: Container(
+                height: 220 * fem,
+                decoration: BoxDecoration(
+                    color: Colors.white
+                ),
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  padding: EdgeInsets.zero,
+                  itemCount: autoSearchResults.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text(autoSearchResults[index]['name']),
+                      subtitle: Text(autoSearchResults[index]['address']),
+                      onTap: () {
+                        var selectedResult = autoSearchResults[index]['ref_id'];
+                        getLatAndLong(selectedResult);
+                        FocusScope.of(context).requestFocus(FocusNode());
+                      },
+                    );
+                  },
+                ),
+              ),
+            )
+                : SizedBox.shrink(),),
           DraggableScrollableSheet(
             initialChildSize: 0.3,
             minChildSize: 0.2,

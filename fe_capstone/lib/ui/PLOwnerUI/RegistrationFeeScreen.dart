@@ -130,6 +130,8 @@ class _RegistrationFeeScreenState extends State<RegistrationFeeScreen> {
                           length: widget.requestRegisterParking.length,
                           parkingName: widget.requestRegisterParking.parkingName,
                           slot: widget.requestRegisterParking.slot,
+                          latitude: widget.requestRegisterParking.latitude,
+                          longitude: widget.requestRegisterParking.longitude,
                           uuid: newUUID,
                           width: widget.requestRegisterParking.width
                       );

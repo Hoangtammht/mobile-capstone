@@ -1,4 +1,3 @@
-import 'package:fe_capstone/apis/FirebaseAPI.dart';
 import 'package:fe_capstone/blocs/VehicleProvider.dart';
 import 'package:fe_capstone/blocs/WalletDataProvider.dart';
 import 'package:fe_capstone/ui/screens/LoginScreen.dart';
