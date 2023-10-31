@@ -14,8 +14,10 @@ import 'package:fe_capstone/ui/CustomerUI/ReservationScreen.dart';
 import 'package:fe_capstone/ui/components/widgetCustomer/ListParkingCard.dart';
 import 'package:fe_capstone/ui/components/widgetCustomer/RatingStars.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import 'package:vietmap_flutter_gl/vietmap_flutter_gl.dart';
 import 'package:dio/dio.dart';
 
@@ -61,15 +63,11 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    print('render');
     customerHome = _getHomeStatus();
     customerHome!.then((data) {
       if (data.statusID == 5) {
         if (!isRatingDialogDisplayed) {
-          showDialog(
-            context: context,
-            builder: (context) => RatingDialog(customerHome: data),
-          );
+          _RatingDialog(context, data);
           setState(() {
             isRatingDialogDisplayed = true;
           });
@@ -82,6 +80,12 @@ class _HomeScreenState extends State<HomeScreen> {
         checkAccount();
         isCheckedAccount = true;
       }
+    });
+  }
+
+  void refreshHomeScreen() {
+    setState(() {
+      customerHome = _getHomeStatus();
     });
   }
 
@@ -236,8 +240,30 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               latLng: LatLng(lat, long)));
+
           await _fetchParkingList(lat, long, 1, 5.0);
-          print('$lat , $long');
+
+          if (parkingList != null && parkingList.isNotEmpty) {
+            for (var parking in parkingList) {
+              temp.add(Marker(
+                alignment: Alignment.bottomCenter,
+                width: 50,
+                height: 50,
+                child: Container(
+                  width: 50,
+                  height: 50,
+                  child: Icon(
+                    Icons.local_parking_outlined,
+                    color: Colors.green,
+                    size: 40,
+                  ),
+                ),
+                latLng: LatLng(parking.latitude, parking.longitude),
+              ));
+            }
+          }
+
+
         });
       } else {
         print('AutoSearch Request Failed with status: ${response.statusCode}');
@@ -464,7 +490,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   future: customerHome,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      // Hiển thị giao diện khi đợi dữ liệu
                       return Center(child: CircularProgressIndicator());
                     } else if (snapshot.hasError) {
                       // Xử lý lỗi
@@ -481,9 +506,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         if (showParkingDetail) {
                           return ParkingDetailContent(
                             ploID: selectParkinglot,
-                            // ploID: 'PL0934328813',
                             scrollController: scrollController,
                             showParkingDetailContent: showParkingDetailContent,
+                            refreshHomeScreen: refreshHomeScreen,
                             closeParkingDetail: () {
                               setState(() {
                                 showParkingDetail = false;
@@ -504,7 +529,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           );
                         }
                       } else if (customerHome.statusID == 1) {
-                        return CheckInContent(scrollController, customerHome);
+                        return CheckInContent(scrollController, customerHome, refreshHomeScreen);
                       } else {
                         return CheckOutContent(scrollController, customerHome);
                       }
@@ -550,6 +575,25 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       latLng: LatLng(value.latitude, value.longitude)));
                   await _fetchParkingList(lat, long, 1, 5.0);
+                  if (parkingList != null && parkingList.isNotEmpty) {
+                    for (var parking in parkingList) {
+                      temp.add(Marker(
+                        alignment: Alignment.bottomCenter,
+                        width: 50,
+                        height: 50,
+                        child: Container(
+                          width: 50,
+                          height: 50,
+                          child: Icon(
+                            Icons.local_parking_outlined,
+                            color: Colors.green,
+                            size: 40,
+                          ),
+                        ),
+                        latLng: LatLng(parking.latitude, parking.longitude),
+                      ));
+                    }
+                  }
                 });
               },
               child: Icon(
@@ -565,150 +609,136 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-
-
-class RatingDialog extends StatelessWidget {
-  final CustomerHome customerHome;
+Future<void> _RatingDialog(BuildContext context, CustomerHome customerHome) async {
   late TextEditingController _feedbackController = TextEditingController();
-
-  RatingDialog({required this.customerHome});
-
-  @override
-  Widget build(BuildContext context) {
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      showDialog(
-        barrierDismissible: true,
-        context: context,
-        builder: (BuildContext context) {
-          return Dialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(23),
-            ),
-            backgroundColor: const Color(0xffffffff),
-
-            child: Container(
-              padding: EdgeInsets.all(20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
+  showDialog(
+    barrierDismissible: true,
+    context: context,
+    builder: (BuildContext context) {
+      return Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(23),
+        ),
+        backgroundColor: const Color(0xffffffff),
+        child: Container(
+          padding: EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Center(
+                child: Text(
+                  "GỬI ĐÁNH GIÁ",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 20 * fem,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Center(
-                    child: Text(
-                      "GỬI ĐÁNH GIÁ",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
+                  Text('Bãi xe'),
+                  Text(customerHome.parkingName),
+                ],
+              ),
+              Container(
+                margin: EdgeInsets.only(bottom: 20, top: 20),
+                padding: EdgeInsets.fromLTRB(15, 0, 10, 0),
+                constraints: BoxConstraints(
+                  maxWidth: 300,
+                ),
+                decoration: BoxDecoration(
+                  color: Color(0xfff5f5f5),
+                  borderRadius: BorderRadius.circular(9 * fem),
+                ),
+                child: TextFormField(
+                  controller: _feedbackController,
+                  decoration: InputDecoration(
+                    hintText: 'Nhập đánh giá',
+                    border: InputBorder.none,
                   ),
-                  SizedBox(
-                    height: 20* fem,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                    Text('Bãi xe'),
-                    Text(customerHome.parkingName),
-                  ]),
-
-                  Container(
-                    margin: EdgeInsets.only(bottom: 20, top: 20),
-                    padding: EdgeInsets.fromLTRB(15, 0, 10, 0),
-                    constraints: BoxConstraints(
-                      maxWidth: 300,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Color(0xfff5f5f5),
-                      borderRadius: BorderRadius.circular(9 * fem),
-                    ),
-                    child: TextFormField(
-                      controller: _feedbackController,
-                      decoration: InputDecoration(
-                        hintText: 'Nhập đánh giá',
-                        border: InputBorder.none,
-                      ),
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          children: [
-                            Container(
-                              height: 1,
-                              color: Color(0xffb3abab), // Đường thẳng ngang
-                            ),
-                            TextButton(
-                            onPressed: () async {
-                              try {
-                                await ReservationAPI.skipRating(
-                                    customerHome.reservationID);
-                                // Navigator.of(context).popUntil((route) => route.);
-                                Navigator.of(context).pop;
-                              } catch (e) {
-                                Navigator.of(context).popUntil((route) => route.isCurrent);
-                              }
-                            },
-                              child: Text(
-                                'Hủy',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xff5767f5),
-                                ),
-                              ),
-                            ),
-                          ],
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 1,
+                          color: Color(0xffb3abab),
                         ),
-                      ),
-                      Column(
-                        children: [
-                          Container(
-                            width: 1,
-                            height: 48,
-                            color: Color(0xffb3abab),
+                        TextButton(
+                          onPressed: () async {
+                            try {
+                              await ReservationAPI.skipRating(
+                                  customerHome.reservationID);
+                              Navigator.of(context).pop();
+                            } catch (e) {
+                              Navigator.of(context).popUntil((route) => route.isCurrent);
+                            }
+                          },
+                          child: Text(
+                            'Hủy',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xff5767f5),
+                            ),
                           ),
-                        ],
-                      ),
-                      Expanded(
-                        child: Column(
-                          children: [
-                            Container(
-                              height: 1,
-                              color: Color(0xffb3abab),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('Rating suscess ${_feedbackController}'),
-                                  ),
-                                );
-                                Navigator.of(context).pop();
-                              },
-                              child: Text(
-                                'Lưu',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xffff3737),
-                                ),
-                              ),
-                            ),
-                          ],
                         ),
+                      ],
+                    ),
+                  ),
+                  Column(
+                    children: [
+                      Container(
+                        width: 1,
+                        height: 48,
+                        color: Color(0xffb3abab),
                       ),
                     ],
                   ),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 1,
+                          color: Color(0xffb3abab),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Rating success ${_feedbackController.text}'),
+                              ),
+                            );
+                            Navigator.of(context).pop();
+                          },
+                          child: Text(
+                            'Gửi',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xffff3737),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
-            ),
-          );
-        },
+            ],
+          ),
+        ),
       );
-    });
-    return Container();
-  }
+    },
+  );
 }
 
 // Future<void> showDialogOnce(BuildContext context, bool isDialogDisplayed) {
@@ -909,7 +939,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                     ]),
               ),
               Container(
-                height: 400 * fem,
+                height: 410 * fem,
                 decoration: BoxDecoration(
                   color: Colors.white,
                 ),
@@ -949,6 +979,7 @@ class ParkingDetailContent extends StatefulWidget {
   final ScrollController scrollController;
   final Function showParkingDetailContent;
   final Function closeParkingDetail;
+  final Function refreshHomeScreen;
   final String ploID;
 
   const ParkingDetailContent({
@@ -956,20 +987,20 @@ class ParkingDetailContent extends StatefulWidget {
     required this.showParkingDetailContent,
     required this.closeParkingDetail,
     required this.ploID,
+    required this.refreshHomeScreen,
   });
 
   @override
   State<ParkingDetailContent> createState() => _ParkingDetailContentState();
 }
 
-//Detail Parking lot
 class _ParkingDetailContentState extends State<ParkingDetailContent> {
   late String ploID;
   Future<ParkingLotDetail>? parkingLotFuture;
+  final formatCurrency = NumberFormat.simpleCurrency(locale: 'vi_VN');
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     parkingLotFuture = _getParkingLotFuture();
     ploID = widget.ploID;
@@ -993,7 +1024,6 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                 return Text('Error: ${snapshot.error}');
               } else {
                 ParkingLotDetail parkingLotDetail = snapshot.data!;
-
                 return (Expanded(
                   child: ListView(
                     controller: widget.scrollController,
@@ -1005,10 +1035,6 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                           borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(26 * fem),
                             topRight: Radius.circular(26 * fem),
-                          ),
-                          border: Border.all(
-                            color: Colors.red,
-                            width: 2.0,
                           ),
                         ),
                         child: Column(
@@ -1100,8 +1126,7 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                                                 ),
                                               ),
                                               Text(
-                                                parkingLotDetail.morningFee
-                                                    .toString(),
+                                                '${formatCurrency.format(parkingLotDetail.morningFee)}',
                                                 style: TextStyle(
                                                   fontSize: 15 * ffem,
                                                   fontWeight: FontWeight.w600,
@@ -1143,8 +1168,7 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                                                 ),
                                               ),
                                               Text(
-                                                parkingLotDetail.eveningFee
-                                                    .toString(),
+                                                '${formatCurrency.format(parkingLotDetail.eveningFee)}',
                                                 style: TextStyle(
                                                   fontSize: 15 * ffem,
                                                   fontWeight: FontWeight.w600,
@@ -1186,8 +1210,7 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                                                 ),
                                               ),
                                               Text(
-                                                parkingLotDetail.overnightFee
-                                                    .toString(),
+                                                '${formatCurrency.format(parkingLotDetail.overnightFee)}',
                                                 style: TextStyle(
                                                   fontSize: 15 * ffem,
                                                   fontWeight: FontWeight.w600,
@@ -1332,8 +1355,12 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                                                   builder: (context) =>
                                                       ReservationScreen(
                                                           ploID: ploID,
-                                                          parlinglotDetail:
-                                                              parkingLotDetail)));
+                                                          parkinglotDetail: parkingLotDetail,
+                                                          refreshHomeScreen: () {
+                                                            widget.refreshHomeScreen();
+                                                            Navigator.pop(context);
+                                              },
+                                                      )));
                                         },
                                         child: Container(
                                           padding: EdgeInsets.fromLTRB(10 * fem,
@@ -1362,7 +1389,7 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                                   ),
                                 ),
                                 Container(
-                                    height: 200 * fem,
+                                    height: 215 * fem,
                                     child: ListView(
                                       scrollDirection: Axis.horizontal,
                                       children: [
@@ -1402,11 +1429,23 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
 class CheckInContent extends StatelessWidget {
   final ScrollController scrollController;
   final CustomerHome customerHome;
+  final Function refreshHomeScreen;
 
-  const CheckInContent(this.scrollController, this.customerHome);
+  const CheckInContent(this.scrollController, this.customerHome, this.refreshHomeScreen);
+
+  Future<void> _openMap(double lat, double long) async {
+    String googleURL =
+        'https://www.google.com/maps/search/?api=1&query=$lat,$long';
+
+    await canLaunchUrlString(googleURL)
+        ? await launchUrlString(googleURL)
+        : throw 'Could not launch $googleURL';
+  }
 
   @override
   Widget build(BuildContext context) {
+    final formatCurrency = NumberFormat.simpleCurrency(locale: 'vi_VN');
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -1439,11 +1478,11 @@ class CheckInContent extends StatelessWidget {
                       ),
                       Padding(
                         padding: EdgeInsets.only(
-                            left: 10 * fem, right: 10 * fem, top: 15 * fem),
+                            left: 10 * fem, right: 10 * fem, top: 15 * fem, bottom: 10 * fem),
                         child: Text(
                           'Đang trên đường tới...',
                           style: TextStyle(
-                            fontSize: 18 * fem,
+                            fontSize: 20 * fem,
                             fontWeight: FontWeight.bold,
                             color: Color(0xffe7c200),
                           ),
@@ -1462,13 +1501,13 @@ class CheckInContent extends StatelessWidget {
                                   Text(
                                     customerHome.parkingName,
                                     style: TextStyle(
-                                        fontSize: 18 * fem,
+                                        fontSize: 20 * fem,
                                         fontWeight: FontWeight.w700),
                                   ),
                                   Text(
                                     customerHome.address,
                                     style: TextStyle(
-                                      fontSize: 14 * fem,
+                                      fontSize: 18 * fem,
                                       color: Colors.grey,
                                     ),
                                   ),
@@ -1478,10 +1517,15 @@ class CheckInContent extends StatelessWidget {
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Padding(
-                                  padding: EdgeInsets.only(right: 2 * fem),
-                                  child: Image.asset(
-                                      'assets/images/directionImage.png'),
+                                InkWell(
+                                  onTap: (){
+                                    _openMap(customerHome.latitude, customerHome.longitude);
+                                  },
+                                  child: Padding(
+                                    padding: EdgeInsets.only(right: 2 * fem),
+                                    child: Image.asset(
+                                        'assets/images/directionImage.png'),
+                                  ),
                                 ),
                                 Padding(
                                   padding: EdgeInsets.only(left: 2 * fem),
@@ -1523,16 +1567,16 @@ class CheckInContent extends StatelessWidget {
                                       child: Text(
                                         'Phí gửi xe',
                                         style: TextStyle(
-                                          fontSize: 12 * fem,
+                                          fontSize: 18 * fem,
                                           fontWeight: FontWeight.w400,
                                           color: Color(0xff5b5b5b),
                                         ),
                                       ),
                                     ),
                                     Text(
-                                      customerHome.price.toString(),
+                                      '${formatCurrency.format(customerHome.price)}',
                                       style: TextStyle(
-                                        fontSize: 19 * ffem,
+                                        fontSize: 20 * ffem,
                                         fontWeight: FontWeight.w600,
                                         height: 1.2175 * ffem / fem,
                                         color: Color(0xff000000),
@@ -1555,7 +1599,7 @@ class CheckInContent extends StatelessWidget {
                                       child: Text(
                                         'Trạng thái',
                                         style: TextStyle(
-                                          fontSize: 12 * fem,
+                                          fontSize: 18 * fem,
                                           fontWeight: FontWeight.w400,
                                           color: Color(0xff5b5b5b),
                                         ),
@@ -1573,7 +1617,7 @@ class CheckInContent extends StatelessWidget {
                                         child: Text(
                                           'Đang tới',
                                           style: TextStyle(
-                                            fontSize: 15 * ffem,
+                                            fontSize: 18 * ffem,
                                             fontWeight: FontWeight.w600,
                                             height: 1.175 * ffem / fem,
                                             color: Color(0xffe7c200),
@@ -1600,7 +1644,7 @@ class CheckInContent extends StatelessWidget {
                                       child: Text(
                                         'Bãi đỗ',
                                         style: TextStyle(
-                                          fontSize: 13 * fem,
+                                          fontSize: 18 * fem,
                                           fontWeight: FontWeight.w400,
                                           color: Color(0xff5b5b5b),
                                         ),
@@ -1609,7 +1653,7 @@ class CheckInContent extends StatelessWidget {
                                     Text(
                                       customerHome.parkingName,
                                       style: TextStyle(
-                                        fontSize: 16 * fem,
+                                        fontSize: 18 * fem,
                                         fontWeight: FontWeight.w600,
                                         color: Color(0xff000000),
                                       ),
@@ -1630,7 +1674,7 @@ class CheckInContent extends StatelessWidget {
                                       child: Text(
                                         'Phương thức',
                                         style: TextStyle(
-                                          fontSize: 13 * fem,
+                                          fontSize: 18 * fem,
                                           fontWeight: FontWeight.w400,
                                           color: Color(0xff5b5b5b),
                                         ),
@@ -1639,7 +1683,7 @@ class CheckInContent extends StatelessWidget {
                                     Text(
                                       customerHome.methodName,
                                       style: TextStyle(
-                                        fontSize: 16 * fem,
+                                        fontSize: 18 * fem,
                                         fontWeight: FontWeight.w600,
                                         color: Color(0xff000000),
                                       ),
@@ -1662,7 +1706,7 @@ class CheckInContent extends StatelessWidget {
                                       child: Text(
                                         'Phương tiện',
                                         style: TextStyle(
-                                          fontSize: 13 * fem,
+                                          fontSize: 18 * fem,
                                           fontWeight: FontWeight.w400,
                                           color: Color(0xff5b5b5b),
                                         ),
@@ -1671,7 +1715,7 @@ class CheckInContent extends StatelessWidget {
                                     Text(
                                       customerHome.licensePlate,
                                       style: TextStyle(
-                                        fontSize: 16 * fem,
+                                        fontSize: 18 * fem,
                                         fontWeight: FontWeight.w600,
                                         color: Color(0xff000000),
                                       ),
@@ -1685,10 +1729,10 @@ class CheckInContent extends StatelessWidget {
                       ),
                       Padding(
                         padding:
-                            EdgeInsets.only(left: 10 * fem, right: 10 * fem),
+                            EdgeInsets.only(left: 10 * fem, right: 10 * fem, bottom: 20* fem),
                         child: GestureDetector(
                           onTap: () {
-                            _showDeleteDialog(context, customerHome);
+                            _showDeleteDialog(context, customerHome, refreshHomeScreen);
                           },
                           child: Container(
                             margin: EdgeInsets.only(top: 15 * fem),
@@ -1704,12 +1748,12 @@ class CheckInContent extends StatelessWidget {
                       ),
                       Padding(
                         padding: EdgeInsets.only(
-                            left: 10 * fem, right: 10 * fem, bottom: 10 * fem),
+                            left: 10 * fem, right: 10 * fem, bottom: 20 * fem),
                         child: Center(
                             child: Text(
                           'Check-in',
                           style: TextStyle(
-                              fontSize: 24 * fem,
+                              fontSize: 30 * fem,
                               fontWeight: FontWeight.bold,
                               color: Theme.of(context).primaryColor),
                         )),
@@ -1725,7 +1769,7 @@ class CheckInContent extends StatelessWidget {
 }
 
 Future<void> _showDeleteDialog(
-    BuildContext context, CustomerHome customerHome) async {
+    BuildContext context, CustomerHome customerHome, Function refreshHomeScreen) async {
   await showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -1746,7 +1790,7 @@ Future<void> _showDeleteDialog(
                   child: Text(
                     'HỦY BỎ ĐẶT XE',
                     style: TextStyle(
-                      fontSize: 15 * fem,
+                      fontSize: 25 * fem,
                       fontWeight: FontWeight.w600,
                       color: const Color(0xff000000),
                     ),
@@ -1757,7 +1801,10 @@ Future<void> _showDeleteDialog(
                   child: Container(
                 margin: EdgeInsets.only(top: 20 * fem, bottom: 20 * fem),
                 child:
-                    Text('Hủy bỏ việc đặt chỗ ở ${customerHome.parkingName} '),
+                    Text('Bạn có chắc chắn hủy việc đặt chỗ ở ${customerHome.parkingName} ', style: TextStyle(
+                      fontSize: 20 * fem,
+                      fontWeight: FontWeight.w600,
+                    ),),
               )),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -1811,8 +1858,8 @@ Future<void> _showDeleteDialog(
                                   content: Text('Hủy bỏ đặt chỗ thành công'),
                                 ),
                               );
-
-                              Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => HomeScreen()));
+                              Navigator.of(context).pop();
+                              refreshHomeScreen();
                             } catch (e) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
@@ -1823,7 +1870,7 @@ Future<void> _showDeleteDialog(
                             }
                           },
                           child: const Text(
-                            'Gửi',
+                            'Xác nhận',
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w600,
@@ -1850,8 +1897,19 @@ class CheckOutContent extends StatelessWidget {
 
   const CheckOutContent(this.scrollController, this.customerHome);
 
+  Future<void> _openMap(double lat, double long) async {
+    String googleURL =
+        'https://www.google.com/maps/search/?api=1&query=$lat,$long';
+
+    await canLaunchUrlString(googleURL)
+        ? await launchUrlString(googleURL)
+        : throw 'Could not launch $googleURL';
+  }
+
   @override
   Widget build(BuildContext context) {
+    final formatCurrency = NumberFormat.simpleCurrency(locale: 'vi_VN');
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -1888,11 +1946,11 @@ class CheckOutContent extends StatelessWidget {
                       ),
                       Padding(
                         padding: EdgeInsets.only(
-                            left: 10 * fem, right: 10 * fem, top: 15 * fem),
+                            left: 10 * fem, right: 10 * fem, top: 15 * fem, bottom: 15 * fem),
                         child: Text(
                           'Đang trong bãi...',
                           style: TextStyle(
-                            fontSize: 18 * fem,
+                            fontSize: 22 * fem,
                             fontWeight: FontWeight.bold,
                             color: Colors.green,
                           ),
@@ -1900,7 +1958,7 @@ class CheckOutContent extends StatelessWidget {
                       ),
                       Padding(
                         padding:
-                            EdgeInsets.only(left: 10 * fem, right: 10 * fem),
+                            EdgeInsets.only(left: 10 * fem, right: 10 * fem, bottom: 15 * fem),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -1911,13 +1969,13 @@ class CheckOutContent extends StatelessWidget {
                                   Text(
                                     customerHome.parkingName,
                                     style: TextStyle(
-                                        fontSize: 18 * fem,
+                                        fontSize: 20 * fem,
                                         fontWeight: FontWeight.w700),
                                   ),
                                   Text(
                                     customerHome.address,
                                     style: TextStyle(
-                                      fontSize: 14 * fem,
+                                      fontSize: 18 * fem,
                                       color: Colors.grey,
                                     ),
                                   ),
@@ -1927,10 +1985,15 @@ class CheckOutContent extends StatelessWidget {
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Padding(
-                                  padding: EdgeInsets.only(right: 2 * fem),
-                                  child: Image.asset(
-                                    'assets/images/directionImageGreen.png',
+                                InkWell(
+                                  onTap: (){
+                                    _openMap(customerHome.latitude, customerHome.longitude);
+                                  },
+                                  child: Padding(
+                                    padding: EdgeInsets.only(right: 2 * fem),
+                                    child: Image.asset(
+                                      'assets/images/directionImageGreen.png',
+                                    ),
                                   ),
                                 ),
                                 InkWell(
@@ -1956,7 +2019,7 @@ class CheckOutContent extends StatelessWidget {
                       ),
                       Padding(
                         padding:
-                            EdgeInsets.only(left: 10 * fem, right: 10 * fem),
+                            EdgeInsets.only(left: 10 * fem, right: 10 * fem, top: 15 * fem),
                         child: Container(
                           margin: EdgeInsets.only(top: 10 * fem),
                           padding: EdgeInsets.only(
@@ -1984,16 +2047,16 @@ class CheckOutContent extends StatelessWidget {
                                       child: Text(
                                         'Phí gửi xe',
                                         style: TextStyle(
-                                          fontSize: 12 * fem,
+                                          fontSize: 20 * fem,
                                           fontWeight: FontWeight.w400,
                                           color: Color(0xff5b5b5b),
                                         ),
                                       ),
                                     ),
                                     Text(
-                                      customerHome.price.toString(),
+                                      '${formatCurrency.format(customerHome.price)}',
                                       style: TextStyle(
-                                        fontSize: 19 * ffem,
+                                        fontSize: 20 * ffem,
                                         fontWeight: FontWeight.w600,
                                         height: 1.2175 * ffem / fem,
                                         color: Color(0xff000000),
@@ -2016,7 +2079,7 @@ class CheckOutContent extends StatelessWidget {
                                       child: Text(
                                         'Trạng thái',
                                         style: TextStyle(
-                                          fontSize: 12 * fem,
+                                          fontSize: 20 * fem,
                                           fontWeight: FontWeight.w400,
                                           color: Color(0xff5b5b5b),
                                         ),
@@ -2034,7 +2097,7 @@ class CheckOutContent extends StatelessWidget {
                                         child: Text(
                                           'Trong bãi',
                                           style: TextStyle(
-                                            fontSize: 15 * ffem,
+                                            fontSize: 18 * ffem,
                                             fontWeight: FontWeight.w600,
                                             height: 1.175 * ffem / fem,
                                             color: Colors.green,
@@ -2061,7 +2124,7 @@ class CheckOutContent extends StatelessWidget {
                                       child: Text(
                                         'Bãi đỗ',
                                         style: TextStyle(
-                                          fontSize: 13 * fem,
+                                          fontSize: 20 * fem,
                                           fontWeight: FontWeight.w400,
                                           color: Color(0xff5b5b5b),
                                         ),
@@ -2070,7 +2133,7 @@ class CheckOutContent extends StatelessWidget {
                                     Text(
                                       customerHome.parkingName,
                                       style: TextStyle(
-                                        fontSize: 16 * fem,
+                                        fontSize: 18 * fem,
                                         fontWeight: FontWeight.w600,
                                         color: Color(0xff000000),
                                       ),
@@ -2091,7 +2154,7 @@ class CheckOutContent extends StatelessWidget {
                                       child: Text(
                                         'Phương thức',
                                         style: TextStyle(
-                                          fontSize: 13 * fem,
+                                          fontSize: 20 * fem,
                                           fontWeight: FontWeight.w400,
                                           color: Color(0xff5b5b5b),
                                         ),
@@ -2100,7 +2163,7 @@ class CheckOutContent extends StatelessWidget {
                                     Text(
                                       customerHome.methodName,
                                       style: TextStyle(
-                                        fontSize: 16 * fem,
+                                        fontSize: 18 * fem,
                                         fontWeight: FontWeight.w600,
                                         color: Color(0xff000000),
                                       ),
@@ -2126,7 +2189,7 @@ class CheckOutContent extends StatelessWidget {
                                       Text(
                                         'Bạn hiện đang trễ giờ rời bãi',
                                         style: TextStyle(
-                                          fontSize: 16 * fem,
+                                          fontSize: 20 * fem,
                                           fontWeight: FontWeight.w600,
                                           color: Colors.red,
                                         ),
@@ -2149,7 +2212,7 @@ class CheckOutContent extends StatelessWidget {
                                       child: Text(
                                         'Phương tiện',
                                         style: TextStyle(
-                                          fontSize: 13 * fem,
+                                          fontSize: 20 * fem,
                                           fontWeight: FontWeight.w400,
                                           color: Color(0xff5b5b5b),
                                         ),
@@ -2158,7 +2221,7 @@ class CheckOutContent extends StatelessWidget {
                                     Text(
                                       customerHome.licensePlate,
                                       style: TextStyle(
-                                        fontSize: 16 * fem,
+                                        fontSize: 18 * fem,
                                         fontWeight: FontWeight.w600,
                                         color: Color(0xff000000),
                                       ),
@@ -2172,14 +2235,14 @@ class CheckOutContent extends StatelessWidget {
                       ),
                       Padding(
                         padding: EdgeInsets.only(
-                            left: 10 * fem, right: 10 * fem, top: 20 * fem),
+                            left: 10 * fem, right: 10 * fem, top: 20 * fem, bottom: 20 * fem),
                         child: Align(
                           alignment: Alignment.bottomCenter,
                           child: Center(
                               child: Text(
                             'Check-out',
                             style: TextStyle(
-                                fontSize: 24 * fem,
+                                fontSize: 30 * fem,
                                 fontWeight: FontWeight.bold,
                                 color: Theme.of(context).primaryColor),
                           )),

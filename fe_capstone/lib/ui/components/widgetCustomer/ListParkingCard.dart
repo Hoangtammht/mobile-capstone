@@ -10,12 +10,8 @@ import 'package:flutter/material.dart';
 
 
 class ListParkingCard extends StatelessWidget {
-
   final Parking parkingInfor;
   const ListParkingCard({Key? key, required this.parkingInfor}) : super(key: key);
-
-  // final ParkingHomeScreen  fakeData ;
-  // const ListParkingCard(this.fakeData, {Key? key}) : super(key: key);
 
 
   @override
@@ -52,9 +48,7 @@ class ListParkingCard extends StatelessWidget {
                   ),
                   child: Center(
                     child: Text(
-
                       'Còn ${parkingInfor.slot} chỗ',
-
                       style:  TextStyle (
                         fontSize:  15*ffem,
                         fontWeight:  FontWeight.w400,
@@ -73,7 +67,7 @@ class ListParkingCard extends StatelessWidget {
                   ),
                   child: Center(
                     child: Text(
-                      '5 m',
+                      (parkingInfor.distance * 1000).toStringAsFixed(0) + ' m',
                       style:  TextStyle (
                         fontSize:  15*ffem,
                         fontWeight:  FontWeight.w400,
