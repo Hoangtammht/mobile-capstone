@@ -1,5 +1,6 @@
 class Parking {
   Parking({
+    required this.ploID,
     required this.parkingName,
     required this.currentSlot,
     required this.address,
@@ -9,6 +10,7 @@ class Parking {
     required this.methodName,
     required this.slot,
   });
+  late final String ploID;
   late final String parkingName;
   late final int currentSlot;
   late final String address;
@@ -19,6 +21,7 @@ class Parking {
   late final int slot;
 
   Parking.fromJson(Map<String, dynamic> json){
+    ploID = json['ploID'] ?? '';
     parkingName = json['parkingName'] ?? '';
     currentSlot = json['currentSlot'] ?? 0;
     address = json['address'] ?? '';
@@ -31,6 +34,7 @@ class Parking {
 
   Map<String, dynamic> toJson() {
     final _data = <String, dynamic>{};
+    _data['ploID'] = ploID;
     _data['parkingName'] = parkingName;
     _data['currentSlot'] = currentSlot;
     _data['address'] = address;

@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:fe_capstone/models/History.dart';
 import 'package:fe_capstone/blocs/UserPreferences.dart';
 import 'package:fe_capstone/models/HistoryDetail.dart';
+
 class HistoryAPI{
   static Dio dio = Dio();
   static const String baseUrl = 'https://eparkingcapstone.azurewebsites.net';

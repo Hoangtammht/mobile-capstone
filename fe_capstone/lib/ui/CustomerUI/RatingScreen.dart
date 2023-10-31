@@ -43,7 +43,7 @@ class _RatingScreenState extends State<RatingScreen> {
           },
         ),
         title: Text(
-          'ĐÁNG GIÁ',
+          'ĐÁNH GIÁ',
           style: TextStyle(
             fontSize: 30 * ffem,
             fontWeight: FontWeight.w700,

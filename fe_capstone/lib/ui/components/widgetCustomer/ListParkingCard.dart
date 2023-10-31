@@ -20,7 +20,7 @@ class ListParkingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final slot = fakeData.slot;
+
     return InkWell(
       child: Padding(
         padding: EdgeInsets.only(top: 12 * fem, left: 15 * fem, right: 15 * fem),
@@ -35,15 +35,6 @@ class ListParkingCard extends StatelessWidget {
             Padding(
               padding: EdgeInsets.only(top: 5 * fem, bottom: 10 * fem),
               child: Text(parkingInfor.address, style: TextStyle(
-
-            // Text(fakeData.parkingName, style: TextStyle(
-            //     fontSize: 20 * fem,
-            //     fontWeight: FontWeight.bold
-            // ),),
-            // Padding(
-            //   padding: EdgeInsets.only(top: 5 * fem, bottom: 10 * fem),
-            //   child: Text(fakeData.address, style: TextStyle(
-
                 color: Colors.grey,
                 fontSize: 18 * fem,
               ),),
