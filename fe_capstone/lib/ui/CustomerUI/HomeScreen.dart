@@ -402,9 +402,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       onTap: () {
                         var selectedResult = autoSearchResults[index]['ref_id'];
                         getLatAndLong(selectedResult);
-                        setState(() {
-                            _searchController.text = autoSearchResults[index]['name'];
-                        });
                         FocusScope.of(context).requestFocus(FocusNode());
                       },
                     );

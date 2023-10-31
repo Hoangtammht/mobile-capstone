@@ -10,6 +10,7 @@ import 'package:fe_capstone/ui/PLOwnerUI/WaitingApprovalScreen.dart';
 import 'package:fe_capstone/ui/helper/ConfirmDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:open_street_map_search_and_pick/open_street_map_search_and_pick.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
 class RegisterParking extends StatefulWidget {
@@ -25,6 +26,10 @@ class _RegisterParkingState extends State<RegisterParking> {
   bool canSubmit = false;
   String userName = '';
   List<String> images = [];
+  String address = '';
+  double lat = 0.0;
+  double long = 0.0;
+  bool showMapPicker = false;
 
   String? _image;
   TextEditingController _parkingNameController = TextEditingController();
@@ -59,6 +64,30 @@ class _RegisterParkingState extends State<RegisterParking> {
         userName = name!;
       });
     }
+  }
+
+  String formatAddress(Map<String, dynamic> addressData) {
+    List<String> components = [];
+
+    if (addressData.containsKey('amenity')) {
+      components.add(addressData['amenity']);
+    }
+    if (addressData.containsKey('house_number')) {
+      components.add(addressData['house_number']);
+    }
+    if (addressData.containsKey('road')) {
+      components.add(addressData['road']);
+    }
+    if (addressData.containsKey('suburb')) {
+      components.add(addressData['suburb']);
+    }
+    if (addressData.containsKey('city')) {
+      components.add(addressData['city']);
+    }
+
+    String formattedAddress = components.join(', ');
+
+    return formattedAddress.isNotEmpty ? formattedAddress : 'Không có địa chỉ';
   }
 
   @override
@@ -302,37 +331,54 @@ class _RegisterParkingState extends State<RegisterParking> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.symmetric(
-                    horizontal: 5 * fem, vertical: 15 * fem),
-                child: Text('Địa chỉ:',
-                    style: TextStyle(
-                      fontSize: 22 * fem,
-                      fontWeight: FontWeight.bold,
-                    )),
-              ),
-              Container(
-                padding:
-                    EdgeInsets.fromLTRB(18 * fem, 0 * fem, 18 * fem, 0 * fem),
-                decoration: BoxDecoration(
-                  color: Color(0xfff5f5f5),
-                  borderRadius: BorderRadius.circular(9 * fem),
-                ),
-                child: TextFormField(
-                  minLines: 1,
-                  maxLines: null,
-                  controller: _addressController,
-                  style: TextStyle(
-                    fontSize: 22 * ffem,
-                    fontWeight: FontWeight.w400,
-                    height: 1.175 * ffem / fem,
-                    color: Color(0xff9e9e9e),
-                  ),
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Nhập địa chỉ',
-                  ),
+                padding: EdgeInsets.symmetric(horizontal: 5 * fem, vertical: 15 * fem),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Địa chỉ:',
+                      style: TextStyle(
+                        fontSize: 22 * fem,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(width: 10), // Add spacing between the texts
+                    Flexible(
+                      child: Text(
+                        address,
+                        style: TextStyle(
+                          fontSize: 20 * fem,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    showMapPicker = !showMapPicker;
+                  });
+                },
+                child: Text(showMapPicker ? 'Đóng' : 'Chọn vị trí'),
+              ),
+              if (showMapPicker)
+                SizedBox(
+                  height: 500,
+                  child: OpenStreetMapSearchAndPick(
+                    center: LatLong(10.828813446468915, 106.62925166053212),
+                    buttonColor: Colors.blue,
+                    buttonText: 'Xác nhận',
+                    onPicked: (pickedData) {
+                      setState(() {
+                        address = formatAddress(pickedData.address);
+                        lat = pickedData.latLong.latitude;
+                        long = pickedData.latLong.longitude;
+                        showMapPicker = false;
+                      });
+                    },
+                  ),
+                ),
               Padding(
                 padding: EdgeInsets.symmetric(
                     horizontal: 5 * fem, vertical: 15 * fem),
@@ -420,7 +466,6 @@ class _RegisterParkingState extends State<RegisterParking> {
                         double length = double.parse(_lenthController.text);
                         double width = double.parse(_widthController.text);
                         int slot = int.parse(_slotController.text);
-                        String address = _addressController.text;
                         String description = _descriptionController.text;
                         RequestRegisterParking request = RequestRegisterParking(
                           address: address,
@@ -429,6 +474,8 @@ class _RegisterParkingState extends State<RegisterParking> {
                           length: length,
                           parkingName: parkingName,
                           slot: slot,
+                          latitude: lat,
+                          longitude: long,
                           uuid: "",
                           width: width,
                         );
