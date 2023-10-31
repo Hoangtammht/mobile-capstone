@@ -27,10 +27,12 @@ class AuthAPIs {
 
       if (response.statusCode == 200) {
         await UserPreferences.setAccessToken(response.data['access_token']);
+
         String? deviceToken = await FirebaseAPI.getFirebaseMessagingToken();
         AuthAPIs.addDeviceToken(deviceToken!);
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString("device_token", deviceToken);
+
 
         final ploData = response.data['PLO'];
         if (ploData != null && ploData.containsKey('role')) {

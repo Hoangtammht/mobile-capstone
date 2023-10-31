@@ -1,393 +1,508 @@
+import 'package:fe_capstone/apis/customer/ReservationAPI.dart';
+import 'package:fe_capstone/blocs/VehicleProvider.dart';
+import 'package:fe_capstone/models/ListVehicleCustomer.dart';
+import 'package:fe_capstone/models/ParkingInformationModel.dart';
+import 'package:fe_capstone/models/ReservationDetail.dart';
+import 'package:fe_capstone/ui/CustomerUI/HomeScreen.dart';
+
 import 'package:flutter/material.dart';
 import 'package:fe_capstone/main.dart';
+import 'package:provider/provider.dart';
 
 class ReservationScreen extends StatefulWidget {
-  const ReservationScreen({Key? key}) : super(key: key);
+  final ParkingLotDetail parlinglotDetail;
+  final String ploID;
+
+  const ReservationScreen({
+    required this.parlinglotDetail,
+    required this.ploID,
+  });
 
   @override
   State<ReservationScreen> createState() => _ReservationScreenState();
 }
 
 class _ReservationScreenState extends State<ReservationScreen> {
-  List<String> listType = <String>['Ban ngày', 'Ban Đêm', 'Qua đêm'];
-  List<String> listVehicle = <String>['72A-371.90', '60A-257.26', '51F-123.56'];
-  late String dropdownType = listType.first;
-  late String dropdownVehicle = listVehicle.first;
+  Future<List<ReservationMethod>>? reservationMethod;
+  int vehicleID = 0;
+  late VehicleProvider _vehicleProvider;
+  late Future<List<ListVehicleCustomer>> vehicleFuture;
   TextEditingController _vehicleNumberController = TextEditingController();
+  late double price;
+  late String dropdownType = '';
+  late String dropdownVehicle = '';
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _vehicleProvider = Provider.of<VehicleProvider>(context, listen: false);
+    vehicleFuture = _vehicleProvider.getVehicleList();
+    vehicleFuture.then((value) {
+      dropdownVehicle = value.first.licencePlate;
+    });
+    reservationMethod = _getReservationMethod();
+    reservationMethod!.then((data) {
+      dropdownType = data.first.methodName;
+      price = data.first.price;
+    });
+  }
+
+  Future<List<ReservationMethod>> _getReservationMethod() {
+    return ReservationAPI.getMethodofPLO(widget.ploID);
+  }
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).primaryColor,
-        centerTitle: true,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios_new,
-            color: Colors.white,
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).primaryColor,
+          centerTitle: true,
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back_ios_new,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
           ),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        title: Text(
-          'Đặt chỗ',
-          style: TextStyle(
-            fontSize: 26 * ffem,
-            fontWeight: FontWeight.w700,
-            height: 1.175 * ffem / fem,
-            color: Color(0xffffffff),
+          title: Text(
+            'Đặt chỗ',
+            style: TextStyle(
+              fontSize: 26 * ffem,
+              fontWeight: FontWeight.w700,
+              height: 1.175 * ffem / fem,
+              color: const Color(0xffffffff),
+            ),
           ),
         ),
-      ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 12 * fem),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: EdgeInsets.only(top: 25 * fem),
-              child: Text('Khách sạn Romantic',
-                  style: TextStyle(
-                      fontSize: 20 * fem, fontWeight: FontWeight.bold)),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 2 * fem, bottom: 15 * fem),
-              child: Text(
-                '681A Đ. Nguyễn Huệ, Bến Nghé, Quận 1, TP HCM',
-                style: TextStyle(fontSize: 15 * fem, color: Colors.grey),
-              ),
-            ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  padding: EdgeInsets.fromLTRB(
-                      15 * fem, 10 * fem, 15 * fem, 8 * fem),
-                  height: 50 * fem,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[350],
-                    borderRadius: BorderRadius.circular(6 * fem),
-                  ),
+        body: FutureBuilder(
+            future: reservationMethod,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Text('Lỗi: ${snapshot.error}');
+              } else {
+                final data = snapshot.data;
+                // dropdownType = data!.first.methodName;
+                if (data == null) {
+                  return Text('Không có dữ liệu');
+                }
+
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 12 * fem),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        margin: EdgeInsets.only(bottom: 6 * fem),
-                        child: Text(
-                          'Sáng',
-                          style: TextStyle(
-                            fontSize: 13 * ffem,
-                            fontWeight: FontWeight.w400,
-                            height: 1.175 * ffem / fem,
-                            color: Color(0xff5b5b5b),
-                          ),
-                        ),
-                      ),
-                      Text(
-                        '3k',
-                        style: TextStyle(
-                          fontSize: 15 * ffem,
-                          fontWeight: FontWeight.w600,
-                          height: 1.2175 * ffem / fem,
-                          color: Color(0xff000000),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  width: 10 * fem,
-                ),
-                Container(
-                  padding: EdgeInsets.fromLTRB(
-                      15 * fem, 10 * fem, 15 * fem, 8 * fem),
-                  height: 50 * fem,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[350],
-                    borderRadius: BorderRadius.circular(6 * fem),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(bottom: 6 * fem),
-                        child: Text(
-                          'Tối',
-                          style: TextStyle(
-                            fontSize: 13 * ffem,
-                            fontWeight: FontWeight.w400,
-                            height: 1.175 * ffem / fem,
-                            color: Color(0xff5b5b5b),
-                          ),
-                        ),
-                      ),
-                      Text(
-                        '3k',
-                        style: TextStyle(
-                          fontSize: 15 * ffem,
-                          fontWeight: FontWeight.w600,
-                          height: 1.2175 * ffem / fem,
-                          color: Color(0xff000000),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  width: 10 * fem,
-                ),
-                Container(
-                  padding: EdgeInsets.fromLTRB(
-                      12 * fem, 10 * fem, 12 * fem, 8 * fem),
-                  height: 50 * fem,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[350],
-                    borderRadius: BorderRadius.circular(6 * fem),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(bottom: 6 * fem),
-                        child: Text(
-                          'Qua đêm',
-                          style: TextStyle(
-                            fontSize: 13 * ffem,
-                            fontWeight: FontWeight.w400,
-                            height: 1.175 * ffem / fem,
-                            color: Color(0xff5b5b5b),
-                          ),
-                        ),
-                      ),
-                      Text(
-                        '4k',
-                        style: TextStyle(
-                          fontSize: 15 * ffem,
-                          fontWeight: FontWeight.w600,
-                          height: 1.2175 * ffem / fem,
-                          color: Color(0xff000000),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  width: 10 * fem,
-                ),
-                Container(
-                  padding: EdgeInsets.fromLTRB(
-                      12 * fem, 10 * fem, 12 * fem, 8 * fem),
-                  height: 50 * fem,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[350],
-                    borderRadius: BorderRadius.circular(6 * fem),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(bottom: 6 * fem),
-                        child: Text(
-                          'Chỗ trống',
-                          style: TextStyle(
-                            fontSize: 13 * ffem,
-                            fontWeight: FontWeight.w400,
-                            height: 1.175 * ffem / fem,
-                            color: Color(0xff5b5b5b),
-                          ),
-                        ),
-                      ),
-                      Text(
-                        '11',
-                        style: TextStyle(
-                          fontSize: 15 * ffem,
-                          fontWeight: FontWeight.w600,
-                          height: 1.2175 * ffem / fem,
-                          color: Color(0xff000000),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  width: 10 * fem,
-                ),
-                Container(
-                  padding: EdgeInsets.fromLTRB(
-                      15 * fem, 10 * fem, 15 * fem, 8 * fem),
-                  height: 50 * fem,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[350],
-                    borderRadius: BorderRadius.circular(6 * fem),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(bottom: 6 * fem),
-                        child: Text(
-                          'Cách',
-                          style: TextStyle(
-                            fontSize: 13 * ffem,
-                            fontWeight: FontWeight.w400,
-                            height: 1.175 * ffem / fem,
-                            color: Color(0xff5b5b5b),
-                          ),
-                        ),
-                      ),
-                      Text(
-                        '5m',
-                        style: TextStyle(
-                          fontSize: 15 * ffem,
-                          fontWeight: FontWeight.w600,
-                          height: 1.2175 * ffem / fem,
-                          color: Color(0xff000000),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 30 * fem, bottom: 15 * fem),
-              child: Text(
-                'Phương thức gửi:',
-                style:
-                    TextStyle(fontSize: 17 * fem, fontWeight: FontWeight.bold),
-              ),
-            ),
-            DropdownMenu<String>(
-              initialSelection: listType.first,
-              width: 350 * fem,
-              textStyle: TextStyle(fontSize: 16 * fem),
-              onSelected: (String? value) {
-                setState(() {
-                  dropdownType = value!;
-                });
-              },
-              dropdownMenuEntries:
-              listType.map<DropdownMenuEntry<String>>((String value) {
-                return DropdownMenuEntry<String>(value: value, label: value);
-              }).toList(),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 25 * fem, bottom: 15 * fem),
-              child: Text(
-                'Chọn xe:',
-                style:
-                    TextStyle(fontSize: 17 * fem, fontWeight: FontWeight.bold),
-              ),
-            ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    border:
-                        Border.all(color: Color(0xff2b7031), width: 2 * fem),
-                    borderRadius: BorderRadius.circular(3 * fem),
-                  ),
-                  child: DropdownMenu<String>(
-                    initialSelection: listVehicle.first,
-                    textStyle: TextStyle(fontSize: 16 * fem),
-                    
-                    onSelected: (String? value) {
-                      setState(() {
-                        dropdownVehicle = value!;
-                      });
-                    },
-                    dropdownMenuEntries:
-                    listVehicle.map<DropdownMenuEntry<String>>((String value) {
-                      return DropdownMenuEntry<String>(value: value, label: value);
-                    }).toList(),
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    _showAddVehicleDialog(context);
-                  },
-                  child: Container(
-                    width: 31 * fem,
-                    height: 31 * fem,
-                    child: Image.asset('assets/images/addIcon.png'),
-                  ),
-                ),
-              ],
-            ),
-            Expanded(
-              child: Align(
-                alignment: Alignment.bottomLeft,
-                child: Text(
-                  'Thời gian chờ là 15 phút',
-                  style: TextStyle(
-                      fontSize: 15 * fem, fontWeight: FontWeight.w600),
-                ),
-              ),
-            ),
-            Expanded(
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  padding: EdgeInsets.fromLTRB(
-                      13 * fem, 38 * fem, 14 * fem, 37 * fem),
-                  height: 120 * fem,
-                  decoration: BoxDecoration(
-                    color: Color(0xffffffff),
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        children: [
-                          Text(
-                            '3.000đ',
+                      Padding(
+                        padding: EdgeInsets.only(top: 25 * fem),
+                        child: Text(widget.parlinglotDetail.parkingName,
                             style: TextStyle(
-                                fontSize: 18 * fem,
-                                fontWeight: FontWeight.bold),
+                                fontSize: 20 * fem,
+                                fontWeight: FontWeight.bold)),
+                      ),
+                      Padding(
+                        padding:
+                            EdgeInsets.only(top: 2 * fem, bottom: 15 * fem),
+                        child: Text(
+                          widget.parlinglotDetail.address,
+                          style:
+                              TextStyle(fontSize: 15 * fem, color: Colors.grey),
+                        ),
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          if(widget.parlinglotDetail.morningFee != 0)
+                          Container(
+                            padding: EdgeInsets.fromLTRB(
+                                15 * fem, 10 * fem, 15 * fem, 8 * fem),
+                            height: 50 * fem,
+                            decoration: BoxDecoration(
+                              color: Colors.grey[350],
+                              borderRadius: BorderRadius.circular(6 * fem),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+
+                                Container(
+                                  margin: EdgeInsets.only(bottom: 6 * fem),
+                                  child: Text(
+                                    'Sáng',
+                                    style: TextStyle(
+                                      fontSize: 13 * ffem,
+                                      fontWeight: FontWeight.w400,
+                                      height: 1.175 * ffem / fem,
+                                      color: const Color(0xff5b5b5b),
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  widget.parlinglotDetail.morningFee.toString(),
+                                  style: TextStyle(
+                                    fontSize: 15 * ffem,
+                                    fontWeight: FontWeight.w600,
+                                    height: 1.2175 * ffem / fem,
+                                    color: const Color(0xff000000),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                           SizedBox(
-                            height: 4 * fem,
+                            width: 10 * fem,
                           ),
-                          Text(dropdownType)
+                          if(widget.parlinglotDetail.eveningFee != 0)
+                          Container(
+                            padding: EdgeInsets.fromLTRB(
+                                15 * fem, 10 * fem, 15 * fem, 8 * fem),
+                            height: 50 * fem,
+                            decoration: BoxDecoration(
+                              color: Colors.grey[350],
+                              borderRadius: BorderRadius.circular(6 * fem),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  margin: EdgeInsets.only(bottom: 6 * fem),
+                                  child: Text(
+                                    'Tối',
+                                    style: TextStyle(
+                                      fontSize: 13 * ffem,
+                                      fontWeight: FontWeight.w400,
+                                      height: 1.175 * ffem / fem,
+                                      color: const Color(0xff5b5b5b),
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  widget.parlinglotDetail.eveningFee.toString(),
+                                  style: TextStyle(
+                                    fontSize: 15 * ffem,
+                                    fontWeight: FontWeight.w600,
+                                    height: 1.2175 * ffem / fem,
+                                    color: const Color(0xff000000),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            width: 10 * fem,
+                          ),
+                          if(widget.parlinglotDetail.overnightFee != 0)
+                          Container(
+                            padding: EdgeInsets.fromLTRB(
+                                12 * fem, 10 * fem, 12 * fem, 8 * fem),
+                            height: 50 * fem,
+                            decoration: BoxDecoration(
+                              color: Colors.grey[350],
+                              borderRadius: BorderRadius.circular(6 * fem),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  margin: EdgeInsets.only(bottom: 6 * fem),
+                                  child: Text(
+                                    'Qua đêm',
+                                    style: TextStyle(
+                                      fontSize: 13 * ffem,
+                                      fontWeight: FontWeight.w400,
+                                      height: 1.175 * ffem / fem,
+                                      color: const Color(0xff5b5b5b),
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  widget.parlinglotDetail.overnightFee
+                                      .toString(),
+                                  style: TextStyle(
+                                    fontSize: 15 * ffem,
+                                    fontWeight: FontWeight.w600,
+                                    height: 1.2175 * ffem / fem,
+                                    color: const Color(0xff000000),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            width: 10 * fem,
+                          ),
+                          Container(
+                            padding: EdgeInsets.fromLTRB(
+                                12 * fem, 10 * fem, 12 * fem, 8 * fem),
+                            height: 50 * fem,
+                            decoration: BoxDecoration(
+                              color: Colors.grey[350],
+                              borderRadius: BorderRadius.circular(6 * fem),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  margin: EdgeInsets.only(bottom: 6 * fem),
+                                  child: Text(
+                                    'Chỗ trống',
+                                    style: TextStyle(
+                                      fontSize: 13 * ffem,
+                                      fontWeight: FontWeight.w400,
+                                      height: 1.175 * ffem / fem,
+                                      color: const Color(0xff5b5b5b),
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  widget.parlinglotDetail.currentSlot
+                                      .toString(),
+                                  style: TextStyle(
+                                    fontSize: 15 * ffem,
+                                    fontWeight: FontWeight.w600,
+                                    height: 1.2175 * ffem / fem,
+                                    color: const Color(0xff000000),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            width: 10 * fem,
+                          ),
+                          Container(
+                            padding: EdgeInsets.fromLTRB(
+                                15 * fem, 10 * fem, 15 * fem, 8 * fem),
+                            height: 50 * fem,
+                            decoration: BoxDecoration(
+                              color: Colors.grey[350],
+                              borderRadius: BorderRadius.circular(6 * fem),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  margin: EdgeInsets.only(bottom: 6 * fem),
+                                  child: Text(
+                                    'Cách',
+                                    style: TextStyle(
+                                      fontSize: 13 * ffem,
+                                      fontWeight: FontWeight.w400,
+                                      height: 1.175 * ffem / fem,
+                                      color: const Color(0xff5b5b5b),
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  '5m',
+                                  style: TextStyle(
+                                    fontSize: 15 * ffem,
+                                    fontWeight: FontWeight.w600,
+                                    height: 1.2175 * ffem / fem,
+                                    color: const Color(0xff000000),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
-                      InkWell(
-                        onTap: () {
-                          _showAddReservationDialog(context);
+                      Padding(
+                        padding:
+                            EdgeInsets.only(top: 30 * fem, bottom: 15 * fem),
+                        child: Text(
+                          'Phương thức gửi:',
+                          style: TextStyle(
+                              fontSize: 17 * fem, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      DropdownMenu<String>(
+                        initialSelection: data.first.methodName,
+                        width: 350 * fem,
+                        textStyle: TextStyle(fontSize: 16 * fem),
+                        onSelected: (String? value) {
+                          ReservationMethod selectedMap =
+                              data.firstWhere((map) => map.methodName == value);
+                          setState(() {
+                            dropdownType = selectedMap.methodName;
+
+                            if (selectedMap.methodName.contains('Ban ngày')) {
+                              price = selectedMap.price;
+                            } else if (selectedMap.methodName.contains('Ban đêm')) {
+                              price = selectedMap.price;
+                            } else {
+                              price = selectedMap.price;
+                            }
+                          });
                         },
-                        child: Container(
-                          padding: EdgeInsets.fromLTRB(
-                              15 * fem, 10 * fem, 15 * fem, 10 * fem),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).primaryColor,
-                            borderRadius: BorderRadius.circular(6 * fem),
+                        dropdownMenuEntries:
+                            data.map<DropdownMenuEntry<String>>((map) {
+                          return DropdownMenuEntry<String>(
+                            value: map.methodName,
+                            label: map.methodName,
+                          );
+                        }).toList(),
+                      ),
+                      Padding(
+                        padding:
+                            EdgeInsets.only(top: 25 * fem, bottom: 15 * fem),
+                        child: Text(
+                          'Chọn xe:',
+                          style: TextStyle(
+                              fontSize: 17 * fem, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Consumer<VehicleProvider>(
+                        builder: (context, vehicleProvider, child) {
+                          return FutureBuilder<List<ListVehicleCustomer>>(
+                            future: vehicleProvider.getVehicleList(),
+                            builder: (context, snapshot) {
+                              if (vehicleProvider.vehicles.isEmpty) {
+                                return InkWell(
+                                  onTap: () {
+                                    _showAddVehicleDialog(context);
+                                  },
+                                  child: Container(
+                                    width: 31 * fem,
+                                    height: 31 * fem,
+                                    child: Image.asset(
+                                        'assets/images/addIcon.png'),
+                                  ),
+                                );
+                              }
+                              return Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: const Color(0xff2b7031),
+                                        width: 2 * fem,
+                                      ),
+                                      borderRadius:
+                                          BorderRadius.circular(3 * fem),
+                                    ),
+                                    child: DropdownMenu<String>(
+                                      initialSelection: vehicleProvider
+                                          .vehicles.first.licencePlate,
+                                      textStyle: TextStyle(fontSize: 16 * fem),
+                                      onSelected: (String? value) {
+                                        ListVehicleCustomer selectedMap =
+                                            vehicleProvider.vehicles.firstWhere(
+                                                (map) =>
+                                                    map.licencePlate == value);
+
+                                        setState(() {
+                                          dropdownVehicle =
+                                              selectedMap.licencePlate;
+
+                                        });
+                                      },
+                                      dropdownMenuEntries: vehicleProvider
+                                          .vehicles
+                                          .map((vehicle) {
+                                        return DropdownMenuEntry<String>(
+                                          value: vehicle.licencePlate,
+                                          label: vehicle.licencePlate,
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      _showAddVehicleDialog(context);
+                                    },
+                                    child: Container(
+                                      width: 31 * fem,
+                                      height: 31 * fem,
+                                      child: Image.asset(
+                                          'assets/images/addIcon.png'),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                      ),
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.bottomLeft,
+                          child: Text(
+                            'Thời gian chờ là 15 phút',
+                            style: TextStyle(
+                                fontSize: 15 * fem,
+                                fontWeight: FontWeight.w600),
                           ),
-                          child: Center(
-                            child: Text(
-                              'Đặt chỗ',
-                              style: TextStyle(
-                                fontSize: 16 * ffem,
-                                fontWeight: FontWeight.w600,
-                                height: 1.175 * ffem / fem,
-                                color: Colors.white,
-                              ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Container(
+                            padding: EdgeInsets.fromLTRB(
+                                13 * fem, 38 * fem, 14 * fem, 37 * fem),
+                            height: 120 * fem,
+                            decoration: const BoxDecoration(
+                              color: Color(0xffffffff),
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  children: [
+                                    Text(
+                                      price.toString(),
+                                      style: TextStyle(
+                                          fontSize: 18 * fem,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    SizedBox(
+                                      height: 4 * fem,
+                                    ),
+                                    Text(dropdownType)
+                                  ],
+                                ),
+                                InkWell(
+                                  onTap: () {
+                                    _showAddReservationDialog(context);
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.fromLTRB(
+                                        15 * fem, 10 * fem, 15 * fem, 10 * fem),
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context).primaryColor,
+                                      borderRadius:
+                                          BorderRadius.circular(6 * fem),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        'Đặt chỗ',
+                                        style: TextStyle(
+                                          fontSize: 16 * ffem,
+                                          fontWeight: FontWeight.w600,
+                                          height: 1.175 * ffem / fem,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
                       ),
                     ],
                   ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+                );
+              }
+            }));
   }
 
   Future<void> _showAddVehicleDialog(BuildContext context) async {
@@ -400,7 +515,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
           ),
           backgroundColor: const Color(0xffffffff),
           child: Container(
-            padding: EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -414,19 +529,19 @@ class _ReservationScreenState extends State<ReservationScreen> {
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.only(bottom: 20, top: 20),
-                  padding: EdgeInsets.fromLTRB(15, 0, 10, 0),
-                  constraints: BoxConstraints(
+                  margin: const EdgeInsets.only(bottom: 20, top: 20),
+                  padding: const EdgeInsets.fromLTRB(15, 0, 10, 0),
+                  constraints: const BoxConstraints(
                     maxWidth: 300,
                   ),
                   decoration: BoxDecoration(
-                    color: Color(0xfff5f5f5),
+                    color: const Color(0xfff5f5f5),
                     borderRadius: BorderRadius.circular(9 * fem),
                   ),
                   child: TextFormField(
                     controller: _vehicleNumberController,
-                    decoration: InputDecoration(
-                      hintText: '12A-1234',
+                    decoration: const InputDecoration(
+                      hintText: '12-A123456',
                       border: InputBorder.none,
                     ),
                   ),
@@ -439,13 +554,13 @@ class _ReservationScreenState extends State<ReservationScreen> {
                         children: [
                           Container(
                             height: 1,
-                            color: Color(0xffb3abab), // Đường thẳng ngang
+                            color: const Color(0xffb3abab), // Đường thẳng ngang
                           ),
                           TextButton(
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
-                            child: Text(
+                            child: const Text(
                               'Hủy',
                               style: TextStyle(
                                 fontSize: 20,
@@ -462,7 +577,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                         Container(
                           width: 1,
                           height: 48,
-                          color: Color(0xffb3abab), // Đường thẳng dọc
+                          color: const Color(0xffb3abab), // Đường thẳng dọc
                         ),
                       ],
                     ),
@@ -471,19 +586,26 @@ class _ReservationScreenState extends State<ReservationScreen> {
                         children: [
                           Container(
                             height: 1,
-                            color: Color(0xffb3abab),
+                            color: const Color(0xffb3abab),
                           ),
                           TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
+                            onPressed: () async {
                               String newVehicle = _vehicleNumberController.text;
                               if (newVehicle.isNotEmpty) {
-                                setState(() {
-                                  listVehicle.add(newVehicle);
-                                });
+                                try {
+                                  await _vehicleProvider
+                                      .addNewVehicle(newVehicle);
+                                  Navigator.of(context).pop();
+                                } catch (e) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Thêm xe thất bại'),
+                                    ),
+                                  );
+                                }
                               }
                             },
-                            child: Text(
+                            child: const Text(
                               'Lưu',
                               style: TextStyle(
                                 fontSize: 20,
@@ -506,6 +628,14 @@ class _ReservationScreenState extends State<ReservationScreen> {
   }
 
   Future<void> _showAddReservationDialog(BuildContext context) async {
+    int methodID;
+    if (dropdownType.contains('Ban ngày')) {
+      methodID = 1;
+    } else if (dropdownType.contains('Ban đêm')) {
+      methodID = 2;
+    } else {
+      methodID = 3;
+    }
     await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -528,7 +658,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                       style: TextStyle(
                         fontSize: 15 * fem,
                         fontWeight: FontWeight.w600,
-                        color: Color(0xff000000),
+                        color: const Color(0xff000000),
                       ),
                     ),
                   ),
@@ -544,15 +674,15 @@ class _ReservationScreenState extends State<ReservationScreen> {
                         style: TextStyle(
                           fontSize: 13 * fem,
                           fontWeight: FontWeight.w600,
-                          color: Color(0xff000000),
+                          color: const Color(0xff000000),
                         ),
                       ),
                       Text(
-                        'Khách sạn Romantic',
+                        widget.parlinglotDetail.parkingName,
                         style: TextStyle(
                           fontSize: 13 * fem,
                           fontWeight: FontWeight.w600,
-                          color: Color(0xff000000),
+                          color: const Color(0xff000000),
                         ),
                       ),
                     ],
@@ -561,8 +691,8 @@ class _ReservationScreenState extends State<ReservationScreen> {
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 4 * fem),
                   child: Container(
-                    margin:
-                        EdgeInsets.fromLTRB(1 * fem, 0 * fem, 1 * fem, 11 * fem),
+                    margin: EdgeInsets.fromLTRB(
+                        1 * fem, 0 * fem, 1 * fem, 11 * fem),
                     width: double.infinity,
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -574,7 +704,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                             style: TextStyle(
                               fontSize: 13 * fem,
                               fontWeight: FontWeight.w600,
-                              color: Color(0xff000000),
+                              color: const Color(0xff000000),
                             ),
                           ),
                         ),
@@ -583,7 +713,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                           style: TextStyle(
                             fontSize: 13 * fem,
                             fontWeight: FontWeight.w600,
-                            color: Color(0xff000000),
+                            color: const Color(0xff000000),
                           ),
                         ),
                       ],
@@ -600,7 +730,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                       style: TextStyle(
                         fontSize: 13 * fem,
                         fontWeight: FontWeight.w600,
-                        color: Color(0xff000000),
+                        color: const Color(0xff000000),
                       ),
                     ),
                   ),
@@ -609,8 +739,8 @@ class _ReservationScreenState extends State<ReservationScreen> {
                   width: 94 * fem,
                   height: 23 * fem,
                   decoration: BoxDecoration(
-                    border: Border.all(color: Color(0xff2b7031)),
-                    color: Color(0xfff8f8f8),
+                    border: Border.all(color: const Color(0xff2b7031)),
+                    color: const Color(0xfff8f8f8),
                     borderRadius: BorderRadius.circular(3 * fem),
                   ),
                   child: Center(
@@ -620,7 +750,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                         fontSize: 15 * ffem,
                         fontWeight: FontWeight.w600,
                         height: 1.2175 * ffem / fem,
-                        color: Color(0xff2b7031),
+                        color: const Color(0xff2b7031),
                       ),
                     ),
                   ),
@@ -628,27 +758,27 @@ class _ReservationScreenState extends State<ReservationScreen> {
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 10 * fem),
                   child: Row(
-                    crossAxisAlignment:  CrossAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children:  [
+                    children: [
                       Container(
-                        margin:  EdgeInsets.fromLTRB(0*fem, 6*fem, 174*fem, 0*fem),
-                        child:
-                        Text(
+                        margin: EdgeInsets.fromLTRB(
+                            0 * fem, 6 * fem, 174 * fem, 0 * fem),
+                        child: Text(
                           'Số tiền: ',
-                          style:  TextStyle (
-                            fontSize:  13*fem,
-                            fontWeight:  FontWeight.w600,
-                            color:  Color(0xff000000),
+                          style: TextStyle(
+                            fontSize: 13 * fem,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xff000000),
                           ),
                         ),
                       ),
                       Text(
-                        '3.000đ',
-                        style:  TextStyle (
-                          fontSize:  18*fem,
-                          fontWeight:  FontWeight.w600,
-                          color:  Color(0xff000000),
+                        price.toString(),
+                        style: TextStyle(
+                          fontSize: 18 * fem,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xff000000),
                         ),
                       ),
                     ],
@@ -662,13 +792,13 @@ class _ReservationScreenState extends State<ReservationScreen> {
                         children: [
                           Container(
                             height: 1,
-                            color: Color(0xffb3abab),
+                            color: const Color(0xffb3abab),
                           ),
                           TextButton(
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
-                            child: Text(
+                            child: const Text(
                               'Hủy',
                               style: TextStyle(
                                 fontSize: 20,
@@ -685,7 +815,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                         Container(
                           width: 1,
                           height: 48,
-                          color: Color(0xffb3abab),
+                          color: const Color(0xffb3abab),
                         ),
                       ],
                     ),
@@ -694,14 +824,35 @@ class _ReservationScreenState extends State<ReservationScreen> {
                         children: [
                           Container(
                             height: 1,
-                            color: Color(0xffb3abab),
+                            color: const Color(0xffb3abab),
                           ),
                           TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
+                            onPressed: () async {
+                              try {
+                                await ReservationAPI.getBooking(
+                                    dropdownVehicle, methodID, widget.ploID);
+                                // Navigator.push(context, MaterialPageRoute(
+                                //   builder: (BuildContext) => HomeScreen()
+                                // ));
+                                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => HomeScreen()));
+                                // Navigator.of(context).pop();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Đặt chỗ thành công'),
+                                  ),
+                                );
+
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Đặt chỗ thất bại'),
+                                  ),
+                                );
+                                Navigator.of(context).pop();
+                              }
                             },
-                            child: Text(
-                              'Lưu',
+                            child: const Text(
+                              'Đặt',
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w600,

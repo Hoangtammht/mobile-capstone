@@ -7,6 +7,11 @@ class SearchParkingAPI{
   static const String baseUrl = 'https://eparkingcapstone.azurewebsites.net';
 
   static Future<List<Parking>> findParkingList(double latitude, double longitude, int method, double radius) async {
+    print(latitude);
+    print(longitude);
+    print(method);
+    print(radius);
+
     try {
       String? token = await UserPreferences.getAccessToken();
       if (token == null) {

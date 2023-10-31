@@ -95,3 +95,35 @@ class ReservationByLicensePlate {
     return _data;
   }
 }
+
+class ReservationMethod {
+  ReservationMethod({
+    required this.methodID,
+    required this.methodName,
+    required this.price,
+    required this.special,
+  });
+
+  late final int methodID;
+  late final String methodName;
+  late final double price;
+  late final bool special;
+
+  ReservationMethod.fromJson
+      (Map<String, dynamic> json){
+    methodID = json['methodID'] ?? 0;
+    methodName = json['methodName'] ?? '';
+    price = json['price'] ?? 0;
+    special = json['special'] ?? false;
+  }
+
+  Map<String, dynamic> toJson() {
+    final _data = <String, dynamic>{};
+    _data['methodID'] = methodID;
+    _data['methodName'] = methodName;
+    _data['price'] = price;
+    _data['special'] = special;
+    return _data;
+  }
+}
+

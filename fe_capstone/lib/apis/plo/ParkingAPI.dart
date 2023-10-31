@@ -704,11 +704,16 @@ class ParkingAPI {
 
       if (response.statusCode == 200) {
         print("get RatingList successful");
-        final List<dynamic> data = response.data['data'];
-        List<CustomerRating> ratingList;
-        ratingList = data.map((item) => CustomerRating.fromJson(item)).toList();
 
-        return ratingList;
+        final status = response.data['status'];
+        if(status == 200) {
+          final List<dynamic> data = response.data['data'];
+          List<CustomerRating> ratingList;
+          ratingList = data.map((item) => CustomerRating.fromJson(item)).toList();
+         return ratingList;
+        }
+
+        return [];
       } else {
         throw Exception('Failed to get RatingList');
       }
