@@ -123,5 +123,39 @@ class ReservationAPI {
     }
   }
 
+  static Future<void> sendRating(String content, String ploID, int reservationID, int star) async {
+    try {
+      String? token = await UserPreferences.getAccessToken();
+      if (token == null) {
+        throw Exception('Access token is null');
+      }
+      final response = await dio.post(
+        '$baseUrl/rating/sendRating',
+        data: {
+          "content": content,
+          "ploID": ploID,
+          "reservationID": reservationID,
+          "star": star,
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        print('Send rating thành công');
+      } else {
+        throw Exception('Failed to send rating');
+      }
+    } catch (e) {
+      throw Exception('Failed to send rating: $e');
+    }
+  }
+
+
+
 
 }

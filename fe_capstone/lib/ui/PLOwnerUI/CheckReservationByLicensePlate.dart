@@ -169,7 +169,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                           } else {
                             ReservationByLicensePlate data = snapshot.data!;
                             final checkStatus = data.status;
-
+                            print('status : $checkStatus');
                             if (checkStatus == 0) {
                               return Container(
                                 width: 300 * fem,
@@ -204,9 +204,15 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                 ),
                               );
                             } else {
-                              final parts = data.checkIn.split(' - ');
-                              final hours = parts[0];
-                              final date = parts[1];
+                               List<String> parts;
+                               String hours = '';
+                               String date = '';
+                               if(data.checkIn != ""){
+                                 parts = data.checkIn.split(' - ');
+                                 hours = parts[0];
+                                 date =  parts[1];
+                               }
+
                               return Container(
                                   padding: EdgeInsets.symmetric(
                                       horizontal: 35 * fem),
@@ -257,6 +263,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                           ],
                                         ),
                                       SizedBox(height: 10.0),
+                                      if (checkStatus == 2 || checkStatus == 3)
                                       Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
@@ -307,18 +314,24 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                           ),
                                         ],
                                       ),
-                                      SizedBox(
-                                        height: 20,
-                                      ),
-                                      if (checkStatus == 2)
-                                        Center(
-                                          child: Text(
-                                              'Khách hàng đã lấy trễ giờ',
-                                              style: TextStyle(
-                                                  color: Colors.red,
-                                                  fontSize: 20 * fem,
-                                                  fontWeight: FontWeight.w400)),
+
+                                      if (checkStatus == 3)
+                                        Column(
+                                          children: [
+                                            SizedBox(
+                                              height: 20,
+                                            ),
+                                            Center(
+                                              child: Text(
+                                                  'Khách hàng đã lấy trễ giờ',
+                                                  style: TextStyle(
+                                                      color: Colors.red,
+                                                      fontSize: 20 * fem,
+                                                      fontWeight: FontWeight.w400)),
+                                            ),
+                                          ],
                                         ),
+
                                       if (checkStatus == 1)
                                         Row(
                                             mainAxisAlignment:
@@ -524,9 +537,13 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                                   ),
                                                 ),
                                               ),
+                                              SizedBox(
+                                                height: 20 * fem,
+                                              ),
                                             ])
                                     ],
                                   ));
+
                             }
                           }
                         },
@@ -768,7 +785,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                     ),
                   ),
                 ),
-                if (checkStatus == 2)
+                if (checkStatus == 3)
                   Text.rich(
                     TextSpan(children: [
                       TextSpan(
