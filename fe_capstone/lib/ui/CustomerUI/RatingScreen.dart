@@ -69,6 +69,7 @@ class _RatingScreenState extends State<RatingScreen> {
             return Container(
               margin: EdgeInsets.only(top: 10 * fem),
               child: ListView.builder(
+                reverse: true,
                 scrollDirection: Axis.vertical,
                 itemCount: ratings.length,
                 itemBuilder: (context, index) {

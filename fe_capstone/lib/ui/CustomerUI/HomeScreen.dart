@@ -14,6 +14,7 @@ import 'package:fe_capstone/ui/CustomerUI/ReservationScreen.dart';
 import 'package:fe_capstone/ui/components/widgetCustomer/ListParkingCard.dart';
 import 'package:fe_capstone/ui/components/widgetCustomer/RatingStars.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:geolocator/geolocator.dart';
@@ -35,11 +36,14 @@ class _HomeScreenState extends State<HomeScreen> {
   String selectParkinglot = '';
   bool isSendRating = false;
   bool isCheckedAccount = false;
+  String distance = '';
 
-  void showParkingDetailContent(String ploID) {
+
+  void showParkingDetailContent(Parking parking) {
     setState(() {
       showParkingDetail = true;
-      selectParkinglot = ploID;
+      selectParkinglot = parking.ploID;
+      distance = (parking.distance * 1000).toStringAsFixed(0);
     });
   }
 
@@ -90,7 +94,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<double> checkWalletCustomer() async {
-    ResponseWalletCustomer responseWalletCustomer = await WalletScreenAPI.getWalletScreenData();
+    ResponseWalletCustomer responseWalletCustomer =
+        await WalletScreenAPI.getWalletScreenData();
     accountBalance = responseWalletCustomer.walletBalance;
     print('Số tiền trong ví là: $accountBalance');
     return accountBalance;
@@ -114,16 +119,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void checkAccount() {
     if (accountBalance < 10000) {
-      String formattedBalance = accountBalance.toStringAsFixed(0).replaceAllMapped(
-          new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+      String formattedBalance = accountBalance
+          .toStringAsFixed(0)
+          .replaceAllMapped(new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
               (Match m) => '${m[1]}.');
       showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text("Thông báo",style: TextStyle(fontSize: 24 * fem)),
+            title: Text("Thông báo", style: TextStyle(fontSize: 24 * fem)),
             content: Text(
-                "Số dư tài khoản của bạn chỉ còn $formattedBalanceđ. Vui lòng nạp tiền!", style: TextStyle(fontSize: 20 * fem)),
+                "Số dư tài khoản của bạn chỉ còn $formattedBalanceđ. Vui lòng nạp tiền!",
+                style: TextStyle(fontSize: 20 * fem)),
             actions: <Widget>[
               TextButton(
                 child: Text("Đóng", style: TextStyle(fontSize: 18 * fem)),
@@ -262,8 +269,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ));
             }
           }
-
-
         });
       } else {
         print('AutoSearch Request Failed with status: ${response.statusCode}');
@@ -456,31 +461,31 @@ class _HomeScreenState extends State<HomeScreen> {
             right: 0,
             child: showSearchResults
                 ? Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16 * fem),
-              child: Container(
-                height: 220 * fem,
-                decoration: BoxDecoration(
-                    color: Colors.white
-                ),
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  padding: EdgeInsets.zero,
-                  itemCount: autoSearchResults.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(autoSearchResults[index]['name']),
-                      subtitle: Text(autoSearchResults[index]['address']),
-                      onTap: () {
-                        var selectedResult = autoSearchResults[index]['ref_id'];
-                        getLatAndLong(selectedResult);
-                        FocusScope.of(context).requestFocus(FocusNode());
-                      },
-                    );
-                  },
-                ),
-              ),
-            )
-                : SizedBox.shrink(),),
+                    padding: EdgeInsets.symmetric(horizontal: 16 * fem),
+                    child: Container(
+                      height: 220 * fem,
+                      decoration: BoxDecoration(color: Colors.white),
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        padding: EdgeInsets.zero,
+                        itemCount: autoSearchResults.length,
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            title: Text(autoSearchResults[index]['name']),
+                            subtitle: Text(autoSearchResults[index]['address']),
+                            onTap: () {
+                              var selectedResult =
+                                  autoSearchResults[index]['ref_id'];
+                              getLatAndLong(selectedResult);
+                              FocusScope.of(context).requestFocus(FocusNode());
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  )
+                : SizedBox.shrink(),
+          ),
           DraggableScrollableSheet(
             initialChildSize: 0.3,
             minChildSize: 0.2,
@@ -499,14 +504,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
                       if (customerHome.statusID == 0 ||
                           customerHome.statusID == 5) {
-                        // if (customerHome.statusID == 5) {
-                        //   return RatingDialog(customerHome: customerHome);
-                        // }
-
                         if (showParkingDetail) {
                           return ParkingDetailContent(
                             ploID: selectParkinglot,
                             scrollController: scrollController,
+                            distance: distance,
                             showParkingDetailContent: showParkingDetailContent,
                             refreshHomeScreen: refreshHomeScreen,
                             closeParkingDetail: () {
@@ -515,7 +517,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               });
                             },
                           );
-                          // return showRatingDialogAutomatically(context, customerHome, isRatingDialogDisplayed, handleRating);
                         } else {
                           return HomeScreenContent(
                             scrollController,
@@ -529,7 +530,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           );
                         }
                       } else if (customerHome.statusID == 1) {
-                        return CheckInContent(scrollController, customerHome, refreshHomeScreen);
+                        return CheckInContent(
+                            scrollController, customerHome, refreshHomeScreen);
                       } else {
                         return CheckOutContent(scrollController, customerHome);
                       }
@@ -609,166 +611,220 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-Future<void> _RatingDialog(BuildContext context, CustomerHome customerHome) async {
+Future<void> _RatingDialog(
+    BuildContext context, CustomerHome customerHome) async {
   late TextEditingController _feedbackController = TextEditingController();
+  int selectedRating = 0;
   showDialog(
-    barrierDismissible: true,
+    barrierDismissible: false,
     context: context,
     builder: (BuildContext context) {
-      return Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(23),
-        ),
-        backgroundColor: const Color(0xffffffff),
-        child: Container(
-          padding: EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Center(
-                child: Text(
-                  "GỬI ĐÁNH GIÁ",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 20 * fem,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+     return Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(23),
+            ),
+            backgroundColor: const Color(0xffffffff),
+            child: Container(
+              padding: EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('Bãi xe'),
-                  Text(customerHome.parkingName),
-                ],
-              ),
-              Container(
-                margin: EdgeInsets.only(bottom: 20, top: 20),
-                padding: EdgeInsets.fromLTRB(15, 0, 10, 0),
-                constraints: BoxConstraints(
-                  maxWidth: 300,
-                ),
-                decoration: BoxDecoration(
-                  color: Color(0xfff5f5f5),
-                  borderRadius: BorderRadius.circular(9 * fem),
-                ),
-                child: TextFormField(
-                  controller: _feedbackController,
-                  decoration: InputDecoration(
-                    hintText: 'Nhập đánh giá',
-                    border: InputBorder.none,
-                  ),
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Expanded(
-                    child: Column(
-                      children: [
-                        Container(
-                          height: 1,
-                          color: Color(0xffb3abab),
-                        ),
-                        TextButton(
-                          onPressed: () async {
-                            try {
-                              await ReservationAPI.skipRating(
-                                  customerHome.reservationID);
-                              Navigator.of(context).pop();
-                            } catch (e) {
-                              Navigator.of(context).popUntil((route) => route.isCurrent);
-                            }
-                          },
-                          child: Text(
-                            'Hủy',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xff5767f5),
-                            ),
-                          ),
-                        ),
-                      ],
+                  Center(
+                    child: Text(
+                      "GỬI ĐÁNH GIÁ",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
                     ),
                   ),
-                  Column(
+                  SizedBox(
+                    height: 15 * fem,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
-                        width: 1,
-                        height: 48,
-                        color: Color(0xffb3abab),
+                      Text(
+                        'Bãi xe:',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                      Text(
+                        customerHome.parkingName,
+                        style: TextStyle(
+                          fontSize: 18,
+                        ),
                       ),
                     ],
                   ),
-                  Expanded(
-                    child: Column(
-                      children: [
-                        Container(
-                          height: 1,
-                          color: Color(0xffb3abab),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Rating success ${_feedbackController.text}'),
-                              ),
-                            );
-                            Navigator.of(context).pop();
-                          },
-                          child: Text(
-                            'Gửi',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xffff3737),
-                            ),
-                          ),
-                        ),
-                      ],
+                  SizedBox(
+                    height: 15 * fem,
+                  ),
+                  Center(
+                    child: RatingBar.builder(
+                      initialRating: 0,
+                      minRating: 1,
+                      direction: Axis.horizontal,
+                      allowHalfRating: false,
+                      itemCount: 5,
+                      itemSize: 33,
+                      itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                      itemBuilder: (context, _) => Icon(
+                        Icons.star,
+                        color: Colors.amber,
+                      ),
+                      onRatingUpdate: (rating) {
+                        selectedRating = rating.toInt();
+                      },
                     ),
+                  ),
+                  SizedBox(
+                    height: 15 * fem,
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(bottom: 20, top: 20),
+                    padding: EdgeInsets.fromLTRB(15, 0, 10, 0),
+                    constraints: BoxConstraints(
+                      maxWidth: 300,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Color(0xfff5f5f5),
+                      borderRadius: BorderRadius.circular(9 * fem),
+                    ),
+                    child: TextFormField(
+                      controller: _feedbackController,
+                      decoration: InputDecoration(
+                        hintText: 'Nội dung',
+                        border: InputBorder.none,
+                        isDense: true,
+                      ),
+                      maxLines: 5,
+                    ),
+                  ),
+                  SizedBox(height: 15 * fem),
+
+                  // Center(
+                  //     child: Text(
+                  //       '*Không thể gửi vì điền thiếu thông tin!',
+                  //       style: TextStyle(
+                  //         fontWeight: FontWeight.bold,
+                  //         fontSize: 10,
+                  //         color: Colors.red,
+                  //         fontStyle: FontStyle.italic,
+                  //       ),
+                  //   ),
+                  // ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          children: [
+                            Container(
+                              height: 1,
+                              color: Color(0xffb3abab),
+                            ),
+                            TextButton(
+                              onPressed: () async {
+                                try {
+                                  await ReservationAPI.skipRating(
+                                      customerHome.reservationID);
+                                  Navigator.of(context).pop();
+                                } catch (e) {
+                                  Navigator.of(context)
+                                      .popUntil((route) => route.isCurrent);
+                                }
+                              },
+                              child: Text(
+                                'Bỏ qua',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xff5767f5),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Column(
+                        children: [
+                          Container(
+                            width: 1,
+                            height: 48,
+                            color: Color(0xffb3abab),
+                          ),
+                        ],
+                      ),
+                      Expanded(
+                        child: Column(
+                          children: [
+                            Container(
+                              height: 1,
+                              color: Color(0xffb3abab),
+                            ),
+                            TextButton(
+                              onPressed: () async {
+                                if (selectedRating == 0 ||
+                                    _feedbackController.text.isEmpty) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content: Text(
+                                            '*Không thể gửi vì điền thiếu thông tin!')),
+                                  );
+                                } else {
+                                  try {
+                                    await ReservationAPI.sendRating(
+                                        _feedbackController.text,
+                                        customerHome.ploID,
+                                        customerHome.reservationID,
+                                        selectedRating);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          content:
+                                              Text('Gửi đánh giá thành công!')),
+                                    );
+                                    Navigator.of(context).pop();
+                                  } catch (e) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                            content: Text(
+                                                'Gửi đánh giá thất bại!')));
+                                    Navigator.of(context).pop();
+                                  }
+                                }
+                              },
+                              child: Text(
+                                'Gửi',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xffff3737),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
-          ),
-        ),
-      );
+            ),
+          );
     },
   );
 }
 
-// Future<void> showDialogOnce(BuildContext context, bool isDialogDisplayed) {
-//   if (!isDialogDisplayed) {
-//     showDialog(
-//       context: context,
-//       builder: (BuildContext context) {
-//         // Xây dựng nội dung của hộp thoại ở đây
-//         return Dialog(
-//
-//         );
-//       },
-//     ).then((result) {
-//       // Xử lý khi hộp thoại bị đóng
-//       isDialogDisplayed = false; // Đánh dấu rằng hộp thoại đã được đóng
-//     });
-//
-//     // Đánh dấu rằng hộp thoại đang được hiển thị
-//     isDialogDisplayed = true;
-//   }
-// }
-//
-
 class HomeScreenContent extends StatefulWidget {
   final ScrollController scrollController;
-  final Function showParkingDetail;
+  final Function showParkingDetailContent;
   final List<Parking> parkingList;
   final MethodCallback onMethodSelected;
 
-  const HomeScreenContent(this.scrollController, this.showParkingDetail,
+  const HomeScreenContent(this.scrollController, this.showParkingDetailContent,
       this.parkingList, this.onMethodSelected);
 
   @override
@@ -958,8 +1014,8 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                         itemBuilder: (context, index) {
                           return InkWell(
                             onTap: () {
-                              widget.showParkingDetail(
-                                  widget.parkingList[index].ploID);
+                              widget.showParkingDetailContent(
+                                  widget.parkingList[index]);
                             },
                             child: ListParkingCard(
                                 parkingInfor: widget.parkingList[index]),
@@ -981,6 +1037,7 @@ class ParkingDetailContent extends StatefulWidget {
   final Function closeParkingDetail;
   final Function refreshHomeScreen;
   final String ploID;
+  final String distance;
 
   const ParkingDetailContent({
     required this.scrollController,
@@ -988,6 +1045,8 @@ class ParkingDetailContent extends StatefulWidget {
     required this.closeParkingDetail,
     required this.ploID,
     required this.refreshHomeScreen,
+    required this.distance,
+
   });
 
   @override
@@ -1138,7 +1197,7 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                                           ),
                                         ),
                                       SizedBox(
-                                        width: 4 * fem,
+                                        width: 5 * fem,
                                       ),
                                       if (parkingLotDetail.eveningFee != 0)
                                         Container(
@@ -1180,7 +1239,7 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                                           ),
                                         ),
                                       SizedBox(
-                                        width: 4 * fem,
+                                        width: 5 * fem,
                                       ),
                                       if (parkingLotDetail.overnightFee != 0)
                                         Container(
@@ -1222,7 +1281,7 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                                           ),
                                         ),
                                       SizedBox(
-                                        width: 4 * fem,
+                                        width: 5 * fem,
                                       ),
                                       Container(
                                         padding: EdgeInsets.fromLTRB(12 * fem,
@@ -1264,7 +1323,7 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                                         ),
                                       ),
                                       SizedBox(
-                                        width: 4 * fem,
+                                        width: 5 * fem,
                                       ),
                                       Container(
                                         padding: EdgeInsets.fromLTRB(20 * fem,
@@ -1293,7 +1352,7 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                                               ),
                                             ),
                                             Text(
-                                              '5m',
+                                              '${widget.distance} m',
                                               style: TextStyle(
                                                 fontSize: 15 * ffem,
                                                 fontWeight: FontWeight.w600,
@@ -1354,12 +1413,17 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                                               MaterialPageRoute(
                                                   builder: (context) =>
                                                       ReservationScreen(
-                                                          ploID: ploID,
-                                                          parkinglotDetail: parkingLotDetail,
-                                                          refreshHomeScreen: () {
-                                                            widget.refreshHomeScreen();
-                                                            Navigator.pop(context);
-                                              },
+                                                        ploID: ploID,
+                                                        distance: widget.distance,
+                                                        waitingTime: parkingLotDetail.waitingTime,
+                                                        parkinglotDetail:
+                                                            parkingLotDetail,
+                                                        refreshHomeScreen: () {
+                                                          widget
+                                                              .refreshHomeScreen();
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
                                                       )));
                                         },
                                         child: Container(
@@ -1431,7 +1495,8 @@ class CheckInContent extends StatelessWidget {
   final CustomerHome customerHome;
   final Function refreshHomeScreen;
 
-  const CheckInContent(this.scrollController, this.customerHome, this.refreshHomeScreen);
+  const CheckInContent(
+      this.scrollController, this.customerHome, this.refreshHomeScreen);
 
   Future<void> _openMap(double lat, double long) async {
     String googleURL =
@@ -1478,7 +1543,10 @@ class CheckInContent extends StatelessWidget {
                       ),
                       Padding(
                         padding: EdgeInsets.only(
-                            left: 10 * fem, right: 10 * fem, top: 15 * fem, bottom: 10 * fem),
+                            left: 10 * fem,
+                            right: 10 * fem,
+                            top: 15 * fem,
+                            bottom: 10 * fem),
                         child: Text(
                           'Đang trên đường tới...',
                           style: TextStyle(
@@ -1518,8 +1586,9 @@ class CheckInContent extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 InkWell(
-                                  onTap: (){
-                                    _openMap(customerHome.latitude, customerHome.longitude);
+                                  onTap: () {
+                                    _openMap(customerHome.latitude,
+                                        customerHome.longitude);
                                   },
                                   child: Padding(
                                     padding: EdgeInsets.only(right: 2 * fem),
@@ -1728,11 +1797,12 @@ class CheckInContent extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                        padding:
-                            EdgeInsets.only(left: 10 * fem, right: 10 * fem, bottom: 20* fem),
+                        padding: EdgeInsets.only(
+                            left: 10 * fem, right: 10 * fem, bottom: 20 * fem),
                         child: GestureDetector(
                           onTap: () {
-                            _showDeleteDialog(context, customerHome, refreshHomeScreen);
+                            _showDeleteDialog(
+                                context, customerHome, refreshHomeScreen);
                           },
                           child: Container(
                             margin: EdgeInsets.only(top: 15 * fem),
@@ -1768,8 +1838,8 @@ class CheckInContent extends StatelessWidget {
   }
 }
 
-Future<void> _showDeleteDialog(
-    BuildContext context, CustomerHome customerHome, Function refreshHomeScreen) async {
+Future<void> _showDeleteDialog(BuildContext context, CustomerHome customerHome,
+    Function refreshHomeScreen) async {
   await showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -1800,11 +1870,13 @@ Future<void> _showDeleteDialog(
               Center(
                   child: Container(
                 margin: EdgeInsets.only(top: 20 * fem, bottom: 20 * fem),
-                child:
-                    Text('Bạn có chắc chắn hủy việc đặt chỗ ở ${customerHome.parkingName} ', style: TextStyle(
-                      fontSize: 20 * fem,
-                      fontWeight: FontWeight.w600,
-                    ),),
+                child: Text(
+                  'Bạn có chắc chắn hủy việc đặt chỗ ở ${customerHome.parkingName} ',
+                  style: TextStyle(
+                    fontSize: 20 * fem,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               )),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -1946,7 +2018,10 @@ class CheckOutContent extends StatelessWidget {
                       ),
                       Padding(
                         padding: EdgeInsets.only(
-                            left: 10 * fem, right: 10 * fem, top: 15 * fem, bottom: 15 * fem),
+                            left: 10 * fem,
+                            right: 10 * fem,
+                            top: 15 * fem,
+                            bottom: 15 * fem),
                         child: Text(
                           'Đang trong bãi...',
                           style: TextStyle(
@@ -1957,8 +2032,8 @@ class CheckOutContent extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                        padding:
-                            EdgeInsets.only(left: 10 * fem, right: 10 * fem, bottom: 15 * fem),
+                        padding: EdgeInsets.only(
+                            left: 10 * fem, right: 10 * fem, bottom: 15 * fem),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -1986,8 +2061,9 @@ class CheckOutContent extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 InkWell(
-                                  onTap: (){
-                                    _openMap(customerHome.latitude, customerHome.longitude);
+                                  onTap: () {
+                                    _openMap(customerHome.latitude,
+                                        customerHome.longitude);
                                   },
                                   child: Padding(
                                     padding: EdgeInsets.only(right: 2 * fem),
@@ -2018,8 +2094,8 @@ class CheckOutContent extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                        padding:
-                            EdgeInsets.only(left: 10 * fem, right: 10 * fem, top: 15 * fem),
+                        padding: EdgeInsets.only(
+                            left: 10 * fem, right: 10 * fem, top: 15 * fem),
                         child: Container(
                           margin: EdgeInsets.only(top: 10 * fem),
                           padding: EdgeInsets.only(
@@ -2235,7 +2311,10 @@ class CheckOutContent extends StatelessWidget {
                       ),
                       Padding(
                         padding: EdgeInsets.only(
-                            left: 10 * fem, right: 10 * fem, top: 20 * fem, bottom: 20 * fem),
+                            left: 10 * fem,
+                            right: 10 * fem,
+                            top: 20 * fem,
+                            bottom: 20 * fem),
                         child: Align(
                           alignment: Alignment.bottomCenter,
                           child: Center(

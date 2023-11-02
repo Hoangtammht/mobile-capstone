@@ -5,7 +5,7 @@ class History {
   late final String methodName;
   late final String checkIn;
   late final String checkOut;
-
+  late final int statusID;
   History({
     required this.reservationID,
     required this.parkingName,
@@ -13,6 +13,8 @@ class History {
     required this.methodName,
     required this.checkIn,
     required this.checkOut,
+    required this.statusID,
+
   });
 
   History.fromJson(Map<String, dynamic> json){
@@ -22,6 +24,7 @@ class History {
     methodName = json['methodName'] ?? '';
     checkIn = json['checkIn'] ?? '';
     checkOut = json['checkOut'] ?? '';
+    statusID = json['statusID'] ?? 0;
   }
 
   Map<String, dynamic> toJson() {
@@ -32,6 +35,7 @@ class History {
     _data['methodName'] = methodName;
     _data['checkIn'] = checkIn;
     _data['checkOut'] = checkOut;
+    _data['statusID'] = statusID;
     return _data;
   }
 }

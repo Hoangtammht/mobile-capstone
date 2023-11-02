@@ -50,6 +50,7 @@ class AuthAPIs {
   }
 
   static Future<void> addDeviceToken(String deviceToken) async {
+    print('token $deviceToken');
     try {
       String? token = await UserPreferences.getAccessToken();
       if (token == null) {
@@ -85,10 +86,7 @@ class AuthAPIs {
         throw Exception('Access token is null');
       }
       var response = await dio.delete(
-        '$baseUrl/user/deleteDeviceToken',
-        queryParameters: {
-          "deviceToken": deviceToken,
-        },
+        '$baseUrl/user/deleteDeviceToken?deviceToken=$deviceToken',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -334,8 +332,6 @@ class AuthAPIs {
       throw Exception('Xác nhận đăng ký thất bại: $e');
     }
   }
-
-
 
 }
 

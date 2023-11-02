@@ -143,6 +143,7 @@ class ParkingLotDetail {
     required this.star,
     required this.currentSlot,
     required this.images,
+    required this.waitingTime,
   });
 
   late final String parkingName;
@@ -153,6 +154,7 @@ class ParkingLotDetail {
   late final int star;
   late final int currentSlot;
   late final List<ParkingImage2> images;
+  late final String waitingTime;
 
 
 
@@ -169,6 +171,7 @@ class ParkingLotDetail {
     } else {
       images = <ParkingImage2>[];
     }
+    waitingTime = json['waitingTime'];
   }
 
   Map<String, dynamic> toJson() {
@@ -181,6 +184,7 @@ class ParkingLotDetail {
     _data['star'] = star;
     _data['currentSlot'] = currentSlot;
     _data['images'] = images.map((e)=>e.toJson()).toList();
+    _data['waitingTime'] = waitingTime;
     return _data;
   }
 }

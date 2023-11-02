@@ -93,7 +93,7 @@ class _RebookingState extends State<Rebooking> {
                       margin: EdgeInsets.only(top: 25 * fem),
                       padding: EdgeInsets.symmetric(horizontal: 8 * fem),
                       width: mq.width,
-                      height: 350 * fem,
+                      height: 500 * fem,
                       decoration: BoxDecoration(
                         color: Colors.grey[200],
                         borderRadius: BorderRadius.circular(16 * fem),
@@ -145,7 +145,7 @@ class _RebookingState extends State<Rebooking> {
                                 ),
                                 Spacer(),
                                 Container(
-                                  width:  60* fem,
+                                  width:  70* fem,
                                   height: 20 * fem,
                                   decoration: BoxDecoration(
                                     color: statusColor,
@@ -165,7 +165,7 @@ class _RebookingState extends State<Rebooking> {
                                         } else if (historyDetail.statusName == 'Historical') {
                                           return 'Đã rời';
                                         } else {
-                                          return '';
+                                          return 'Hủy đặt';
                                         }
                                       }(),
                                       style: TextStyle(
@@ -276,22 +276,26 @@ class _RebookingState extends State<Rebooking> {
                           ),
                           Container(
                             padding: EdgeInsets.fromLTRB(15 * fem, 10 * fem, 0, 0),
-                            child:  Row(
+                            child:  Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                         Text(
-                                            'Địa chỉ: ',
+                                            'Địa chỉ ',
                                             style: TextStyle(
                                                 fontSize: 22 * fem
                                             )
                                         ),
+                                        SizedBox(
+                                          height: 30 * fem,
+                                        ),
                                         Text(
                                             historyDetail.address,
                                             style: TextStyle(
-                                              fontSize: 22 * fem,
+                                              fontSize: 18 * fem,
                                               fontWeight: FontWeight.bold,
-                                            )
+                                            ),
+                                          // maxLines: 2,
+                                          // overflow: TextOverflow.ellipsis,
                                   ),
                               ],
                             ),
@@ -309,7 +313,8 @@ class _RebookingState extends State<Rebooking> {
                         borderRadius: BorderRadius.circular(9 * fem),
                       ),
                       child: Center(
-                        child: Text(
+                        child:
+                        Text(
                           'Đặt lại',
                           style: TextStyle(
                             fontSize: 25 * ffem,

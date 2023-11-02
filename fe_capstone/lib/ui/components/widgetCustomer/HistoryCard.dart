@@ -40,27 +40,71 @@ class HistoryCard extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 4 * fem),
-              Container(
-                width:  80*fem,
-                height:  20*fem,
-                decoration:  BoxDecoration (
-                  color:  Color(0xffe4f6e6),
-                  borderRadius:  BorderRadius.circular(10*fem),
-                ),
-                child:
-                Center(
-                  child:
-                  Text(
-                    history.methodName,
-                    style:  TextStyle (
-                      fontSize:  14*ffem,
-                      fontWeight:  FontWeight.w400,
-                      height:  1.2175*ffem/fem,
-                      color:  Color(0xff2b7031),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    width:  80*fem,
+                    height:  20*fem,
+                    decoration:  BoxDecoration (
+                      color:  Color(0xffe4f6e6),
+                      borderRadius:  BorderRadius.circular(10*fem),
+                    ),
+                    child:
+                    Center(
+                      child:
+                      Text(
+                        history.methodName,
+                        style:  TextStyle (
+                          fontSize:  14*ffem,
+                          fontWeight:  FontWeight.w400,
+                          height:  1.2175*ffem/fem,
+                          color:  Color(0xff2b7031),
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                  if(history.statusID == 4)
+                  Container(
+                    width:  70* fem,
+                    height: 20 * fem,
+                    decoration: BoxDecoration(
+                      color: Colors.green,
+                      borderRadius: BorderRadius.circular(100 * fem),
+                    ),
+                    child: Center(
+                      child: Text(
+                         'Hoàn thành',
+                        style: TextStyle(
+                          fontSize: 14 * ffem,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                  if(history.statusID == 5)
+                    Container(
+                      width:  70* fem,
+                      height: 20 * fem,
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(100 * fem),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Hủy đặt',
+                          style: TextStyle(
+                            fontSize: 14 * ffem,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
               ),
+
               SizedBox(height: 8 * fem),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
