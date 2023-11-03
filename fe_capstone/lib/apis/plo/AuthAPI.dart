@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:fe_capstone/blocs/UserPreferences.dart';
+import 'package:fe_capstone/constant/url_constants.dart';
 import 'package:fe_capstone/models/RevenueModel.dart';
 
 class AuthPloAPIs{
   static Dio dio = Dio();
-  static const String baseUrl = 'https://eparkingcapstone.azurewebsites.net';
 
   static Future<RevenueModel> getPloRevenue() async {
     try {
@@ -13,7 +13,7 @@ class AuthPloAPIs{
         throw Exception('Access token is null');
       }
       final response = await dio.get(
-        '$baseUrl/PLO/getRevenue',
+        '${UrlConstant.PARKING_OWNER}/getRevenue',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',

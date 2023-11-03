@@ -1,4 +1,5 @@
 import 'package:fe_capstone/apis/Auth.dart';
+import 'package:fe_capstone/blocs/UserPreferences.dart';
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/ui/CustomerUI/BottomTabNavCustomer.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/BottomTabNavPlo.dart';
@@ -20,13 +21,14 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   bool isPasswordVisible = false;
   String dropdownValue = 'CU';
-
-  void toggleUserRole(){
+  bool isLoading = false;
+  void toggleUserRole() {
     setState(() {
       dropdownValue = dropdownValue == 'CU' ? 'PL' : 'CU';
     });
   }
 
+  @override
   TextEditingController _userNameController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
 
@@ -109,12 +111,11 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           Container(
-                            margin: EdgeInsets.fromLTRB(0, 0, 11.5 * fem, 0.99 * fem),
+                            margin: EdgeInsets.fromLTRB(
+                                0, 0, 11.5 * fem, 0.99 * fem),
                             width: 2 * fem,
                             height: 48.01 * fem,
-                            decoration: BoxDecoration(
-                              color: Color(0xff6ec2f7)
-                            ),
+                            decoration: BoxDecoration(color: Color(0xff6ec2f7)),
                           ),
                           Expanded(
                             child: TextFormField(
@@ -156,9 +157,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           Expanded(
                             child: TextFormField(
                               controller: _passwordController,
-                              obscureText: isPasswordVisible
-                                  ? false
-                                  : true,
+                              obscureText: isPasswordVisible ? false : true,
                               style: TextStyle(
                                 fontSize: 25 * ffem,
                                 fontWeight: FontWeight.w600,
@@ -181,15 +180,12 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: IconButton(
                               icon: Icon(
                                 isPasswordVisible
-                                    ? Icons
-                                        .visibility
-                                    : Icons
-                                        .visibility_off,
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
                               ),
                               onPressed: () {
                                 setState(() {
-                                  isPasswordVisible =
-                                      !isPasswordVisible;
+                                  isPasswordVisible = !isPasswordVisible;
                                 });
                               },
                             ),
@@ -202,8 +198,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                ResetPasswordScreen(),
+                            builder: (context) => ResetPasswordScreen(),
                           ),
                         );
                       },
@@ -238,12 +233,26 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ],
                       ),
-                      child: TextButton(
+                      child:
+                          isLoading ?
+                              Center(
+                                child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                  strokeWidth: 2.0,
+                                ),
+                              ) :
+                      TextButton(
                         onPressed: () {
+                          setState(() {
+                            isLoading = true;
+                          });
                           String username = getFullUserName();
                           String password = _passwordController.text;
                           if (username.isNotEmpty && password.isNotEmpty) {
                             AuthAPIs.loginUser(username, password).then((_) {
+                              UserPreferences.setLoggedIn(true);
+                              UserPreferences.setUsername(username);
+                              UserPreferences.setPassword(password);
                               if (username.startsWith('P')) {
                                 Navigator.pushReplacement(
                                   context,
@@ -255,7 +264,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => BottomTabNavCustomer(),
+                                    builder: (context) =>
+                                        BottomTabNavCustomer(),
                                   ),
                                 );
                               }
@@ -269,18 +279,45 @@ class _LoginScreenState extends State<LoginScreen> {
                                 behavior: SnackBarBehavior.fixed,
                               );
 
-                              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(snackBar);
 
                               Future.delayed(Duration(milliseconds: 1500), () {
-                                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                                ScaffoldMessenger.of(context)
+                                    .hideCurrentSnackBar();
+                              });
+                            }).whenComplete(() {
+                              setState(() {
+                                isLoading = false;
                               });
                             });
                           } else {
-                            Dialogs.showSnackbar(context, "Tài khoản hoặc mật khẩu không được để trống.");
+
+                            // Dialogs.showSnackbar(context,
+                            //     "Tài khoản hoặc mật khẩu không được để trống.");
+                            setState(() {
+                              isLoading = false; // Ẩn CircularProgressIndicator khi xảy ra lỗi
+                            });
+                            final snackBar = SnackBar(
+                              content: Text(
+                                "Tài khoản hoặc mật khẩu không được để trống.",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: 18 * fem),
+                              ),
+                              behavior: SnackBarBehavior.fixed,
+                            );
+
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(snackBar);
+
+                            Future.delayed(Duration(milliseconds: 1500), () {
+                              ScaffoldMessenger.of(context)
+                                  .hideCurrentSnackBar();
+                            });
                           }
                         },
                         child: Center(
-                          child: Text(
+                          child:  Text(
                             'ĐĂNG NHẬP',
                             textAlign: TextAlign.center,
                             style: TextStyle(
@@ -314,8 +351,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 fontWeight: FontWeight.w600,
                                 height: 1.175 * ffem / fem,
                                 color: const Color(0xff5767f5),
-                                decoration:
-                                    TextDecoration.underline,
+                                decoration: TextDecoration.underline,
                               ),
                               recognizer: TapGestureRecognizer()
                                 ..onTap = () {

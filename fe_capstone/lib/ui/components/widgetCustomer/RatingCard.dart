@@ -1,6 +1,8 @@
 import 'package:fe_capstone/ui/components/widgetCustomer/RatingStars.dart';
+import 'package:fe_capstone/ui/helper/my_date_until.dart';
 import 'package:flutter/material.dart';
 import 'package:fe_capstone/main.dart';
+import 'package:intl/intl.dart';
 
 class RatingCard extends StatelessWidget {
   final String fromBy;
@@ -42,7 +44,7 @@ class RatingCard extends StatelessWidget {
             child: Align(
               alignment: Alignment.centerRight,
               child: Text(
-                feedbackDate!,
+                MyDateUtil.formatCheckInAndCheckOutDate(feedbackDate!),
                 style: TextStyle(
                   fontSize: 15 * fem,
                   color: Colors.black,

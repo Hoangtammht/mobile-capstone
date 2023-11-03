@@ -3,6 +3,8 @@ import 'package:fe_capstone/apis/customer/ReservationAPI.dart';
 import 'package:fe_capstone/apis/customer/SearchParkingAPI.dart';
 import 'package:fe_capstone/apis/plo/ParkingAPI.dart';
 import 'package:fe_capstone/apis/customer/WalletScreenAPI.dart';
+import 'package:fe_capstone/constant/base_constant.dart';
+import 'package:fe_capstone/constant/url_constants.dart';
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/models/CustomerHome.dart';
 import 'package:fe_capstone/models/Parking.dart';
@@ -186,7 +188,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void performAutoSearch(String searchText) async {
     double circleRadius = 200.0;
     String url =
-        'https://maps.vietmap.vn/api/autocomplete/v3?apikey=c3d0f188ff669f89042771a20656579073cffec5a8a69747&text=$searchText';
+        '${BaseConstants.VIETMAP_URL}/autocomplete/v3?apikey=${BaseConstants.VIET_MAP_APIKEY}&text=$searchText';
     try {
       var dio = Dio();
       var response = await dio.get(url);
@@ -219,7 +221,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void getLatAndLong(String refId) async {
     String url =
-        "https://maps.vietmap.vn/api/place/v3?apikey=c3d0f188ff669f89042771a20656579073cffec5a8a69747&refid=$refId";
+        "${BaseConstants.VIETMAP_URL}/place/v3?apikey=${BaseConstants.VIET_MAP_APIKEY}&refid=$refId";
     try {
       var dio = Dio();
       var response = await dio.get(url);
@@ -293,7 +295,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: VietmapGL(
                 myLocationEnabled: true,
                 styleString:
-                    'https://maps.vietmap.vn/api/maps/light/styles.json?apikey=c3d0f188ff669f89042771a20656579073cffec5a8a69747',
+                    '${BaseConstants.VIETMAP_URL}/maps/light/styles.json?apikey=${BaseConstants.VIET_MAP_APIKEY}',
                 trackCameraPosition: true,
                 onMapCreated: _onMapCreated,
                 compassEnabled: false,
@@ -1500,7 +1502,7 @@ class CheckInContent extends StatelessWidget {
 
   Future<void> _openMap(double lat, double long) async {
     String googleURL =
-        'https://www.google.com/maps/search/?api=1&query=$lat,$long';
+        '${UrlConstant.GOOGLE_MAP_SEARCH}/?api=1&query=$lat,$long';
 
     await canLaunchUrlString(googleURL)
         ? await launchUrlString(googleURL)
@@ -1971,7 +1973,7 @@ class CheckOutContent extends StatelessWidget {
 
   Future<void> _openMap(double lat, double long) async {
     String googleURL =
-        'https://www.google.com/maps/search/?api=1&query=$lat,$long';
+        '${UrlConstant.GOOGLE_MAP_SEARCH}/?api=1&query=$lat,$long';
 
     await canLaunchUrlString(googleURL)
         ? await launchUrlString(googleURL)

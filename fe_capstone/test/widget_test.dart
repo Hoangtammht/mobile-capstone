@@ -5,6 +5,7 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
+import 'package:fe_capstone/blocs/UserPreferences.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -13,7 +14,11 @@ import 'package:fe_capstone/main.dart';
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    final bool isLoggedIn = false;
+    final String username = 'CU0934328813';
+
+    await tester.pumpWidget(MyApp(isLoggedIn: isLoggedIn, username: username));
+
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

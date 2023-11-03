@@ -57,7 +57,7 @@ class _RegisterParkingState extends State<RegisterParking> {
   }
 
   void getName() async {
-    String? name = await UserPreferences.getUserName();
+    String? name = await UserPreferences.getFullName(userName);
 
     if (userName != null) {
       setState(() {

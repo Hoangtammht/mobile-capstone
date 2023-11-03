@@ -353,34 +353,35 @@ class _ParkingInformationState extends State<ParkingInformation> {
                       ),
                     ),
                     SizedBox(height: 10 * fem),
-                    Container(
-                      height: 300 * fem,
-                      child: FutureBuilder<List<RatingModel>>(
-                        future: listRatingModelFuture,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
-                            return Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          } else if (snapshot.hasError) {
-                            return Text('Error: ${snapshot.error}');
-                          } else {
-                            final listRating = snapshot.data;
-                            return ListView.builder(
-                              scrollDirection: Axis.vertical,
-                              itemCount: listRating!.length,
-                              itemBuilder: (context, index) {
-                                return RatingCard(
-                                  fromBy: listRating[index].fullName,
-                                  star: listRating[index].star,
-                                  content: listRating[index].content,
-                                );
-                              },
-                            );
-                          }
-                        },
-                      ),
-                    )
+                      Container(
+                        height: 300 * fem,
+                        child: FutureBuilder<List<RatingModel>>(
+                          future: listRatingModelFuture,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            } else if (snapshot.hasError) {
+                              return Text('Error: ${snapshot.error}');
+                            } else {
+                              final listRating = snapshot.data;
+                              return ListView.builder(
+                                scrollDirection: Axis.vertical,
+                                itemCount: listRating!.length,
+                                itemBuilder: (context, index) {
+                                  return RatingCard(
+                                    fromBy: listRating[index].fullName,
+                                    star: listRating[index].star,
+                                    content: listRating[index].content,
+                                    feedbackDate: listRating[index].feedbackDate,
+                                  );
+                                },
+                              );
+                            }
+                          },
+                        ),
+                      )
 
                   ],
                 ),

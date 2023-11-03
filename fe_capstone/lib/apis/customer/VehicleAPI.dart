@@ -1,10 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:fe_capstone/blocs/UserPreferences.dart';
+import 'package:fe_capstone/constant/url_constants.dart';
 import 'package:fe_capstone/models/ListVehicleCustomer.dart';
 
 class VehicleAPI{
   static Dio dio = Dio();
-  static const String baseUrl = 'https://eparkingcapstone.azurewebsites.net';
+
 
   static Future<List<ListVehicleCustomer>> getVehicleList() async {
       try {
@@ -13,7 +14,7 @@ class VehicleAPI{
         throw Exception('Access token is null');
       }
       final response = await dio.get(
-        '$baseUrl/licensePlate/getLicensePlate',
+        '${UrlConstant.LICENSE_PLATE}/getLicensePlate',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -41,7 +42,7 @@ class VehicleAPI{
         throw Exception('Access token is null');
       }
       final response = await dio.post(
-        '$baseUrl/licensePlate/addLicensePlate?licensePlate=$licencePlate',
+        '${UrlConstant.LICENSE_PLATE}/addLicensePlate?licensePlate=$licencePlate',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -64,7 +65,7 @@ class VehicleAPI{
         throw Exception('Access token is null');
       }
       final response = await dio.delete(
-        '$baseUrl/licensePlate/deleteLicensePlate?licensePlateID=$licencePlateID',
+        '${UrlConstant.LICENSE_PLATE}/deleteLicensePlate?licensePlateID=$licencePlateID',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',

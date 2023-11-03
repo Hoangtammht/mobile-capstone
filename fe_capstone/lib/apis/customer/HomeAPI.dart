@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:fe_capstone/blocs/UserPreferences.dart';
+import 'package:fe_capstone/constant/url_constants.dart';
 import 'package:fe_capstone/models/CustomerHome.dart';
 
 class HomeAPI{
   static Dio dio = Dio();
-  static const String baseUrl = 'https://eparkingcapstone.azurewebsites.net';
 
   static Future<CustomerHome> getHomeStatus() async {
     try {
@@ -13,7 +13,7 @@ class HomeAPI{
         throw Exception('Access token is null');
       }
       final response = await dio.get(
-        '$baseUrl/customer/getScreen',
+        '${UrlConstant.CUSTOMER}/getScreen',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',

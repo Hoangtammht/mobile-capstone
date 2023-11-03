@@ -1,13 +1,13 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:fe_capstone/constant/url_constants.dart';
 import 'package:fe_capstone/models/History.dart';
 import 'package:fe_capstone/blocs/UserPreferences.dart';
 import 'package:fe_capstone/models/HistoryDetail.dart';
 
 class HistoryAPI{
   static Dio dio = Dio();
-  static const String baseUrl = 'https://eparkingcapstone.azurewebsites.net';
 
   static Future<List<History>> getHistoryList() async {
     try {
@@ -16,7 +16,7 @@ class HistoryAPI{
         throw Exception('Access token is null');
       }
       final response = await dio.get(
-        '$baseUrl/reservation/reservationHistory',
+        '${UrlConstant.RESERVATION}/reservationHistory',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -47,7 +47,7 @@ class HistoryAPI{
         throw Exception('Access token is null');
       }
       final response = await dio.get(
-        '$baseUrl/reservation/reservationHistoryDetail?reservationId=$reservationId',
+        '${UrlConstant.CUSTOMER}/reservationHistoryDetail?reservationId=$reservationId',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',

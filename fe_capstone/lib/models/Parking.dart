@@ -1,3 +1,5 @@
+import 'package:fe_capstone/models/History.dart';
+
 class Parking {
   Parking({
     required this.ploID,
@@ -11,6 +13,8 @@ class Parking {
     required this.currentTime,
     required this.methodName,
     required this.slot,
+    required this.listMethod,
+
   });
   late final String ploID;
   late final String parkingName;
@@ -23,6 +27,7 @@ class Parking {
   late final String currentTime;
   late final String methodName;
   late final int slot;
+  late final List<Method> listMethod;
 
   Parking.fromJson(Map<String, dynamic> json){
     ploID = json['ploID'] ?? '';
@@ -36,6 +41,10 @@ class Parking {
     currentTime = json['currentTime'] ?? '';
     methodName = json['methodName'] ?? '';
     slot = json['slot'] ?? 0;
+    listMethod = (json['listMethod'] as List<dynamic>?)
+        ?.map((e) => Method.fromJson(e as Map<String, dynamic>))
+        .toList() ?? [];
+
   }
 
   Map<String, dynamic> toJson() {
@@ -51,6 +60,34 @@ class Parking {
     _data['latitude'] = latitude;
     _data['longitude'] = longitude;
     _data['slot'] = slot;
+    _data['listMethod'] = listMethod.map((e) => e.toJson()).toList();
+    return _data;
+  }
+}
+
+
+class Method {
+  Method({
+    required this.methodID,
+    required this.methodName,
+    required this.price,
+  });
+  late final int methodID;
+  late final String methodName;
+  late final double price;
+
+
+  Method.fromJson(Map<String, dynamic> json){
+    methodID = json['methodID'] ?? 0;
+    methodName = json['methodName'] ?? '';
+    price = json['price'] ?? 0;
+  }
+
+  Map<String, dynamic> toJson() {
+    final _data = <String, dynamic>{};
+    _data['methodID'] = methodID;
+    _data['methodName'] = methodName;
+    _data['price'] = price;
     return _data;
   }
 }
