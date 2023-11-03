@@ -19,8 +19,7 @@ class ParkingCard extends StatefulWidget {
 }
 
 class _ParkingCardState extends State<ParkingCard> {
-  WebSocketChannel channel = IOWebSocketChannel.connect('wss://eparkingcapstone.azurewebsites.net/privateChat');
-
+  WebSocketChannel channel = IOWebSocketChannel.connect('wss://eparkingcapstone.azurewebsites.net/privateReservation');
 
   @override
   Widget build(BuildContext context) {
@@ -288,8 +287,8 @@ class _ParkingCardState extends State<ParkingCard> {
                                 try {
                                   await ParkingAPI.checkInReservation(reservationID);
                                   final message = {
-                                    "chatId": reservationID.toString(),
-                                    "message": "GetStatus",
+                                    "reservationID": reservationID.toString(),
+                                    "content": "GetStatus"
                                   };
                                   final messageJson = jsonEncode(message);
                                   channel.sink.add(messageJson);
@@ -453,8 +452,8 @@ class _ParkingCardState extends State<ParkingCard> {
                                   await ParkingAPI.checkoutReservation(reservationID);
                                   widget.updateUI();
                                   final message = {
-                                    "chatId": reservationID.toString(),
-                                    "message": "GetStatus",
+                                    "reservationID": reservationID.toString(),
+                                    "content": "GetStatus"
                                   };
                                   final messageJson = jsonEncode(message);
                                   channel.sink.add(messageJson);
