@@ -1,5 +1,8 @@
 import 'package:fe_capstone/blocs/VehicleProvider.dart';
 import 'package:fe_capstone/blocs/WalletDataProvider.dart';
+import 'package:fe_capstone/ui/CustomerUI/BottomTabNavCustomer.dart';
+import 'package:fe_capstone/ui/CustomerUI/HomeScreen.dart';
+import 'package:fe_capstone/ui/PLOwnerUI/BottomTabNavPlo.dart';
 import 'package:fe_capstone/ui/screens/LoginScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -15,19 +18,24 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   _initializeFirebase();
   await UserPreferences.init();
+  bool isLoggedIn = UserPreferences.isLoggedIn();
+  String? username =  await UserPreferences.getUsername();
+  String actualUsername = username ?? '';
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => VehicleProvider()),
         ChangeNotifierProvider(create: (context) => WalletDataProvider()),
       ],
-      child: MyApp(),
+      child: MyApp(isLoggedIn: isLoggedIn, username: actualUsername),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final bool isLoggedIn;
+  final String username;
+  const MyApp({required this.isLoggedIn , required this.username, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -41,8 +49,16 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
           primaryColor: Color(0xFF6EC2F7)
       ),
-      home: LoginScreen(),
+      home:isLoggedIn ? getHomeScreen() : LoginScreen(),
     );
+  }
+
+  Widget getHomeScreen() {
+    if (username.contains('P')) {
+      return BottomTabNavPlo();
+    } else {
+      return BottomTabNavCustomer();
+    }
   }
 }
 

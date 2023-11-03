@@ -13,13 +13,10 @@ class HistoryList extends StatefulWidget {
 }
 
 class _HistoryListState extends State<HistoryList> {
-  Future<List<History>>? historyListFuture;
-  //
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   historyListFuture = _getListHistoryFuture();
-  // }
+  late Future<List<History>> historyListFuture;
+  late List<History> displayedHistory;
+  int selectedButtonIndex = 0;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -44,12 +41,71 @@ class _HistoryListState extends State<HistoryList> {
             } else if (snapshot.hasError) {
               return Center(child: Text('Lỗi: ${snapshot.error}'));
             } else {
-              return ListView.builder(
-                reverse: true,
-                itemCount: snapshot.data!.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return HistoryCard(history: snapshot.data![index]);
-                },
+              List<History> historyList = snapshot.data!;
+              if(selectedButtonIndex == 0){
+                displayedHistory = historyList;
+              } else if (selectedButtonIndex == 1){
+                displayedHistory = historyList
+                    .where((history) => history.statusID == 4)
+                    .toList();
+              } else {
+                displayedHistory = historyList
+                    .where((history) => history.statusID == 5)
+                    .toList();
+              }
+              return Column(
+                children: [
+                  Container(
+                      margin: EdgeInsets.only(top: 8.0, bottom: 8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                selectedButtonIndex = 0;
+                              });
+                            },
+                            style: selectedButtonIndex == 0
+                                ? ElevatedButton.styleFrom(
+                                    primary: Colors.green)
+                                : null,
+                            child: Text('Tất cả'),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                selectedButtonIndex = 1;
+                              });
+                            },
+                            style: selectedButtonIndex == 1
+                                ? ElevatedButton.styleFrom(
+                                    primary: Colors.green)
+                                : null,
+                            child: Text('Hoàn thành'),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                selectedButtonIndex = 2;
+                              });
+                            },
+                            style: selectedButtonIndex == 2
+                                ? ElevatedButton.styleFrom(
+                                    primary: Colors.green)
+                                : null,
+                            child: Text('Hủy bỏ'),
+                          ),
+                        ],
+                      )),
+                  Expanded(
+                      child: ListView.builder(
+                    itemCount: displayedHistory.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return HistoryCard(history: displayedHistory[index]);
+                    },
+                  )),
+                ],
               );
             }
           },

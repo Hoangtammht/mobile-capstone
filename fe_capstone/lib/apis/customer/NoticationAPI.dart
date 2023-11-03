@@ -1,13 +1,14 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:fe_capstone/constant/url_constants.dart';
 import 'package:fe_capstone/models/CustomerNotification.dart';
 import 'package:fe_capstone/models/History.dart';
 import 'package:fe_capstone/blocs/UserPreferences.dart';
 
 class NoticationAPI{
   static Dio dio = Dio();
-  static const String baseUrl = 'https://eparkingcapstone.azurewebsites.net';
+
 
   static Future<List<CustomerNotification>> getNotication() async {
     try {
@@ -16,7 +17,7 @@ class NoticationAPI{
         throw Exception('Access token is null');
       }
       final response = await dio.get(
-        '$baseUrl/user/getNotifcations',
+        '${UrlConstant.AUTH}/getNotifcations',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',

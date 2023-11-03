@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:fe_capstone/apis/FirebaseAPI.dart';
 import 'package:fe_capstone/blocs/UserPreferences.dart';
+import 'package:fe_capstone/constant/base_constant.dart';
+import 'package:fe_capstone/constant/url_constants.dart';
 import 'package:fe_capstone/models/CustomerDetail.dart';
 import 'package:fe_capstone/models/UpdateProfileRequest.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -8,12 +10,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthAPIs {
   static Dio dio = Dio();
-  static const String baseUrl = 'https://eparkingcapstone.azurewebsites.net';
+
 
   static Future<void> loginUser(String id, String password) async {
     try {
       var response = await dio.post(
-        '$baseUrl/user/loginUser',
+        '${UrlConstant.AUTH}/loginUser',
         data: {
           "id": id,
           "password": password,
@@ -37,8 +39,7 @@ class AuthAPIs {
         final ploData = response.data['PLO'];
         if (ploData != null && ploData.containsKey('role')) {
           final fullName = ploData['fullName'];
-          await UserPreferences.setUserName(fullName);
-          print(fullName);
+          await UserPreferences.setFullName(fullName);
         }
       } else {
         throw Exception(
@@ -50,14 +51,13 @@ class AuthAPIs {
   }
 
   static Future<void> addDeviceToken(String deviceToken) async {
-    print('token $deviceToken');
     try {
       String? token = await UserPreferences.getAccessToken();
       if (token == null) {
         throw Exception('Access token is null');
       }
       var response = await dio.post(
-        '$baseUrl/user/addDeviceToken',
+        '${BaseConstants.BASE_URL}/user/addDeviceToken',
         data: {
           "deviceToken": deviceToken,
         },
@@ -86,7 +86,7 @@ class AuthAPIs {
         throw Exception('Access token is null');
       }
       var response = await dio.delete(
-        '$baseUrl/user/deleteDeviceToken?deviceToken=$deviceToken',
+        '${UrlConstant.AUTH}/deleteDeviceToken?deviceToken=$deviceToken',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -112,7 +112,7 @@ class AuthAPIs {
       }
 
       final response = await dio.get(
-        '$baseUrl/user/getProfileUser',
+        '${UrlConstant.AUTH}/getProfileUser',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -151,7 +151,7 @@ class AuthAPIs {
       };
 
       final response = await dio.put(
-        '$baseUrl/user/changePassword',
+        '${UrlConstant.AUTH}/changePassword',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -178,7 +178,7 @@ class AuthAPIs {
         throw Exception('Access token is null');
       }
       final response = await dio.put(
-        '$baseUrl/user/updateProfileUser',
+        '${UrlConstant.AUTH}/updateProfileUser',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -201,7 +201,7 @@ class AuthAPIs {
   static Future<void> checkPhoneNumber(String phoneNumber, String role) async {
     try {
       var response = await dio.post(
-        '$baseUrl/user/checkPhoneNumber',
+        '${UrlConstant.AUTH}/checkPhoneNumber',
         data: {
           "phoneNumber": phoneNumber,
           "role": role,
@@ -226,7 +226,7 @@ class AuthAPIs {
   static Future<void> verifyOTP(String otpCode, String phoneNumber) async {
     try {
       var response = await dio.post(
-        '$baseUrl/user/checkOTPcode',
+        '${UrlConstant.AUTH}/checkOTPcode',
         data: {
           "otpcode": otpCode,
           "phoneNumber": phoneNumber,
@@ -251,7 +251,7 @@ class AuthAPIs {
       String password, String phoneNumber, String role) async {
     try {
       var response = await dio.put(
-        '$baseUrl/user/updatePassword',
+        '${UrlConstant.AUTH}/updatePassword',
         data: {
           "password": password,
           "phoneNumber": phoneNumber,
@@ -277,7 +277,7 @@ class AuthAPIs {
   static Future<void> registerUser(String phoneNumber, String role) async {
     try {
       var response = await dio.post(
-        '$baseUrl/user/registerUser',
+        '${UrlConstant.AUTH}/registerUser',
         queryParameters: {
           'phoneNumber': phoneNumber,
           'role': role,
@@ -308,7 +308,7 @@ class AuthAPIs {
   ) async {
     try {
       var response = await dio.post(
-        '$baseUrl/user/confirmRegisterOTP',
+        '${UrlConstant.AUTH}/confirmRegisterOTP',
         data: {
           'fullName': fullName,
           'otpcode': otpCode,

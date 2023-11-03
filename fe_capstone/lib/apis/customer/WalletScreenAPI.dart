@@ -1,12 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:fe_capstone/blocs/UserPreferences.dart';
+import 'package:fe_capstone/constant/url_constants.dart';
 import 'package:fe_capstone/models/ResponseWalletCustomer.dart';
 
 
 
 class WalletScreenAPI{
   static Dio dio = Dio();
-  static const String baseUrl = 'https://eparkingcapstone.azurewebsites.net';
+
 
   static Future<ResponseWalletCustomer> getWalletScreenData() async {
     try {
@@ -15,7 +16,7 @@ class WalletScreenAPI{
         throw Exception('Access token is null');
       }
       var response = await dio.get(
-        '$baseUrl/customer/walletScreen',
+        '${UrlConstant.CUSTOMER}/walletScreen',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -43,7 +44,7 @@ class WalletScreenAPI{
         throw Exception('Access token is null');
       }
       var response = await dio.post(
-        '$baseUrl/customer/createPayment',
+        '${UrlConstant.CUSTOMER}/createPayment',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',

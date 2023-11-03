@@ -1,10 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:fe_capstone/blocs/UserPreferences.dart';
+import 'package:fe_capstone/constant/url_constants.dart';
 import 'package:fe_capstone/models/Parking.dart';
 
 class SearchParkingAPI{
   static Dio dio = Dio();
-  static const String baseUrl = 'https://eparkingcapstone.azurewebsites.net';
+
 
   static Future<List<Parking>> findParkingList(double latitude, double longitude, int method, double radius) async {
     print(latitude);
@@ -18,7 +19,7 @@ class SearchParkingAPI{
         throw Exception('Access token is null');
       }
       final response = await dio.get(
-        '$baseUrl/customer/findParkingList',
+        '${UrlConstant.CUSTOMER}/findParkingList',
         queryParameters: {
           'latitude': latitude,
           'longitude': longitude,

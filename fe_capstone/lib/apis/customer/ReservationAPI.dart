@@ -2,11 +2,12 @@
 
 import 'package:dio/dio.dart';
 import 'package:fe_capstone/blocs/UserPreferences.dart';
+import 'package:fe_capstone/constant/url_constants.dart';
 import 'package:fe_capstone/models/ReservationDetail.dart';
 
 class ReservationAPI {
   static Dio dio =  Dio();
-  static const String baseUrl = 'https://eparkingcapstone.azurewebsites.net';
+
 
   static Future<void> getBooking(String licensePlate, int methodID, String ploID) async {
     try {
@@ -15,7 +16,7 @@ class ReservationAPI {
         throw Exception('Access token is null');
       }
       final response = await dio.post(
-        '$baseUrl/reservation/bookingReservation',
+        '${UrlConstant.RESERVATION}/bookingReservation',
         data: {
           "licensePlate": licensePlate,
           "methodID": methodID,
@@ -46,7 +47,7 @@ class ReservationAPI {
         throw Exception('Access token is null');
       }
       final response = await dio.put(
-        '$baseUrl/reservation/cancelReservation?reservationID=$reservationID',
+        '${UrlConstant.RESERVATION}/cancelReservation?reservationID=$reservationID',
 
         options: Options(
           headers: {
@@ -73,7 +74,7 @@ class ReservationAPI {
         throw Exception('Access token is null');
       }
       final response = await dio.get(
-        '$baseUrl/customer/getListMethodByTime?ploID=$ploID',
+        '${UrlConstant.CUSTOMER}/getListMethodByTime?ploID=$ploID',
 
         options: Options(
           headers: {
@@ -103,7 +104,7 @@ class ReservationAPI {
         throw Exception('Access token is null');
       }
       final response = await dio.put(
-        '$baseUrl/rating/cancelRating?reservationID=${reservationID}',
+        '${UrlConstant.RATING}/cancelRating?reservationID=${reservationID}',
 
         options: Options(
           headers: {
@@ -130,7 +131,7 @@ class ReservationAPI {
         throw Exception('Access token is null');
       }
       final response = await dio.post(
-        '$baseUrl/rating/sendRating',
+        '${UrlConstant.RATING}/sendRating',
         data: {
           "content": content,
           "ploID": ploID,

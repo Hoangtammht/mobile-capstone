@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:fe_capstone/blocs/UserPreferences.dart';
+import 'package:fe_capstone/constant/url_constants.dart';
 import 'package:fe_capstone/models/ListVehicleInParking.dart';
 import 'package:fe_capstone/models/PLONotification.dart';
 import 'package:fe_capstone/models/ParkingInformationModel.dart';
@@ -15,7 +16,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 class ParkingAPI {
   static Dio dio = Dio();
-  static const String baseUrl = 'https://eparkingcapstone.azurewebsites.net';
 
   static Future<ParkingInformationModel> getParkingInformation() async {
     try {
@@ -24,7 +24,7 @@ class ParkingAPI {
         throw Exception('Access token is null');
       }
       final response = await dio.get(
-        '$baseUrl/PLO/getParkingInformation',
+        '${UrlConstant.PARKING_OWNER}/getParkingInformation',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -52,7 +52,7 @@ class ParkingAPI {
         throw Exception('Access token is null');
       }
       final response = await dio.get(
-        '$baseUrl/PLO/getRatingList',
+        '${UrlConstant.PARKING_OWNER}/getRatingList',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -63,8 +63,10 @@ class ParkingAPI {
 
       if (response.statusCode == 200) {
         final List<dynamic> data = response.data;
+        print('${data}');
         final List<RatingModel> ratings =
             data.map((json) => RatingModel.fromJson(json)).toList();
+        print('$ratings');
         return ratings;
       } else {
         throw Exception('Failed to get rating list');
@@ -88,7 +90,7 @@ class ParkingAPI {
         throw Exception('Access token is null');
       }
       final response = await dio.put(
-        '$baseUrl/PLO/updateParkingInformation',
+        '${UrlConstant.PARKING_OWNER}/updateParkingInformation',
         data: {
           "description": description,
           "image": images,
@@ -126,7 +128,7 @@ class ParkingAPI {
       String fileName = pathElements.last;
 
       String uploadUrl =
-          "https://sg.storage.bunnycdn.com/fiftyfiftycdn/eparking/$fileName";
+          "${UrlConstant.IMAGE_STORE}/$fileName";
 
       dio.options.headers = {
         "AccessKey": "11073c71-c367-41b8-a5c4273b5027-0919-47bf",
@@ -139,7 +141,7 @@ class ParkingAPI {
       );
 
       if (response.statusCode == 201) {
-        String imageLink = "https://fiftyfifty.b-cdn.net/eparking/$fileName";
+        String imageLink = "${UrlConstant.IMAGE_LINK}/$fileName";
         return imageLink;
       } else {
         print('Upload failed with status ${response.statusCode}');
@@ -159,7 +161,7 @@ class ParkingAPI {
         throw Exception('Access token is null');
       }
       var response = await dio.get(
-        '$baseUrl/parking/showListVehicleInParking',
+        '${UrlConstant.PARKING_LOT}/showListVehicleInParking',
         queryParameters: {'statusID': statusID},
         options: Options(
           headers: {
@@ -190,7 +192,7 @@ class ParkingAPI {
         throw Exception('Access token is null');
       }
       var response = await dio.get(
-        '$baseUrl/parking/getParkingSetting',
+        '${UrlConstant.PARKING_LOT}/getParkingSetting',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -220,7 +222,7 @@ class ParkingAPI {
         throw Exception('Access token is null');
       }
       final response = await dio.put(
-        '$baseUrl/parking/updateParkingSetting',
+        '${UrlConstant.PARKING_LOT}/updateParkingSetting',
         data: data,
         options: Options(
           headers: {
@@ -247,7 +249,7 @@ class ParkingAPI {
         throw Exception('Access token is null');
       }
       var response = await dio.put(
-        '$baseUrl/reservation/checkoutReservation',
+        '${UrlConstant.RESERVATION}/checkoutReservation',
         data: {"reservationID": reservationID},
         options: Options(
           headers: {
@@ -273,7 +275,7 @@ class ParkingAPI {
         throw Exception('Access token is null');
       }
       var response = await dio.put(
-        '$baseUrl/reservation/checkinReservation',
+        '${UrlConstant.RESERVATION}/checkinReservation',
         data: {"reservationID": reservationID},
         options: Options(
           headers: {
@@ -300,7 +302,7 @@ class ParkingAPI {
         throw Exception('Access token is null');
       }
       var response = await dio.get(
-        '$baseUrl/parking/getReservationDetail',
+        '${UrlConstant.PARKING_LOT}getReservationDetail',
         queryParameters: {'reservationID': reservationID},
         options: Options(
           headers: {
@@ -328,7 +330,7 @@ class ParkingAPI {
         throw Exception('Access token is null');
       }
       final response = await dio.get(
-        '$baseUrl/PLO/checkPLOTransfer',
+        '${UrlConstant.PARKING_OWNER}/checkPLOTransfer',
         queryParameters: {
           'phoneNumber': phoneNumber,
         },
@@ -357,7 +359,7 @@ class ParkingAPI {
         throw Exception('Access token is null');
       }
       final response = await dio.put(
-        '$baseUrl/PLO/checkOTPcodeTransferParking',
+        '${UrlConstant.PARKING_OWNER}/checkOTPcodeTransferParking',
         queryParameters: {
           'OTPcode': otpCode,
           'phoneNumber': phoneNumber,
@@ -386,7 +388,7 @@ class ParkingAPI {
         throw Exception('Access token is null');
       }
       final response = await dio.get(
-        '$baseUrl/parking/getParkingStatusID',
+        '${UrlConstant.PARKING_LOT}/getParkingStatusID',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -414,7 +416,7 @@ class ParkingAPI {
         throw Exception('Access token is null');
       }
       final response = await dio.get(
-        '$baseUrl/user/getNotifcations',
+        '${UrlConstant.AUTH}/getNotifcations',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -442,7 +444,7 @@ class ParkingAPI {
         throw Exception('Access token is null');
       }
       final response = await dio.get(
-        '$baseUrl/PLO/getBalance',
+        '${UrlConstant.PARKING_OWNER}/getBalance',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -467,7 +469,7 @@ class ParkingAPI {
         throw Exception('Access token is null');
       }
       final response = await dio.put(
-        '$baseUrl/parking/updateParkingStatusID',
+        '${UrlConstant.PARKING_LOT}/updateParkingStatusID',
         queryParameters: {
           'parkingStatusID': parkingStatusID,
         },
@@ -495,7 +497,7 @@ class ParkingAPI {
         throw Exception('Access token is null');
       }
       final response = await dio.post(
-        '$baseUrl/parking/paymentRegisterParking',
+        '${UrlConstant.PARKING_LOT}/paymentRegisterParking',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -524,7 +526,7 @@ class ParkingAPI {
         throw Exception('Access token is null');
       }
       final response = await dio.post(
-        '$baseUrl/parking/registerParking',
+        '${UrlConstant.PARKING_LOT}/registerParking',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -551,7 +553,7 @@ class ParkingAPI {
         throw Exception('Access token is null');
       }
       final response = await dio.put(
-        '$baseUrl/reservation/checkinReservationWithLicensePlate',
+        '${UrlConstant.RESERVATION}/checkinReservationWithLicensePlate',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -578,7 +580,7 @@ class ParkingAPI {
         throw Exception('Access token is null');
       }
       final response = await dio.put(
-        '$baseUrl/reservation/checkoutReservationWithLicensePlate',
+        '${UrlConstant.RESERVATION}/checkoutReservationWithLicensePlate',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -605,7 +607,7 @@ class ParkingAPI {
         throw Exception('Access token is null');
       }
       var response = await dio.get(
-        '$baseUrl/PLO/getSumByDate',
+        '${UrlConstant.PARKING_OWNER}/getSumByDate',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -637,7 +639,7 @@ class ParkingAPI {
         throw Exception('Access token is null');
       }
       final response = await dio.post(
-        '$baseUrl/PLO/requestWithdrawal',
+        '${UrlConstant.PARKING_OWNER}/requestWithdrawal',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -667,7 +669,7 @@ class ParkingAPI {
         throw Exception('Access token is null');
       }
       final response =
-          await dio.get('$baseUrl/customer/detailPloForCustomer?ploID=$ploID',
+          await dio.get('${UrlConstant.CUSTOMER}/detailPloForCustomer?ploID=$ploID',
               options: Options(
                 headers: {
                   'Authorization': 'Bearer $token',
@@ -694,7 +696,7 @@ class ParkingAPI {
         throw Exception('Access token is null');
       }
       final response =
-          await dio.get('$baseUrl/rating/getRatingOfCustomer?ploID=$ploID',
+          await dio.get('${UrlConstant.RATING}/getRatingOfCustomer?ploID=$ploID',
               options: Options(
                 headers: {
                   'Authorization': 'Bearer $token',
@@ -730,7 +732,7 @@ class ParkingAPI {
         throw Exception('Access token is null');
       }
       final response =
-      await dio.get('$baseUrl/reservation/getInforReservationByLicensePlate?licensePlate=$licensePlate',
+      await dio.get('${UrlConstant.RESERVATION}/getInforReservationByLicensePlate?licensePlate=$licensePlate',
           options: Options(
             headers: {
               'Authorization': 'Bearer $token',

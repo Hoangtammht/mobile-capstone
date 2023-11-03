@@ -15,7 +15,7 @@ class RatingModel {
   late final String customerID;
   late final String fullName;
   late final String ploID;
-  late final String reservationID;
+  late final int reservationID;
   late final String feedbackDate;
 
   RatingModel.fromJson(Map<String, dynamic> json){
