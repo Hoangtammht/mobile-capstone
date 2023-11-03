@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:fe_capstone/apis/customer/HomeAPI.dart';
 import 'package:fe_capstone/apis/customer/ReservationAPI.dart';
 import 'package:fe_capstone/apis/customer/SearchParkingAPI.dart';
@@ -21,6 +23,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:vietmap_flutter_gl/vietmap_flutter_gl.dart';
 import 'package:dio/dio.dart';
+import 'package:web_socket_channel/io.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 typedef MethodCallback = void Function(int method);
 
@@ -37,7 +41,6 @@ class _HomeScreenState extends State<HomeScreen> {
   bool isSendRating = false;
   bool isCheckedAccount = false;
   String distance = '';
-
 
   void showParkingDetailContent(Parking parking) {
     setState(() {
@@ -63,12 +66,15 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<CustomerHome>? customerHome;
   late double accountBalance;
   FocusNode _searchFocusNode = FocusNode();
+  WebSocketChannel channel = IOWebSocketChannel.connect('wss://eparkingcapstone.azurewebsites.net/privateReservation');
+  late int reservationID = 0;
 
   @override
   void initState() {
     super.initState();
     customerHome = _getHomeStatus();
     customerHome!.then((data) {
+      reservationID = data.reservationID;
       if (data.statusID == 5) {
         if (!isRatingDialogDisplayed) {
           _RatingDialog(context, data);
@@ -77,6 +83,15 @@ class _HomeScreenState extends State<HomeScreen> {
           });
         }
       }
+        final message = {
+          "reservationID": reservationID.toString(),
+          "content": "Connected",
+        };
+        final messageJson = jsonEncode(message);
+        channel.sink.add(messageJson);
+        channel.stream.listen((message) {
+          handleMessage(message);
+        });
     });
     Future.delayed(Duration(seconds: 4), () async {
       if (!isCheckedAccount) {
@@ -87,9 +102,29 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  void handleMessage(dynamic message) {
+    print(message.toString());
+    if (message.toString().contains("GetStatus")) {
+      customerHome = _getHomeStatus();
+    }
+  }
+
   void refreshHomeScreen() {
     setState(() {
       customerHome = _getHomeStatus();
+      customerHome!.then((data) {
+        reservationID = data.reservationID;
+        print('Reservation hiện tại là: ${reservationID}');
+        final message = {
+          "reservationID": reservationID.toString(),
+          "content": "Connected",
+        };
+        final messageJson = jsonEncode(message);
+        channel.sink.add(messageJson);
+        // channel.stream.listen((message) {
+        //   handleMessage(message);
+        // });
+      });
     });
   }
 

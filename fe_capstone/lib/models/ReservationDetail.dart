@@ -55,6 +55,7 @@ class ReservationDetail {
 
 class ReservationByLicensePlate {
   ReservationByLicensePlate({
+    required this.reservationID,
     required this.customerName,
     required this.methodName,
     required this.status,
@@ -64,6 +65,7 @@ class ReservationByLicensePlate {
     required this.licensePlate,
   });
 
+  late final int reservationID;
   late final String customerName;
   late final String methodName;
   late final int status;
@@ -74,6 +76,7 @@ class ReservationByLicensePlate {
 
   ReservationByLicensePlate.fromJson
       (Map<String, dynamic> json){
+    reservationID = json['reservationID'] ?? 0;
     customerName = json['customerName'] ?? '';
     methodName = json['methodName'] ?? '';
     status = json['status'] ?? 0;
@@ -85,6 +88,7 @@ class ReservationByLicensePlate {
 
   Map<String, dynamic> toJson() {
     final _data = <String, dynamic>{};
+    _data['reservationID'] = reservationID;
     _data['customerName'] = customerName;
     _data['licensePlate'] = licensePlate;
     _data['methodName'] = methodName;

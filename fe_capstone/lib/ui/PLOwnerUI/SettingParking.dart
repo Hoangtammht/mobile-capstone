@@ -2,7 +2,7 @@ import 'package:fe_capstone/apis/plo/ParkingAPI.dart';
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/models/ResponseSettingParking.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 
 class SettingParkingScreen extends StatefulWidget {
   const SettingParkingScreen({Key? key}) : super(key: key);
@@ -16,7 +16,6 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
   late String dropdownValue = list.first;
   bool isIconVisibleOne = true;
   bool isIconVisibleTwo = true;
-  bool _firstAddClicked = false;
   late Future<ResponseSettingParking> settingParkingFuture;
 
   TextEditingController _priceOfMethodOneController = TextEditingController();
@@ -468,23 +467,42 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
                       String price2 = _priceOfMethodTwoController.text;
                       String price3 = _priceOfMethodThreeController.text;
 
-                      List<Map<String, dynamic>> data = [];
-                      if (price1 != null && price1.isNotEmpty) {
-                        data.add({"methodID": 1, "price": price1});
-                      }
-                      if (price2 != null && price2.isNotEmpty) {
-                        data.add({"methodID": 2, "price": price2});
-                      }
-                      if (price3 != null && price3.isNotEmpty) {
-                        data.add({"methodID": 3, "price": price3});
+                      if(price1.isEmpty && price2.isEmpty && price3.isEmpty){
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text('Cần nhập ít nhất 1 phương thức'),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: Text('Đóng'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      }else{
+                        List<Map<String, dynamic>> data = [];
+                        if (price1 != null && price1.isNotEmpty) {
+                          data.add({"methodID": 1, "price": price1});
+                        }
+                        if (price2 != null && price2.isNotEmpty) {
+                          data.add({"methodID": 2, "price": price2});
+                        }
+                        if (price3 != null && price3.isNotEmpty) {
+                          data.add({"methodID": 3, "price": price3});
+                        }
+                        try {
+                          await ParkingAPI.updateParkingSetting(data);
+                          _showSuccessfulDialog(context);
+                        } catch (e) {
+                          _showFailureDialog(context);
+                        }
                       }
 
-                      try {
-                        await ParkingAPI.updateParkingSetting(data);
-                        _showSuccessfulDialog(context);
-                      } catch (e) {
-                        _showFailureDialog(context);
-                      }
                     },
                     child: Container(
                       margin:  EdgeInsets.fromLTRB(0*fem, 55*fem, 0*fem, 0*fem),
