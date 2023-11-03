@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:fe_capstone/apis/plo/ParkingAPI.dart';
@@ -6,7 +7,8 @@ import 'package:fe_capstone/models/ReservationDetail.dart';
 import 'package:flutter/material.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:web_socket_channel/io.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 class CheckOutByLicensePlate extends StatefulWidget {
   final void Function() updateUI;
@@ -25,6 +27,9 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
 
   String scannedText = "";
   late Future<ReservationByLicensePlate> reservationByLicensePlate;
+
+  WebSocketChannel channel = IOWebSocketChannel.connect('wss://eparkingcapstone.azurewebsites.net/privateReservation');
+  late int reservationIDByScan;
 
   @override
   void initState() {
@@ -168,6 +173,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                             return Text('Error: ${snapshot.error}');
                           } else {
                             ReservationByLicensePlate data = snapshot.data!;
+                            reservationIDByScan = data.reservationID;
                             final checkStatus = data.status;
                             print('status : $checkStatus');
                             if (checkStatus == 0) {
@@ -183,7 +189,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                       fontWeight: FontWeight.w600,
                                       height: 1.175 * ffem / fem,
                                       color: Theme.of(context)
-                                          .primaryColor, // Màu cho phần còn lại
+                                          .primaryColor,
                                     ),
                                     children: <TextSpan>[
                                       TextSpan(
@@ -193,7 +199,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                         text: scannedText,
                                         style: TextStyle(
                                           color: Colors
-                                              .black, // Màu cho "scannedText"
+                                              .black,
                                         ),
                                       ),
                                       TextSpan(
@@ -697,6 +703,12 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                     .checkinReservationWithLicensePlate(
                                         scannedText);
                                 widget.updateUI();
+                                final message = {
+                                  "reservationID": reservationIDByScan.toString(),
+                                  "content": "GetStatus"
+                                };
+                                final messageJson = jsonEncode(message);
+                                channel.sink.add(messageJson);
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text('Check-in thành công'),
@@ -851,6 +863,12 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                     .checkoutReservationWithLicensePlate(
                                         scannedText);
                                 widget.updateUI();
+                                final message = {
+                                  "reservationID": reservationIDByScan.toString(),
+                                  "content": "GetStatus"
+                                };
+                                final messageJson = jsonEncode(message);
+                                channel.sink.add(messageJson);
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text('Check-out thành công'),

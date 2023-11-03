@@ -1,10 +1,12 @@
+import 'dart:convert';
 import 'package:fe_capstone/apis/plo/ParkingAPI.dart';
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/models/ListVehicleInParking.dart';
 import 'package:fe_capstone/ui/components/widgetPLO/ParkingDetailCard.dart';
 import 'package:fe_capstone/ui/helper/my_date_until.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:web_socket_channel/io.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 class ParkingCard extends StatefulWidget {
   final List<String> type;
@@ -17,6 +19,9 @@ class ParkingCard extends StatefulWidget {
 }
 
 class _ParkingCardState extends State<ParkingCard> {
+  WebSocketChannel channel = IOWebSocketChannel.connect('wss://eparkingcapstone.azurewebsites.net/privateChat');
+
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -282,7 +287,12 @@ class _ParkingCardState extends State<ParkingCard> {
                                 int reservationID = int.parse(widget.vehicleData.reservationID);
                                 try {
                                   await ParkingAPI.checkInReservation(reservationID);
-
+                                  final message = {
+                                    "chatId": reservationID.toString(),
+                                    "message": "GetStatus",
+                                  };
+                                  final messageJson = jsonEncode(message);
+                                  channel.sink.add(messageJson);
                                   widget.updateUI();
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
@@ -441,8 +451,13 @@ class _ParkingCardState extends State<ParkingCard> {
                                 int reservationID = int.parse(widget.vehicleData.reservationID);
                                 try {
                                   await ParkingAPI.checkoutReservation(reservationID);
-
                                   widget.updateUI();
+                                  final message = {
+                                    "chatId": reservationID.toString(),
+                                    "message": "GetStatus",
+                                  };
+                                  final messageJson = jsonEncode(message);
+                                  channel.sink.add(messageJson);
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text('Check-out thành công'),

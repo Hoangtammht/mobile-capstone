@@ -7,7 +7,7 @@ import 'package:fe_capstone/ui/PLOwnerUI/SettingParking.dart';
 import 'package:fe_capstone/ui/components/widgetPLO/WaitingParkingCard.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 
 enum ParkingStatus { approved, open, closed }
 
@@ -29,7 +29,6 @@ class _PloHomeScreenState extends State<PloHomeScreen> {
   late Future<double> walletPLO;
   late List<ListVehicleInParking> list1 = [];
   late int list1Length = 0;
-
 
   @override
   void initState() {
@@ -535,16 +534,16 @@ class _PloHomeScreenState extends State<PloHomeScreen> {
                           TextButton(
                             onPressed: () async {
                               if (currentParkingStatus == ParkingStatus.approved) {
-                                await ParkingAPI.updateParkingStatusID(4);
                                 Navigator.pop(context);
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(builder: (context) => SettingParkingScreen()),
                                 );
-                                setState(() {
-                                  currentParkingStatus = ParkingStatus.open;
-                                });
-                                await _reloadParkingInformation();
+                                  setState(() {
+                                    currentParkingStatus = ParkingStatus.open;
+                                  });
+                                  await ParkingAPI.updateParkingStatusID(4);
+                                  await _reloadParkingInformation();
                               } else {
                                 setState(() {
                                   currentParkingStatus = newValue!;

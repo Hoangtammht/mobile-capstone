@@ -739,7 +739,7 @@ class ParkingAPI {
           ));
 
       if (response.statusCode == 200) {
-        ReservationByLicensePlate reservationByLicensePlate = ReservationByLicensePlate(customerName: '', licensePlate: '', methodName: '', status: 0, statusName: '', checkIn: '', checkOut: '');
+        ReservationByLicensePlate reservationByLicensePlate = ReservationByLicensePlate(reservationID: 0,customerName: '', licensePlate: '', methodName: '', status: 0, statusName: '', checkIn: '', checkOut: '');
         final status = response.data['status'];
 
         if(status == 200){
