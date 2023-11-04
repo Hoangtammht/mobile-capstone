@@ -453,7 +453,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                           alignment: Alignment.bottomCenter,
                           child: Container(
                             padding: EdgeInsets.fromLTRB(
-                                13 * fem, 38 * fem, 14 * fem, 37 * fem),
+                                10 * fem, 38 * fem, 14 * fem, 37 * fem),
                             height: 120 * fem,
                             decoration: const BoxDecoration(
                               color: Color(0xffffffff),
@@ -470,11 +470,9 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                           fontSize: 22 * fem,
                                           fontWeight: FontWeight.bold),
                                     ),
-                                    SizedBox(
-                                      height: 4 * fem,
-                                    ),
                                     Text(dropdownType, style: TextStyle(
-                                      fontSize: 20 * fem,
+                                      fontSize: 16 * fem,
+                                      fontWeight: FontWeight.bold,
                                     ),)
                                   ],
                                 ),
