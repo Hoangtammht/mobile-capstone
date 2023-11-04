@@ -302,7 +302,7 @@ class ParkingAPI {
         throw Exception('Access token is null');
       }
       var response = await dio.get(
-        '${UrlConstant.PARKING_LOT}getReservationDetail',
+        '${UrlConstant.PARKING_LOT}/getReservationDetail',
         queryParameters: {'reservationID': reservationID},
         options: Options(
           headers: {

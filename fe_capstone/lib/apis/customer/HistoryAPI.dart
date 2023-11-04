@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:fe_capstone/constant/url_constants.dart';
 import 'package:fe_capstone/models/History.dart';
@@ -47,7 +45,7 @@ class HistoryAPI{
         throw Exception('Access token is null');
       }
       final response = await dio.get(
-        '${UrlConstant.CUSTOMER}/reservationHistoryDetail?reservationId=$reservationId',
+        '${UrlConstant.RESERVATION}/reservationHistoryDetail?reservationId=$reservationId',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',

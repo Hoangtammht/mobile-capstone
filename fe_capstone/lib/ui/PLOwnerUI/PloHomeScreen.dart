@@ -33,6 +33,7 @@ class _PloHomeScreenState extends State<PloHomeScreen> {
   @override
   void initState() {
     super.initState();
+    print('loading');
     statusParkingFuture = _getParkingInformationFuture();
     statusParkingFuture.then((data) {
       parkingStatusID = data?.parkingStatusID ?? 0;

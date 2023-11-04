@@ -57,7 +57,7 @@ class AuthAPIs {
         throw Exception('Access token is null');
       }
       var response = await dio.post(
-        '${BaseConstants.BASE_URL}/user/addDeviceToken',
+        '${UrlConstant.AUTH}/addDeviceToken',
         data: {
           "deviceToken": deviceToken,
         },
