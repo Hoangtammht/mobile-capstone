@@ -109,6 +109,17 @@ class _HomeScreenState extends State<HomeScreen> {
     print(message.toString());
     if (message.toString().contains("GetStatus")) {
       customerHome = _getHomeStatus();
+      customerHome!.then((data) {
+        reservationID = data.reservationID;
+        if (data.statusID == 5) {
+          if (!isRatingDialogDisplayed) {
+            _RatingDialog(context, data);
+            setState(() {
+              isRatingDialogDisplayed = true;
+            });
+          }
+        });
+      });
     }
   }
 
