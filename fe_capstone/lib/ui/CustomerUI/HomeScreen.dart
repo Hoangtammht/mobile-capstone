@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:fe_capstone/apis/customer/HomeAPI.dart';
@@ -86,15 +87,32 @@ class _HomeScreenState extends State<HomeScreen> {
           });
         }
       }
-        final message = {
-          "reservationID": reservationID.toString(),
-          "content": "Connected",
-        };
-        final messageJson = jsonEncode(message);
-        channel.sink.add(messageJson);
-        channel.stream.listen((message) {
-          handleMessage(message);
-        });
+        if(reservationID != 0){
+          final message = {
+            "reservationID": reservationID.toString(),
+            "content": "Connected",
+          };
+          final messageJson = jsonEncode(message);
+          channel.sink.add(messageJson);
+          channel.stream.listen((message) {
+            handleMessage(message);
+          });
+          const duration = Duration(minutes: 3);
+          Timer.periodic(duration, (Timer t) {
+            final message = {
+              "reservationID": reservationID.toString(),
+              "content": "KeepAlive",
+            };
+            final messageJson = jsonEncode(message);
+            if (channel.sink != null) {
+              channel.sink.add(messageJson);
+              print('KeepAlive message sent successfully.');
+            } else {
+              print('Channel sink is closed. KeepAlive message not sent.');
+              t.cancel();
+            }
+          });
+        }
     });
     Future.delayed(Duration(seconds: 4), () async {
       if (!isCheckedAccount) {
@@ -135,10 +153,26 @@ class _HomeScreenState extends State<HomeScreen> {
         };
         final messageJson = jsonEncode(message);
         channel.sink.add(messageJson);
-        // channel.stream.listen((message) {
-        //   handleMessage(message);
-        // });
+        channel.stream.listen((message) {
+          handleMessage(message);
+        });
       });
+    });
+
+    const duration = Duration(minutes: 3);
+    Timer.periodic(duration, (Timer t) {
+      final message = {
+        "reservationID": reservationID.toString(),
+        "content": "KeepAlive",
+      };
+      final messageJson = jsonEncode(message);
+      if (channel.sink != null) {
+        channel.sink.add(messageJson);
+        print('KeepAlive message sent successfully.');
+      } else {
+        print('Channel sink is closed. KeepAlive message not sent.');
+        t.cancel();
+      }
     });
   }
 
@@ -163,6 +197,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void dispose() {
     _searchController.dispose();
+    channel.sink.close();
     super.dispose();
   }
 
