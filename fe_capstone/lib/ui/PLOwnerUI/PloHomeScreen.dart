@@ -38,8 +38,12 @@ class _PloHomeScreenState extends State<PloHomeScreen> {
   late int list1Length = 0;
 
   @override
-  Future<void> initState() async {
+  void initState() {
     super.initState();
+    initializeState();
+  }
+
+  void initializeState() async {
     print('loading');
     statusParkingFuture = _getParkingInformationFuture();
     statusParkingFuture.then((data) {
@@ -51,30 +55,31 @@ class _PloHomeScreenState extends State<PloHomeScreen> {
     fetchVehicleInParking();
     String? ploID = await UserPreferences.getUsername();
     final message = {
-            "ploID": ploID,
-            "content": "Connected",
-          };
-          final messageJson = jsonEncode(message);
-          channel.sink.add(messageJson);
-          channel.stream.listen((message) {
-            handleMessage(message);
-          });
-          const duration = Duration(minutes: 3);
-          Timer.periodic(duration, (Timer t) {
-            final message = {
-              "ploID": ploID,
-              "content": "KeepAlive",
-            };
-            final messageJson = jsonEncode(message);
-            if (channel.sink != null) {
-              channel.sink.add(messageJson);
-              print('KeepAlive message sent successfully.');
-            } else {
-              print('Channel sink is closed. KeepAlive message not sent.');
-              t.cancel();
-            }
-          });
+      "ploID": ploID,
+      "content": "Connected",
+    };
+    final messageJson = jsonEncode(message);
+    channel.sink.add(messageJson);
+    channel.stream.listen((message) {
+      handleMessage(message);
+    });
+    const duration = Duration(minutes: 3);
+    Timer.periodic(duration, (Timer t) {
+      final message = {
+        "ploID": ploID,
+        "content": "KeepAlive",
+      };
+      final messageJson = jsonEncode(message);
+      if (channel.sink != null) {
+        channel.sink.add(messageJson);
+        print('KeepAlive message sent successfully.');
+      } else {
+        print('Channel sink is closed. KeepAlive message not sent.');
+        t.cancel();
+      }
+    });
   }
+
 
   void handleMessage(dynamic message) {
     print(message.toString());
