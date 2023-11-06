@@ -1,4 +1,8 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:fe_capstone/apis/plo/ParkingAPI.dart';
+import 'package:fe_capstone/blocs/UserPreferences.dart';
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/models/ListVehicleInParking.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/CheckReservationByLicensePlate.dart';
@@ -6,6 +10,8 @@ import 'package:fe_capstone/ui/PLOwnerUI/ParkingInformation.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/ParkingPresentScreen.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/SettingParking.dart';
 import 'package:flutter/material.dart';
+import 'package:web_socket_channel/io.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 class ParkingScreen extends StatefulWidget {
   const ParkingScreen({Key? key}) : super(key: key);
@@ -25,12 +31,54 @@ class _ParkingScreenState extends State<ParkingScreen>
   late int list1Length = 0;
   late int list2Length = 0;
   late int list3Length = 0;
+  WebSocketChannel channel = IOWebSocketChannel.connect('wss://eparkingcapstone.azurewebsites.net/privatePLO');
+
 
   @override
   void initState() {
     super.initState();
     _controller = TabController(length: 4, vsync: this, initialIndex: 0);
     fetchData();
+    initializeState();
+  }
+
+  void initializeState() async {
+    String? ploID = await UserPreferences.getUsername();
+    final message = {
+      "ploID": ploID,
+      "content": "Connected"
+    };
+    final messageJson = jsonEncode(message);
+    channel.sink.add(messageJson);
+    channel.stream.listen((message) {
+      handleMessage(message);
+    });
+
+    bool isLoggedIn = UserPreferences.isLoggedIn();
+    if (isLoggedIn) {
+      const duration = Duration(minutes: 3);
+      Timer.periodic(duration, (Timer t) {
+        final message = {
+          "ploID": ploID,
+          "content": "KeepAlive"
+        };
+        final messageJson = jsonEncode(message);
+        if (channel.sink != null) {
+          channel.sink.add(messageJson);
+          print('KeepAlive message sent successfully.');
+        } else {
+          print('Channel sink is closed. KeepAlive message not sent.');
+          t.cancel();
+        }
+      });
+    }
+  }
+
+  void handleMessage(dynamic message) {
+    print(message.toString());
+    if (message.toString().contains("GetParking")) {
+      fetchData();
+    }
   }
 
   void updateUI() {
@@ -107,34 +155,6 @@ class _ParkingScreenState extends State<ParkingScreen>
                     ),
                   ),
                 ),
-                // PopupMenuItem<String>(
-                //   value: 'delete',
-                //   child: InkWell(
-                //     onTap: () {
-                //       showDialog(
-                //           context: context,
-                //           builder: (context) {
-                //             return ConfirmDeleteDialog();
-                //           }
-                //       );
-                //     },
-                //     child: Row(
-                //       children: [
-                //         Icon(
-                //           Icons.delete_forever_outlined,
-                //           color: Colors.red,
-                //         ),
-                //         Padding(
-                //           padding: EdgeInsets.only(left: 4 * fem),
-                //           child: Text(
-                //             'Xóa',
-                //             style: TextStyle(color: Colors.red),
-                //           ),
-                //         )
-                //       ],
-                //     ),
-                //   ),
-                // ),
                 PopupMenuItem<String>(
                   value: 'information',
                   child: InkWell(

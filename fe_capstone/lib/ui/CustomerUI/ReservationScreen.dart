@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:fe_capstone/apis/customer/ReservationAPI.dart';
 import 'package:fe_capstone/blocs/VehicleProvider.dart';
 import 'package:fe_capstone/blocs/WalletDataProvider.dart';
@@ -8,6 +10,9 @@ import 'package:flutter/material.dart';
 import 'package:fe_capstone/main.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:web_socket_channel/io.dart';
+
 
 class ReservationScreen extends StatefulWidget {
   final ParkingLotDetail parkinglotDetail;
@@ -37,6 +42,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
   late String dropdownVehicle = '';
   late List<ReservationMethod> reserMethod;
   final formatCurrency = NumberFormat.simpleCurrency(locale: 'vi_VN');
+  WebSocketChannel channel = IOWebSocketChannel.connect('wss://eparkingcapstone.azurewebsites.net/privatePLO');
 
 
   @override
@@ -838,6 +844,13 @@ class _ReservationScreenState extends State<ReservationScreen> {
                               try {
                                 await ReservationAPI.getBooking(
                                     dropdownVehicle, methodID, widget.ploID);
+                                final message = {
+                                  "ploID": widget.ploID.toString(),
+                                  "content": "GetParking"
+                                };
+                                final messageJson = jsonEncode(message);
+                                channel.sink.add(messageJson);
+                                print("Đặt chỗ socket: $messageJson");
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text('Đặt chỗ thành công')

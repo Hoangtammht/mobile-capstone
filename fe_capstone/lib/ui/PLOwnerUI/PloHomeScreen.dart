@@ -1,4 +1,8 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:fe_capstone/apis/plo/ParkingAPI.dart';
+import 'package:fe_capstone/blocs/UserPreferences.dart';
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/models/ListVehicleInParking.dart';
 import 'package:fe_capstone/models/ParkingStatusInformation.dart';
@@ -8,6 +12,8 @@ import 'package:fe_capstone/ui/components/widgetPLO/WaitingParkingCard.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:web_socket_channel/io.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 enum ParkingStatus { approved, open, closed }
 
@@ -23,6 +29,7 @@ class _PloHomeScreenState extends State<PloHomeScreen> {
   late Future<ParkingStatusInformation> statusParkingFuture;
   int parkingStatusID = 0;
   late ParkingStatus currentParkingStatus;
+  WebSocketChannel channel = IOWebSocketChannel.connect('wss://eparkingcapstone.azurewebsites.net/privatePLO');
 
   List<TotalComing> totalComing = [];
 
@@ -33,6 +40,10 @@ class _PloHomeScreenState extends State<PloHomeScreen> {
   @override
   void initState() {
     super.initState();
+    initializeState();
+  }
+
+  void initializeState() async {
     print('loading');
     statusParkingFuture = _getParkingInformationFuture();
     statusParkingFuture.then((data) {
@@ -42,6 +53,44 @@ class _PloHomeScreenState extends State<PloHomeScreen> {
     });
     walletPLO = _getWalletFuture();
     fetchVehicleInParking();
+    String? ploID = await UserPreferences.getUsername();
+    final message = {
+      "ploID": ploID,
+      "content": "Connected"
+    };
+    final messageJson = jsonEncode(message);
+    channel.sink.add(messageJson);
+    channel.stream.listen((message) {
+      handleMessage(message);
+    });
+    bool isLoggedIn = UserPreferences.isLoggedIn();
+    if (isLoggedIn) {
+      const duration = Duration(minutes: 3);
+      Timer.periodic(duration, (Timer t) {
+        final message = {
+          "ploID": ploID,
+          "content": "KeepAlive"
+        };
+        final messageJson = jsonEncode(message);
+        if (channel.sink != null) {
+          channel.sink.add(messageJson);
+          print('KeepAlive message sent successfully.');
+        } else {
+          print('Channel sink is closed. KeepAlive message not sent.');
+          t.cancel();
+        }
+      });
+    }
+  }
+
+
+  void handleMessage(dynamic message) {
+    print(message.toString());
+    if (message.toString().contains("GetParking")) {
+          statusParkingFuture = _getParkingInformationFuture();
+          walletPLO = _getWalletFuture();
+          _reloadParkingInformation();
+    }
   }
 
   Future<ParkingStatusInformation> _getParkingInformationFuture() async {
@@ -98,6 +147,12 @@ class _PloHomeScreenState extends State<PloHomeScreen> {
       default:
         return 5;
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    channel.sink.close();
   }
 
   @override
