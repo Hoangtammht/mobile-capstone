@@ -31,7 +31,7 @@ import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 typedef MethodCallback = void Function(int method);
-
+bool checkValue = false;
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
@@ -151,6 +151,21 @@ class _HomeScreenState extends State<HomeScreen> {
       customerHome!.then((data) {
         reservationID = data.reservationID;
         print('Reservation hiện tại là: ${reservationID}');
+        if(reservationID != 0){
+          // String startTime = data.startTime;
+          String startTime = "2023-11-06 20:10:00";
+          String cancelBookingTime = data.cancelBookingTime;
+          print('Thời gian đặt $startTime');
+          print('Thời gian cancel $cancelBookingTime');
+          DateTime startDateTime = DateTime.parse(startTime);
+          Duration cancelBookingDuration = parseDuration(cancelBookingTime);
+          DateTime beforeCancelBookingTime = startDateTime.add(cancelBookingDuration).subtract(Duration(minutes: 1));
+          DateTime cancelBookingDateTime = startDateTime.add(cancelBookingDuration);
+          print('Thời gian thông báo check-in trước 15 phút: ${beforeCancelBookingTime}');
+          print('Thời gian phải check-in: ${cancelBookingDateTime}');
+          callApiBeforeCancelBooking(beforeCancelBookingTime.difference(DateTime.now()), reservationID);
+          callApiAtCancelBookingTime(cancelBookingDateTime.difference(DateTime.now()), reservationID);
+        }
         final message = {
           "reservationID": reservationID.toString(),
           "content": "Connected",
@@ -182,6 +197,39 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     }
 
+  }
+
+  void callApiBeforeCancelBooking(Duration duration, int reservationID) {
+    Future.delayed(duration, () async {
+      try {
+        await ReservationAPI.updateReservationToCancel(reservationID);
+        print('Hiện tại trước 15 phút');
+        customerHome = _getHomeStatus();
+      } catch (e) {
+        print('Error calling API: $e');
+      }
+    });
+  }
+
+  void callApiAtCancelBookingTime(Duration duration, int reservationID) {
+    Future.delayed(duration, () async {
+      try {
+        await ReservationAPI.updateReservationToCancel(reservationID);
+        print('Hiện tại sau 15 phút');
+        customerHome = _getHomeStatus();
+      } catch (e) {
+        print('Error calling API: $e');
+      }
+    });
+  }
+
+
+  Duration parseDuration(String durationString) {
+    List<String> timeParts = durationString.split(':');
+    int hours = int.parse(timeParts[0]);
+    int minutes = int.parse(timeParts[1]);
+    int seconds = int.parse(timeParts[2]);
+    return Duration(hours: hours, minutes: minutes, seconds: seconds);
   }
 
   Future<double> checkWalletCustomer() async {
@@ -2017,6 +2065,13 @@ Future<void> _showDeleteDialog(BuildContext context, CustomerHome customerHome,
                             try {
                               await ReservationAPI.cancelReservation(
                                   customerHome.reservationID);
+                              WebSocketChannel channel = IOWebSocketChannel.connect('wss://eparkingcapstone.azurewebsites.net/privatePLO');
+                              final message = {
+                                "ploID": customerHome.ploID.toString(),
+                                "content": "GetParking"
+                              };
+                              final messageJson = jsonEncode(message);
+                              channel.sink.add(messageJson);
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text('Hủy bỏ đặt chỗ thành công'),

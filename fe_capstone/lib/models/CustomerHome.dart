@@ -18,6 +18,10 @@ class CustomerHome {
   late final int statusID;
   late final String statusName;
   late final String parkingName;
+  late final String startTime;
+  late final String endTime;
+  late final String waitingTime;
+  late final String cancelBookingTime;
   late final String address;
   late final double longitude;
   late final double latitude;
@@ -32,6 +36,10 @@ class CustomerHome {
     statusID = json['statusID'] ?? '';
     statusName = json['statusName'] ?? '';
     parkingName = json['parkingName'] ?? '';
+    startTime = json['startTime'] ?? '';
+    endTime = json['endTime'] ?? '';
+    waitingTime = json['waitingTime'] ?? '';
+    cancelBookingTime = json['cancelBookingTime'] ?? '';
     address = json['address'] ?? '';
     longitude = json['longitude'] ?? '';
     latitude = json['latitude'] ?? '';
@@ -47,6 +55,10 @@ class CustomerHome {
     _data['statusID'] = statusID;
     _data['statusName'] = statusName;
     _data['parkingName'] = parkingName;
+    _data['startTime'] = startTime;
+    _data['endTime'] = endTime;
+    _data['waitingTime'] = waitingTime;
+    _data['cancelBookingTime'] = cancelBookingTime;
     _data['address'] = address;
     _data['longitude'] = longitude;
     _data['latitude'] = latitude;
