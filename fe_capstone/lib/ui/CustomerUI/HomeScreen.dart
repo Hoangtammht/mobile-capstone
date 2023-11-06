@@ -6,6 +6,7 @@ import 'package:fe_capstone/apis/customer/ReservationAPI.dart';
 import 'package:fe_capstone/apis/customer/SearchParkingAPI.dart';
 import 'package:fe_capstone/apis/plo/ParkingAPI.dart';
 import 'package:fe_capstone/apis/customer/WalletScreenAPI.dart';
+import 'package:fe_capstone/blocs/UserPreferences.dart';
 import 'package:fe_capstone/constant/base_constant.dart';
 import 'package:fe_capstone/constant/url_constants.dart';
 import 'package:fe_capstone/main.dart';
@@ -97,21 +98,24 @@ class _HomeScreenState extends State<HomeScreen> {
           channel.stream.listen((message) {
             handleMessage(message);
           });
-          const duration = Duration(minutes: 3);
-          Timer.periodic(duration, (Timer t) {
-            final message = {
-              "reservationID": reservationID.toString(),
-              "content": "KeepAlive",
-            };
-            final messageJson = jsonEncode(message);
-            if (channel.sink != null) {
-              channel.sink.add(messageJson);
-              print('KeepAlive message sent successfully.');
-            } else {
-              print('Channel sink is closed. KeepAlive message not sent.');
-              t.cancel();
-            }
-          });
+          bool isLoggedIn = UserPreferences.isLoggedIn();
+          if (isLoggedIn) {
+            const duration = Duration(minutes: 3);
+            Timer.periodic(duration, (Timer t) {
+              final message = {
+                "reservationID": reservationID.toString(),
+                "content": "KeepAlive",
+              };
+              final messageJson = jsonEncode(message);
+              if (channel.sink != null) {
+                channel.sink.add(messageJson);
+                print('KeepAlive message sent successfully.');
+              } else {
+                print('Channel sink is closed. KeepAlive message not sent.');
+                t.cancel();
+              }
+            });
+          }
         }
     });
     Future.delayed(Duration(seconds: 4), () async {
@@ -159,21 +163,25 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     });
 
-    const duration = Duration(minutes: 3);
-    Timer.periodic(duration, (Timer t) {
-      final message = {
-        "reservationID": reservationID.toString(),
-        "content": "KeepAlive",
-      };
-      final messageJson = jsonEncode(message);
-      if (channel.sink != null) {
-        channel.sink.add(messageJson);
-        print('KeepAlive message sent successfully.');
-      } else {
-        print('Channel sink is closed. KeepAlive message not sent.');
-        t.cancel();
-      }
-    });
+    bool isLoggedIn = UserPreferences.isLoggedIn();
+    if (isLoggedIn) {
+      const duration = Duration(minutes: 3);
+      Timer.periodic(duration, (Timer t) {
+        final message = {
+          "reservationID": reservationID.toString(),
+          "content": "KeepAlive",
+        };
+        final messageJson = jsonEncode(message);
+        if (channel.sink != null) {
+          channel.sink.add(messageJson);
+          print('KeepAlive message sent successfully.');
+        } else {
+          print('Channel sink is closed. KeepAlive message not sent.');
+          t.cancel();
+        }
+      });
+    }
+
   }
 
   Future<double> checkWalletCustomer() async {

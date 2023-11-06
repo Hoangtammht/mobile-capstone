@@ -56,37 +56,40 @@ class _PloHomeScreenState extends State<PloHomeScreen> {
     String? ploID = await UserPreferences.getUsername();
     final message = {
       "ploID": ploID,
-      "content": "Connected",
+      "content": "Connected"
     };
     final messageJson = jsonEncode(message);
     channel.sink.add(messageJson);
     channel.stream.listen((message) {
       handleMessage(message);
     });
-    const duration = Duration(minutes: 3);
-    Timer.periodic(duration, (Timer t) {
-      final message = {
-        "ploID": ploID,
-        "content": "KeepAlive",
-      };
-      final messageJson = jsonEncode(message);
-      if (channel.sink != null) {
-        channel.sink.add(messageJson);
-        print('KeepAlive message sent successfully.');
-      } else {
-        print('Channel sink is closed. KeepAlive message not sent.');
-        t.cancel();
-      }
-    });
+    bool isLoggedIn = UserPreferences.isLoggedIn();
+    if (isLoggedIn) {
+      const duration = Duration(minutes: 3);
+      Timer.periodic(duration, (Timer t) {
+        final message = {
+          "ploID": ploID,
+          "content": "KeepAlive"
+        };
+        final messageJson = jsonEncode(message);
+        if (channel.sink != null) {
+          channel.sink.add(messageJson);
+          print('KeepAlive message sent successfully.');
+        } else {
+          print('Channel sink is closed. KeepAlive message not sent.');
+          t.cancel();
+        }
+      });
+    }
   }
 
 
   void handleMessage(dynamic message) {
     print(message.toString());
     if (message.toString().contains("GetParking")) {
-        statusParkingFuture = _getParkingInformationFuture();
-        walletPLO = _getWalletFuture();
-        fetchVehicleInParking();
+          statusParkingFuture = _getParkingInformationFuture();
+          walletPLO = _getWalletFuture();
+          _reloadParkingInformation();
     }
   }
 
@@ -144,6 +147,12 @@ class _PloHomeScreenState extends State<PloHomeScreen> {
       default:
         return 5;
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    channel.sink.close();
   }
 
   @override

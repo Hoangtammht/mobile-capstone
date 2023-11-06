@@ -844,17 +844,18 @@ class _ReservationScreenState extends State<ReservationScreen> {
                               try {
                                 await ReservationAPI.getBooking(
                                     dropdownVehicle, methodID, widget.ploID);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('Đặt chỗ thành công')
-                                  ),
-                                );
                                 final message = {
                                   "ploID": widget.ploID.toString(),
                                   "content": "GetParking"
                                 };
                                 final messageJson = jsonEncode(message);
                                 channel.sink.add(messageJson);
+                                print("Đặt chỗ socket: $messageJson");
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Đặt chỗ thành công')
+                                  ),
+                                );
                                   final walletProvider = Provider.of<WalletDataProvider>(context, listen: false);
                                   await walletProvider.updateTransactions();
                                   refreshHomeScreen();

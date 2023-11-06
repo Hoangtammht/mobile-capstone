@@ -67,9 +67,11 @@ class _BottomTabNavPloState extends State<BottomTabNavPlo> with AutomaticKeepAli
             stateManagement: true,
             navBarStyle: NavBarStyle.style3,
             onItemSelected: (int) {
-              setState(() {
-                statusParkingFuture = _getParkingInformationFuture();
-              });
+              if(_controller.index == 0) {
+                setState(() {
+                  statusParkingFuture = _getParkingInformationFuture();
+                });
+              }
             },
           );
         }
