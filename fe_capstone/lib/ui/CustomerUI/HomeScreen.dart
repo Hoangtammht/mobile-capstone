@@ -31,7 +31,6 @@ import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 typedef MethodCallback = void Function(int method);
-bool checkValue = false;
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
@@ -70,7 +69,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<CustomerHome>? customerHome;
   late double accountBalance;
   FocusNode _searchFocusNode = FocusNode();
-  WebSocketChannel channel = IOWebSocketChannel.connect('wss://eparkingcapstone.azurewebsites.net/privateReservation');
+  WebSocketChannel channel = IOWebSocketChannel.connect(BaseConstants.WEBSOCKET_PRIVATE_RESERVATION_URL);
+  WebSocketChannel ploChannel = IOWebSocketChannel.connect(BaseConstants.WEBSOCKET_PRIVATE_PLO_URL);
   late int reservationID = 0;
 
   @override
@@ -104,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Timer.periodic(duration, (Timer t) {
               final message = {
                 "reservationID": reservationID.toString(),
-                "content": "KeepAlive",
+                "content": "KeepAlive"
               };
               final messageJson = jsonEncode(message);
               if (channel.sink != null) {
@@ -145,6 +145,18 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  String convertToDesiredFormat(String input) {
+    try {
+      DateFormat inputFormat = DateFormat('HH:mm:ss - dd/MM/yyyy');
+      DateTime dateTime = inputFormat.parse(input);
+      DateFormat outputFormat = DateFormat('yyyy-MM-dd HH:mm:ss');
+      return outputFormat.format(dateTime);
+    } catch (e) {
+      print('Error converting date format: $e');
+      return '';
+    }
+  }
+
   void refreshHomeScreen() {
     setState(() {
       customerHome = _getHomeStatus();
@@ -152,29 +164,31 @@ class _HomeScreenState extends State<HomeScreen> {
         reservationID = data.reservationID;
         print('Reservation hiện tại là: ${reservationID}');
         if(reservationID != 0){
-          // String startTime = data.startTime;
-          String startTime = "2023-11-06 20:10:00";
-          String cancelBookingTime = data.cancelBookingTime;
-          print('Thời gian đặt $startTime');
-          print('Thời gian cancel $cancelBookingTime');
-          DateTime startDateTime = DateTime.parse(startTime);
-          Duration cancelBookingDuration = parseDuration(cancelBookingTime);
-          DateTime beforeCancelBookingTime = startDateTime.add(cancelBookingDuration).subtract(Duration(minutes: 1));
-          DateTime cancelBookingDateTime = startDateTime.add(cancelBookingDuration);
-          print('Thời gian thông báo check-in trước 15 phút: ${beforeCancelBookingTime}');
-          print('Thời gian phải check-in: ${cancelBookingDateTime}');
-          callApiBeforeCancelBooking(beforeCancelBookingTime.difference(DateTime.now()), reservationID);
-          callApiAtCancelBookingTime(cancelBookingDateTime.difference(DateTime.now()), reservationID);
+          if(data.statusID == 1){
+            String startTime = convertToDesiredFormat(data.startTime);
+            String cancelBookingTime = data.cancelBookingTime;
+            DateTime startDateTime = DateTime.parse(startTime);
+            Duration cancelBookingDuration = parseDuration(cancelBookingTime);
+            DateTime beforeCancelBookingTime = startDateTime.add(cancelBookingDuration).subtract(Duration(minutes: 1));
+            DateTime cancelBookingDateTime = startDateTime.add(cancelBookingDuration).add(Duration(seconds: 3));
+            print('Reservation lúc đặt là: ${reservationID}');
+            print('Thời gian đặt $startTime');
+            print('Thời gian cancel $cancelBookingTime');
+            print('StatusID ${data.statusID}');
+            print('Thời gian thông báo check-in trước 1 phút: $beforeCancelBookingTime');
+            print('Thời gian phải check-in: $cancelBookingDateTime');
+            callApiBeforeCancelBooking(beforeCancelBookingTime.difference(DateTime.now()), cancelBookingDateTime, reservationID);
+          }
+          final message = {
+            "reservationID": reservationID.toString(),
+            "content": "Connected",
+          };
+          final messageJson = jsonEncode(message);
+          channel.sink.add(messageJson);
+          channel.stream.listen((message) {
+            handleMessage(message);
+          });
         }
-        final message = {
-          "reservationID": reservationID.toString(),
-          "content": "Connected",
-        };
-        final messageJson = jsonEncode(message);
-        channel.sink.add(messageJson);
-        channel.stream.listen((message) {
-          handleMessage(message);
-        });
       });
     });
 
@@ -184,7 +198,7 @@ class _HomeScreenState extends State<HomeScreen> {
       Timer.periodic(duration, (Timer t) {
         final message = {
           "reservationID": reservationID.toString(),
-          "content": "KeepAlive",
+          "content": "KeepAlive"
         };
         final messageJson = jsonEncode(message);
         if (channel.sink != null) {
@@ -196,33 +210,43 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       });
     }
-
   }
 
-  void callApiBeforeCancelBooking(Duration duration, int reservationID) {
-    Future.delayed(duration, () async {
-      try {
-        await ReservationAPI.updateReservationToCancel(reservationID);
+  void callApiBeforeCancelBooking(Duration beforeCancelBooking, DateTime afterCancelBooking, int reservationID) async {
+    try {
+      bool isUpdateSuccessful = await Future.delayed(beforeCancelBooking, () async {
+        return await ReservationAPI.updateReservationToCancel(reservationID);
+      });
+      print('Update trước 15 phút là $isUpdateSuccessful');
+      if (isUpdateSuccessful) {
         print('Hiện tại trước 15 phút');
-        customerHome = _getHomeStatus();
-      } catch (e) {
-        print('Error calling API: $e');
+      } else {
+        callApiAtCancelBookingTime(afterCancelBooking.difference(DateTime.now()), reservationID);
       }
-    });
+    } catch (e) {
+      print('Error calling API: $e');
+    }
   }
 
-  void callApiAtCancelBookingTime(Duration duration, int reservationID) {
-    Future.delayed(duration, () async {
-      try {
-        await ReservationAPI.updateReservationToCancel(reservationID);
-        print('Hiện tại sau 15 phút');
+  Future<void> callApiAtCancelBookingTime(Duration duration, int reservationID) async {
+    try {
+      await Future.delayed(duration, () async {
+        bool isUpdateSuccessful = await ReservationAPI.updateReservationToCancel(reservationID);
+        print('Update sau 15 phút là $isUpdateSuccessful');
         customerHome = _getHomeStatus();
-      } catch (e) {
-        print('Error calling API: $e');
-      }
-    });
+        customerHome!.then((data) {
+            final ploMessage = {
+            "ploID": data.ploID.toString(),
+            "content": "GetParking"
+              };
+            final messageJsonPLO = jsonEncode(ploMessage);
+            ploChannel.sink.add(messageJsonPLO);
+        });
+      });
+    } catch (e) {
+      print('Error calling API: $e');
+    }
   }
-
 
   Duration parseDuration(String durationString) {
     List<String> timeParts = durationString.split(':');
@@ -1980,6 +2004,8 @@ class CheckInContent extends StatelessWidget {
 
 Future<void> _showDeleteDialog(BuildContext context, CustomerHome customerHome,
     Function refreshHomeScreen) async {
+
+  WebSocketChannel ploChannel = IOWebSocketChannel.connect(BaseConstants.WEBSOCKET_PRIVATE_PLO_URL);
   await showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -2065,13 +2091,12 @@ Future<void> _showDeleteDialog(BuildContext context, CustomerHome customerHome,
                             try {
                               await ReservationAPI.cancelReservation(
                                   customerHome.reservationID);
-                              WebSocketChannel channel = IOWebSocketChannel.connect('wss://eparkingcapstone.azurewebsites.net/privatePLO');
                               final message = {
                                 "ploID": customerHome.ploID.toString(),
                                 "content": "GetParking"
                               };
                               final messageJson = jsonEncode(message);
-                              channel.sink.add(messageJson);
+                              ploChannel.sink.add(messageJson);
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text('Hủy bỏ đặt chỗ thành công'),

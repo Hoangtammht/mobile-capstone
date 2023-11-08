@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:fe_capstone/apis/plo/ParkingAPI.dart';
+import 'package:fe_capstone/constant/base_constant.dart';
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/models/ReservationDetail.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +29,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
   String scannedText = "";
   late Future<ReservationByLicensePlate> reservationByLicensePlate;
 
-  WebSocketChannel channel = IOWebSocketChannel.connect('wss://eparkingcapstone.azurewebsites.net/privateReservation');
+  WebSocketChannel channel = IOWebSocketChannel.connect(BaseConstants.WEBSOCKET_PRIVATE_RESERVATION_URL);
   late int reservationIDByScan;
 
   @override

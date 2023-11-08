@@ -171,12 +171,9 @@ class ReservationAPI {
           },
         ),
       );
-
       if (response.statusCode == 200) {
         if (response.data != null) {
-          print('Response data: ${response.data}');
           bool isCancelled = response.data;
-          print('isCancelled data: ${isCancelled}');
           return isCancelled;
         } else {
           throw Exception('Response data is null');
