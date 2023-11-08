@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
     double baseWidth = 414;
     mq = MediaQuery.of(context).size;
     fem = mq.width / baseWidth;
-    ffem = fem * 0.70;
+    ffem = fem * 0.87;
     return MaterialApp(
       title: 'Capstone Project',
       debugShowCheckedModeBanner: false,
