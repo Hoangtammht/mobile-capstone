@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:fe_capstone/apis/customer/ReservationAPI.dart';
 import 'package:fe_capstone/blocs/VehicleProvider.dart';
 import 'package:fe_capstone/blocs/WalletDataProvider.dart';
+import 'package:fe_capstone/constant/base_constant.dart';
 import 'package:fe_capstone/models/ListVehicleCustomer.dart';
 import 'package:fe_capstone/models/ParkingInformationModel.dart';
 import 'package:fe_capstone/models/ReservationDetail.dart';
@@ -42,7 +43,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
   late String dropdownVehicle = '';
   late List<ReservationMethod> reserMethod;
   final formatCurrency = NumberFormat.simpleCurrency(locale: 'vi_VN');
-  WebSocketChannel channel = IOWebSocketChannel.connect('wss://eparkingcapstone.azurewebsites.net/privatePLO');
+  WebSocketChannel ploChannel = IOWebSocketChannel.connect(BaseConstants.WEBSOCKET_PRIVATE_PLO_URL);
 
 
   @override
@@ -51,7 +52,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
     _vehicleProvider = Provider.of<VehicleProvider>(context, listen: false);
     vehicleFuture = _vehicleProvider.getVehicleList();
     vehicleFuture.then((value) {
-      dropdownVehicle = value.first.licencePlate;
+      dropdownVehicle = value.first.licensePlate;
     });
     reservationMethod = _getReservationMethod();
     reservationMethod!.then((data) {
@@ -402,17 +403,17 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                     ),
                                     child: DropdownMenu<String>(
                                       initialSelection: vehicleProvider
-                                          .vehicles.first.licencePlate,
+                                          .vehicles.first.licensePlate,
                                       textStyle: TextStyle(fontSize: 16 * fem),
                                       onSelected: (String? value) {
                                         ListVehicleCustomer selectedMap =
                                             vehicleProvider.vehicles.firstWhere(
                                                 (map) =>
-                                                    map.licencePlate == value);
+                                                    map.licensePlate == value);
 
                                         setState(() {
                                           dropdownVehicle =
-                                              selectedMap.licencePlate;
+                                              selectedMap.licensePlate;
 
                                         });
                                       },
@@ -420,8 +421,8 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                           .vehicles
                                           .map((vehicle) {
                                         return DropdownMenuEntry<String>(
-                                          value: vehicle.licencePlate,
-                                          label: vehicle.licencePlate,
+                                          value: vehicle.licensePlate,
+                                          label: vehicle.licensePlate,
                                         );
                                       }).toList(),
                                     ),
@@ -849,7 +850,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                   "content": "GetParking"
                                 };
                                 final messageJson = jsonEncode(message);
-                                channel.sink.add(messageJson);
+                                ploChannel.sink.add(messageJson);
                                 print("Đặt chỗ socket: $messageJson");
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(

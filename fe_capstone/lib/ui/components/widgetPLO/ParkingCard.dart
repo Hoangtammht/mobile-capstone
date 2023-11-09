@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:fe_capstone/apis/plo/ParkingAPI.dart';
+import 'package:fe_capstone/constant/base_constant.dart';
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/models/ListVehicleInParking.dart';
 import 'package:fe_capstone/ui/components/widgetPLO/ParkingDetailCard.dart';
@@ -19,7 +20,7 @@ class ParkingCard extends StatefulWidget {
 }
 
 class _ParkingCardState extends State<ParkingCard> {
-  WebSocketChannel channel = IOWebSocketChannel.connect('wss://eparkingcapstone.azurewebsites.net/privateReservation');
+  WebSocketChannel channel = IOWebSocketChannel.connect(BaseConstants.WEBSOCKET_PRIVATE_RESERVATION_URL);
 
   @override
   Widget build(BuildContext context) {

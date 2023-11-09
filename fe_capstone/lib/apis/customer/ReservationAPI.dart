@@ -156,7 +156,64 @@ class ReservationAPI {
     }
   }
 
+  static Future<bool> updateReservationToCancel(int reservationID) async {
+    try {
+      String? token = await UserPreferences.getAccessToken();
+      if (token == null) {
+        throw Exception('Access token is null');
+      }
+      final response = await dio.put(
+        '${UrlConstant.CUSTOMER}/updateReservationToCancel?reservationID=$reservationID',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+      if (response.statusCode == 200) {
+        if (response.data != null) {
+          bool isCancelled = response.data;
+          return isCancelled;
+        } else {
+          throw Exception('Response data is null');
+        }
+      } else {
+        throw Exception('Request failed with status: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to update reservation to cancel: $e');
+    }
+  }
 
-
+  static Future<bool> updateReservationToLater(int reservationID) async {
+    try {
+      String? token = await UserPreferences.getAccessToken();
+      if (token == null) {
+        throw Exception('Access token is null');
+      }
+      final response = await dio.put(
+        '${UrlConstant.CUSTOMER}/updateReservationToLate?reservationID=$reservationID',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+      if (response.statusCode == 200) {
+        if (response.data != null) {
+          bool isCancelled = response.data;
+          return isCancelled;
+        } else {
+          throw Exception('Response data is null');
+        }
+      } else {
+        throw Exception('Request failed with status: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to update reservation to later: $e');
+    }
+  }
 
 }

@@ -1,22 +1,21 @@
 class ListVehicleCustomer {
   ListVehicleCustomer({
-    required this.licencePlateID,
-    required this.licencePlate,
+    required this.motorbikeID,
+    required this.licensePlate,
   });
-  late final int licencePlateID;
-  late final String licencePlate;
+  late final int motorbikeID;
+  late final String licensePlate;
 
 
   ListVehicleCustomer.fromJson(Map<String, dynamic> json) {
-    licencePlateID = json['licencePlateID'] ?? '';
-    licencePlate = json['licencePlate'] ?? '';
-
+    motorbikeID = json['motorbikeID'] ?? '';
+    licensePlate = json['licensePlate'] ?? '';
   }
 
   Map<String, dynamic> toJson() {
     final _data = <String, dynamic>{};
-    _data['licencePlateID'] = licencePlateID;
-    _data['licencePlate'] = licencePlate;
+    _data['motorbikeID'] = motorbikeID;
+    _data['licensePlate'] = licensePlate;
     return _data;
   }
 }

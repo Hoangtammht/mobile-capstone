@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:fe_capstone/apis/plo/ParkingAPI.dart';
 import 'package:fe_capstone/blocs/UserPreferences.dart';
+import 'package:fe_capstone/constant/base_constant.dart';
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/models/ListVehicleInParking.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/CheckReservationByLicensePlate.dart';
@@ -31,7 +32,7 @@ class _ParkingScreenState extends State<ParkingScreen>
   late int list1Length = 0;
   late int list2Length = 0;
   late int list3Length = 0;
-  WebSocketChannel channel = IOWebSocketChannel.connect('wss://eparkingcapstone.azurewebsites.net/privatePLO');
+  WebSocketChannel ploChannel = IOWebSocketChannel.connect(BaseConstants.WEBSOCKET_PRIVATE_PLO_URL);
 
 
   @override
@@ -49,8 +50,8 @@ class _ParkingScreenState extends State<ParkingScreen>
       "content": "Connected"
     };
     final messageJson = jsonEncode(message);
-    channel.sink.add(messageJson);
-    channel.stream.listen((message) {
+    ploChannel.sink.add(messageJson);
+    ploChannel.stream.listen((message) {
       handleMessage(message);
     });
 
@@ -63,8 +64,8 @@ class _ParkingScreenState extends State<ParkingScreen>
           "content": "KeepAlive"
         };
         final messageJson = jsonEncode(message);
-        if (channel.sink != null) {
-          channel.sink.add(messageJson);
+        if (ploChannel.sink != null) {
+          ploChannel.sink.add(messageJson);
           print('KeepAlive message sent successfully.');
         } else {
           print('Channel sink is closed. KeepAlive message not sent.');

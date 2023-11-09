@@ -31,7 +31,6 @@ import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 typedef MethodCallback = void Function(int method);
-
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
@@ -70,7 +69,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<CustomerHome>? customerHome;
   late double accountBalance;
   FocusNode _searchFocusNode = FocusNode();
-  WebSocketChannel channel = IOWebSocketChannel.connect('wss://eparkingcapstone.azurewebsites.net/privateReservation');
+  WebSocketChannel channel = IOWebSocketChannel.connect(BaseConstants.WEBSOCKET_PRIVATE_RESERVATION_URL);
+  WebSocketChannel ploChannel = IOWebSocketChannel.connect(BaseConstants.WEBSOCKET_PRIVATE_PLO_URL);
   late int reservationID = 0;
 
   @override
@@ -82,7 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
       reservationID = data.reservationID;
       if (data.statusID == 5) {
         if (!isRatingDialogDisplayed) {
-          _RatingDialog(context, data);
+          _RatingDialog(context, data, handleRating);
           setState(() {
             isRatingDialogDisplayed = true;
           });
@@ -91,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
         if(reservationID != 0){
           final message = {
             "reservationID": reservationID.toString(),
-            "content": "Connected",
+            "content": "Connected"
           };
           final messageJson = jsonEncode(message);
           channel.sink.add(messageJson);
@@ -104,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Timer.periodic(duration, (Timer t) {
               final message = {
                 "reservationID": reservationID.toString(),
-                "content": "KeepAlive",
+                "content": "KeepAlive"
               };
               final messageJson = jsonEncode(message);
               if (channel.sink != null) {
@@ -131,17 +131,42 @@ class _HomeScreenState extends State<HomeScreen> {
     print(message.toString());
     if (message.toString().contains("GetStatus")) {
       customerHome = _getHomeStatus();
-      customerHome!.then((data) {
+        customerHome!.then((data) {
         reservationID = data.reservationID;
         if (data.statusID == 5) {
           if (!isRatingDialogDisplayed) {
-            _RatingDialog(context, data);
+            _RatingDialog(context, data, handleRating);
             setState(() {
               isRatingDialogDisplayed = true;
             });
           }
         }
+        if(reservationID != 0){
+          if(data.statusID == 2){
+          String endTime  = convertToDesiredFormat(data.endTime);
+          DateTime endDateTime = DateTime.parse(endTime);
+          DateTime beforeUpdateLater = endDateTime.subtract(Duration(minutes: 1));
+          DateTime afterUpdateStatusLater = endDateTime.add(Duration(seconds: 3));
+          print('Reservation lúc đặt là: ${reservationID}');
+          print('Thời gian kết thúc $endTime');
+          print('Thời gian thông báo updated later trước 1 phút: $beforeUpdateLater');
+          print('Thời gian phải check-out: $afterUpdateStatusLater');
+          callApiBeforeUpdateStatusLater(beforeUpdateLater.difference(DateTime.now()), afterUpdateStatusLater, reservationID);
+          }
+        }
       });
+    }
+  }
+
+  String convertToDesiredFormat(String input) {
+    try {
+      DateFormat inputFormat = DateFormat('HH:mm:ss - dd/MM/yyyy');
+      DateTime dateTime = inputFormat.parse(input);
+      DateFormat outputFormat = DateFormat('yyyy-MM-dd HH:mm:ss');
+      return outputFormat.format(dateTime);
+    } catch (e) {
+      print('Error converting date format: $e');
+      return '';
     }
   }
 
@@ -151,15 +176,31 @@ class _HomeScreenState extends State<HomeScreen> {
       customerHome!.then((data) {
         reservationID = data.reservationID;
         print('Reservation hiện tại là: ${reservationID}');
-        final message = {
-          "reservationID": reservationID.toString(),
-          "content": "Connected",
-        };
-        final messageJson = jsonEncode(message);
-        channel.sink.add(messageJson);
-        channel.stream.listen((message) {
-          handleMessage(message);
-        });
+        if(reservationID != 0){
+          if(data.statusID == 1){
+            String startTime = convertToDesiredFormat(data.startTime);
+            String cancelBookingTime = data.cancelBookingTime;
+            DateTime startDateTime = DateTime.parse(startTime);
+            Duration cancelBookingDuration = parseDuration(cancelBookingTime);
+            DateTime beforeCancelBookingTime = startDateTime.add(cancelBookingDuration).subtract(Duration(minutes: 1));
+            DateTime cancelBookingDateTime = startDateTime.add(cancelBookingDuration).add(Duration(seconds: 3));
+            print('Reservation lúc đặt là: ${reservationID}');
+            print('Thời gian đặt $startTime');
+            print('Thời gian cancel $cancelBookingTime');
+            print('Thời gian thông báo check-in trước 1 phút: $beforeCancelBookingTime');
+            print('Thời gian phải check-in: $cancelBookingDateTime');
+            callApiBeforeCancelBooking(beforeCancelBookingTime.difference(DateTime.now()), cancelBookingDateTime, reservationID);
+          }
+          final message = {
+            "reservationID": reservationID.toString(),
+            "content": "Connected",
+          };
+          final messageJson = jsonEncode(message);
+          channel.sink.add(messageJson);
+          channel.stream.listen((message) {
+            handleMessage(message);
+          });
+        }
       });
     });
 
@@ -169,7 +210,7 @@ class _HomeScreenState extends State<HomeScreen> {
       Timer.periodic(duration, (Timer t) {
         final message = {
           "reservationID": reservationID.toString(),
-          "content": "KeepAlive",
+          "content": "KeepAlive"
         };
         final messageJson = jsonEncode(message);
         if (channel.sink != null) {
@@ -181,7 +222,86 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       });
     }
+  }
 
+  void callApiBeforeCancelBooking(Duration beforeCancelBooking, DateTime afterCancelBooking, int reservationID) async {
+    try {
+      bool isUpdateSuccessful = await Future.delayed(beforeCancelBooking, () async {
+        return await ReservationAPI.updateReservationToCancel(reservationID);
+      });
+      print('Update trước 15 phút là $isUpdateSuccessful');
+      if (isUpdateSuccessful) {
+        print('Hiện tại trước 15 phút');
+      } else {
+        callApiAtCancelBookingTime(afterCancelBooking.difference(DateTime.now()), reservationID);
+      }
+    } catch (e) {
+      print('Error calling API: $e');
+    }
+  }
+
+  Future<void> callApiAtCancelBookingTime(Duration duration, int reservationID) async {
+    try {
+      await Future.delayed(duration, () async {
+        bool isUpdateSuccessful = await ReservationAPI.updateReservationToCancel(reservationID);
+        print('Update sau 15 phút là $isUpdateSuccessful');
+        customerHome = _getHomeStatus();
+        customerHome!.then((data) {
+            final ploMessage = {
+            "ploID": data.ploID.toString(),
+            "content": "GetParking"
+              };
+            final messageJsonPLO = jsonEncode(ploMessage);
+            ploChannel.sink.add(messageJsonPLO);
+        });
+      });
+    } catch (e) {
+      print('Error calling API: $e');
+    }
+  }
+
+  void callApiBeforeUpdateStatusLater(Duration beforeUpdate, DateTime afterUpdate, int reservationID) async {
+    try {
+      bool isUpdateSuccessful = await Future.delayed(beforeUpdate, () async {
+        return await ReservationAPI.updateReservationToLater(reservationID);
+      });
+      print('Status của reservation trước khi trễ là $isUpdateSuccessful');
+      if (isUpdateSuccessful) {
+        print('Status hiện tại trước 15 phút');
+      } else {
+        callApiAfterStatusLater(afterUpdate.difference(DateTime.now()), reservationID);
+      }
+    } catch (e) {
+      print('Error calling API: $e');
+    }
+  }
+
+  Future<void> callApiAfterStatusLater(Duration duration, int reservationID) async {
+    try {
+      await Future.delayed(duration, () async {
+        bool isUpdateSuccessful = await ReservationAPI.updateReservationToLater(reservationID);
+        print('Status của reservation sau 15 phút là $isUpdateSuccessful');
+        customerHome = _getHomeStatus();
+        customerHome!.then((data) {
+          final ploMessage = {
+            "ploID": data.ploID.toString(),
+            "content": "GetParking"
+          };
+          final messageJsonPLO = jsonEncode(ploMessage);
+          ploChannel.sink.add(messageJsonPLO);
+        });
+      });
+    } catch (e) {
+      print('Error calling API: $e');
+    }
+  }
+
+  Duration parseDuration(String durationString) {
+    List<String> timeParts = durationString.split(':');
+    int hours = int.parse(timeParts[0]);
+    int minutes = int.parse(timeParts[1]);
+    int seconds = int.parse(timeParts[2]);
+    return Duration(hours: hours, minutes: minutes, seconds: seconds);
   }
 
   Future<double> checkWalletCustomer() async {
@@ -194,7 +314,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void handleRating() {
     setState(() {
-      isRatingDialogDisplayed = true;
+      isRatingDialogDisplayed = false;
     });
   }
 
@@ -704,7 +824,7 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 Future<void> _RatingDialog(
-    BuildContext context, CustomerHome customerHome) async {
+    BuildContext context, CustomerHome customerHome, Function checkRating) async {
   late TextEditingController _feedbackController = TextEditingController();
   int selectedRating = 0;
   showDialog(
@@ -823,6 +943,7 @@ Future<void> _RatingDialog(
                                 try {
                                   await ReservationAPI.skipRating(
                                       customerHome.reservationID);
+                                  checkRating();
                                   Navigator.of(context).pop();
                                 } catch (e) {
                                   Navigator.of(context)
@@ -873,6 +994,7 @@ Future<void> _RatingDialog(
                                         customerHome.ploID,
                                         customerHome.reservationID,
                                         selectedRating);
+                                    checkRating();
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                           content:
@@ -1932,6 +2054,8 @@ class CheckInContent extends StatelessWidget {
 
 Future<void> _showDeleteDialog(BuildContext context, CustomerHome customerHome,
     Function refreshHomeScreen) async {
+
+  WebSocketChannel ploChannel = IOWebSocketChannel.connect(BaseConstants.WEBSOCKET_PRIVATE_PLO_URL);
   await showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -2017,6 +2141,12 @@ Future<void> _showDeleteDialog(BuildContext context, CustomerHome customerHome,
                             try {
                               await ReservationAPI.cancelReservation(
                                   customerHome.reservationID);
+                              final message = {
+                                "ploID": customerHome.ploID.toString(),
+                                "content": "GetParking"
+                              };
+                              final messageJson = jsonEncode(message);
+                              ploChannel.sink.add(messageJson);
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text('Hủy bỏ đặt chỗ thành công'),
