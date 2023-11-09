@@ -67,11 +67,6 @@ class _VehicleCardState extends State<VehicleCard> {
     try {
       await _vehicleProvider.deleteVehicle(widget.vehicleID);
       Navigator.of(context).pop();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Xóa xe thành công'),
-        ),
-      );
     } catch (error) {
       print('Lỗi khi xóa xe: $error');
     }

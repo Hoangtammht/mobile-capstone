@@ -16,8 +16,6 @@ class VehicleScreen extends StatefulWidget {
 class _VehicleScreenState extends State<VehicleScreen> {
 
   TextEditingController _vehicleNumberController = TextEditingController();
-  TextEditingController _vehicleNameController = TextEditingController();
-  TextEditingController _vehicleColorController = TextEditingController();
   int vehicleID = 0;
   late VehicleProvider _vehicleProvider;
   late Future<List<ListVehicleCustomer>> vehicleFuture;
@@ -152,84 +150,23 @@ class _VehicleScreenState extends State<VehicleScreen> {
                     ),
                   ),
                 ),
-
-                SizedBox(
-                  height: 20,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Biển số', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 20, top: 10),
-                      padding: const EdgeInsets.fromLTRB(15, 0, 10, 0),
-                      constraints: const BoxConstraints(
-                        maxWidth: 300,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xfff5f5f5),
-                        borderRadius: BorderRadius.circular(9 * fem),
-                      ),
-                      child:
-                      TextFormField(
-                        controller: _vehicleNumberController,
-                        decoration: const InputDecoration(
-                          hintText: '12-A34567',
-                          border: InputBorder.none,
-                        ),
-                      ),
+                Container(
+                  margin: EdgeInsets.only(bottom: 20, top: 20),
+                  padding: EdgeInsets.fromLTRB(15, 0, 10, 0),
+                  constraints: BoxConstraints(
+                    maxWidth: 300,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Color(0xfff5f5f5),
+                    borderRadius: BorderRadius.circular(9 * fem),
+                  ),
+                  child: TextFormField(
+                    controller: _vehicleNumberController,
+                    decoration: InputDecoration(
+                      hintText: '12A-123.45',
+                      border: InputBorder.none,
                     ),
-                  ],
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Tên xe', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 20, top: 10),
-                      padding: const EdgeInsets.fromLTRB(15, 0, 10, 0),
-                      constraints: const BoxConstraints(
-                        maxWidth: 300,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xfff5f5f5),
-                        borderRadius: BorderRadius.circular(9 * fem),
-                      ),
-                      child:
-                      TextFormField(
-                        controller: _vehicleNameController,
-                        decoration: const InputDecoration(
-                          hintText: 'Air Blade 125',
-                          border: InputBorder.none,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Màu sắc', style: TextStyle(fontSize: 15,  fontWeight: FontWeight.bold)),
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 20, top: 10),
-                      padding: const EdgeInsets.fromLTRB(15, 0, 10, 0),
-                      constraints: const BoxConstraints(
-                        maxWidth: 300,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xfff5f5f5),
-                        borderRadius: BorderRadius.circular(9 * fem),
-                      ),
-                      child:
-                      TextFormField(
-                        controller: _vehicleColorController,
-                        decoration: const InputDecoration(
-                          hintText: 'Đen',
-                          border: InputBorder.none,
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -275,17 +212,10 @@ class _VehicleScreenState extends State<VehicleScreen> {
                           ),
                           TextButton(
                             onPressed: () async {
-                              String newlicensePlate =
-                                  _vehicleNumberController.text;
-                              String newMotorColor =
-                                  _vehicleColorController.text;
-                              String newMotorName = _vehicleNameController.text;
-                              if (newlicensePlate.isNotEmpty &&
-                                  newMotorColor.isNotEmpty &&
-                                  newMotorName.isNotEmpty) {
+                              String newVehicle = _vehicleNumberController.text;
+                              if (newVehicle.isNotEmpty) {
                                try{
-                                 await _vehicleProvider.addNewVehicle(newlicensePlate,newMotorColor,newMotorName);
-
+                                 await _vehicleProvider.addNewVehicle(newVehicle);
                                  Navigator.of(context).pop();
                                }catch(e){
                                  ScaffoldMessenger.of(context).showSnackBar(

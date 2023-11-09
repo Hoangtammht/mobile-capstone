@@ -51,7 +51,7 @@ class _WalletScreenState extends State<WalletScreen> {
                   top: 0 * fem,
                   child: Container(
                     width: mq.width,
-                    height: 210 * fem,
+                    height: 208 * fem,
                     decoration: BoxDecoration(
                       color: Theme.of(context).primaryColor,
                     ),
@@ -93,7 +93,7 @@ class _WalletScreenState extends State<WalletScreen> {
                   top: 190 * fem,
                   child: Align(
                     child: SizedBox(
-                      width: 70 * fem,
+                      width: 52 * fem,
                       height: 23 * fem,
                       child: Text(
                         'Số dư',
@@ -146,7 +146,7 @@ class _WalletScreenState extends State<WalletScreen> {
                   child: Container(
                     padding: EdgeInsets.fromLTRB(
                         24.5 * fem, 14 * fem, 23 * fem, 15 * fem),
-                    width: 190 * fem,
+                    width: 160 * fem,
                     height: 52 * fem,
                     decoration: BoxDecoration(
                       color: Color(0xff000000),
@@ -162,7 +162,7 @@ class _WalletScreenState extends State<WalletScreen> {
                           Container(
                             margin: EdgeInsets.fromLTRB(
                                 0 * fem, 0 * fem, 12 * fem, 8 * fem),
-                            width: 25 * fem,
+                            width: 22 * fem,
                             height: 18 * fem,
                             child: Icon(
                               Icons.wallet,

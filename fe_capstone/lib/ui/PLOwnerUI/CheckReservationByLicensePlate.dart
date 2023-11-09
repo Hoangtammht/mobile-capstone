@@ -81,43 +81,80 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                     // Đặt padding cho phía bên trái và phải là 20
                     child: Image.file(File(imageFile!.path)),
                   ),
-
-                Center(
-                  child:     Container(
-                      margin: EdgeInsets.symmetric(
-                          horizontal: 5, vertical: 10 * fem),
-                      padding: const EdgeInsets.only(top: 10),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.white,
-                          onPrimary: Colors.grey,
-                          shadowColor: Colors.grey[400],
-                          elevation: 10,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0)),
-                        ),
-                        onPressed: () {
-                          getImage(ImageSource.camera);
-                        },
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(
-                              vertical: 5, horizontal: 5),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.camera_alt,
-                                size: 30,
-                              ),
-                              Text(
-                                "Camera",
-                                style: TextStyle(
-                                    fontSize: 22, color: Colors.grey[600]),
-                              )
-                            ],
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                        margin: EdgeInsets.symmetric(
+                            horizontal: 5, vertical: 10 * fem),
+                        padding: const EdgeInsets.only(top: 10),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.white,
+                            onPrimary: Colors.grey,
+                            shadowColor: Colors.grey[400],
+                            elevation: 10,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0)),
                           ),
-                        ),
-                      )),
+                          onPressed: () {
+                            getImage(ImageSource.gallery);
+                          },
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(
+                                vertical: 5, horizontal: 5),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.image,
+                                  size: 30,
+                                ),
+                                Text(
+                                  "Gallery",
+                                  style: TextStyle(
+                                      fontSize: 22, color: Colors.grey[600]),
+                                )
+                              ],
+                            ),
+                          ),
+                        )),
+                    Container(
+                        margin: EdgeInsets.symmetric(
+                            horizontal: 5, vertical: 10 * fem),
+                        padding: const EdgeInsets.only(top: 10),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.white,
+                            onPrimary: Colors.grey,
+                            shadowColor: Colors.grey[400],
+                            elevation: 10,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0)),
+                          ),
+                          onPressed: () {
+                            getImage(ImageSource.camera);
+                          },
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(
+                                vertical: 5, horizontal: 5),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.camera_alt,
+                                  size: 30,
+                                ),
+                                Text(
+                                  "Camera",
+                                  style: TextStyle(
+                                      fontSize: 22, color: Colors.grey[600]),
+                                )
+                              ],
+                            ),
+                          ),
+                        )),
+                  ],
                 ),
                 const SizedBox(
                   height: 30,

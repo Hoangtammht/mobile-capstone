@@ -14,17 +14,16 @@ import 'package:provider/provider.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/io.dart';
 
+
 class ReservationScreen extends StatefulWidget {
   final ParkingLotDetail parkinglotDetail;
   final Function refreshHomeScreen;
   final String ploID;
   final String distance;
   final String waitingTime;
-
   const ReservationScreen({
     required this.parkinglotDetail,
-    required this.ploID,
-    required this.refreshHomeScreen,
+    required this.ploID, required this.refreshHomeScreen,
     required this.distance,
     required this.waitingTime,
   });
@@ -39,16 +38,13 @@ class _ReservationScreenState extends State<ReservationScreen> {
   late VehicleProvider _vehicleProvider;
   late Future<List<ListVehicleCustomer>> vehicleFuture;
   TextEditingController _vehicleNumberController = TextEditingController();
-  TextEditingController _vehicleNameController = TextEditingController();
-  TextEditingController _vehicleColorController = TextEditingController();
-
   late double price;
   late String dropdownType = '';
   late String dropdownVehicle = '';
   late List<ReservationMethod> reserMethod;
   final formatCurrency = NumberFormat.simpleCurrency(locale: 'vi_VN');
-  WebSocketChannel ploChannel =
-      IOWebSocketChannel.connect(BaseConstants.WEBSOCKET_PRIVATE_PLO_URL);
+  WebSocketChannel ploChannel = IOWebSocketChannel.connect(BaseConstants.WEBSOCKET_PRIVATE_PLO_URL);
+
 
   @override
   void initState() {
@@ -130,215 +126,207 @@ class _ReservationScreenState extends State<ReservationScreen> {
                               TextStyle(fontSize: 20 * fem, color: Colors.grey),
                         ),
                       ),
-                      Center(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(vertical: 5 * fem),
-                          child: Row(
-                            children: [
-                              if (widget.parkinglotDetail.morningFee != 0)
-                                Container(
-                                  padding: EdgeInsets.fromLTRB(
-                                      12 * fem, 10 * fem, 12 * fem, 8 * fem),
-                                  height: 50 * fem,
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey[350],
-                                    borderRadius:
-                                        BorderRadius.circular(6 * fem),
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        margin:
-                                            EdgeInsets.only(bottom: 3 * fem),
-                                        child: Text(
-                                          'Sáng',
-                                          style: TextStyle(
-                                            fontSize: 15 * ffem,
-                                            fontWeight: FontWeight.w400,
-                                            height: 1.175 * ffem / fem,
-                                            color: Color(0xff5b5b5b),
-                                          ),
-                                        ),
-                                      ),
-                                      Text(
-                                        '${formatCurrency.format(widget.parkinglotDetail.morningFee)}',
-                                        style: TextStyle(
-                                          fontSize: 15 * ffem,
-                                          fontWeight: FontWeight.w600,
-                                          height: 1.2175 * ffem / fem,
-                                          color: Color(0xff000000),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              SizedBox(
-                                width: 5 * fem,
-                              ),
-                              if (widget.parkinglotDetail.eveningFee != 0)
-                                Container(
-                                  padding: EdgeInsets.fromLTRB(
-                                      12 * fem, 10 * fem, 12 * fem, 8 * fem),
-                                  height: 50 * fem,
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey[350],
-                                    borderRadius:
-                                        BorderRadius.circular(6 * fem),
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        margin:
-                                            EdgeInsets.only(bottom: 3 * fem),
-                                        child: Text(
-                                          'Tối',
-                                          style: TextStyle(
-                                            fontSize: 15 * ffem,
-                                            fontWeight: FontWeight.w400,
-                                            height: 1.175 * ffem / fem,
-                                            color: Color(0xff5b5b5b),
-                                          ),
-                                        ),
-                                      ),
-                                      Text(
-                                        '${formatCurrency.format(widget.parkinglotDetail.eveningFee)}',
-                                        style: TextStyle(
-                                          fontSize: 15 * ffem,
-                                          fontWeight: FontWeight.w600,
-                                          height: 1.2175 * ffem / fem,
-                                          color: Color(0xff000000),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              SizedBox(
-                                width: 5 * fem,
-                              ),
-                              if (widget.parkinglotDetail.overnightFee != 0)
-                                Container(
-                                  padding: EdgeInsets.fromLTRB(
-                                      12 * fem, 10 * fem, 12 * fem, 8 * fem),
-                                  height: 50 * fem,
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey[350],
-                                    borderRadius:
-                                        BorderRadius.circular(6 * fem),
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        margin:
-                                            EdgeInsets.only(bottom: 3 * fem),
-                                        child: Text(
-                                          'Qua đêm',
-                                          style: TextStyle(
-                                            fontSize: 15 * ffem,
-                                            fontWeight: FontWeight.w400,
-                                            height: 1.175 * ffem / fem,
-                                            color: Color(0xff5b5b5b),
-                                          ),
-                                        ),
-                                      ),
-                                      Text(
-                                        '${formatCurrency.format(widget.parkinglotDetail.overnightFee)}',
-                                        style: TextStyle(
-                                          fontSize: 15 * ffem,
-                                          fontWeight: FontWeight.w600,
-                                          height: 1.2175 * ffem / fem,
-                                          color: Color(0xff000000),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              SizedBox(
-                                width: 5 * fem,
-                              ),
-                              Container(
-                                padding: EdgeInsets.fromLTRB(
-                                    12 * fem, 10 * fem, 12 * fem, 8 * fem),
-                                height: 50 * fem,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[350],
-                                  borderRadius: BorderRadius.circular(6 * fem),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                      margin: EdgeInsets.only(bottom: 3 * fem),
-                                      child: Text(
-                                        'Chỗ trống',
-                                        style: TextStyle(
-                                          fontSize: 15 * ffem,
-                                          fontWeight: FontWeight.w400,
-                                          height: 1.175 * ffem / fem,
-                                          color: Color(0xff5b5b5b),
-                                        ),
-                                      ),
-                                    ),
-                                    Text(
-                                      widget.parkinglotDetail.currentSlot
-                                          .toString(),
-                                      style: TextStyle(
-                                        fontSize: 15 * ffem,
-                                        fontWeight: FontWeight.w600,
-                                        height: 1.2175 * ffem / fem,
-                                        color: Color(0xff000000),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(
-                                width: 5 * fem,
-                              ),
-                              Container(
-                                padding: EdgeInsets.fromLTRB(
-                                    12 * fem, 10 * fem, 12 * fem, 8 * fem),
-                                height: 50 * fem,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[350],
-                                  borderRadius: BorderRadius.circular(6 * fem),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                      margin: EdgeInsets.only(bottom: 3 * fem),
-                                      child: Text(
-                                        'Cách',
-                                        style: TextStyle(
-                                          fontSize: 15 * ffem,
-                                          fontWeight: FontWeight.w400,
-                                          height: 1.175 * ffem / fem,
-                                          color: Color(0xff5b5b5b),
-                                        ),
-                                      ),
-                                    ),
-                                    Text(
-                                      '${widget.distance} m',
-                                      style: TextStyle(
-                                        fontSize: 15 * ffem,
-                                        fontWeight: FontWeight.w600,
-                                        height: 1.2175 * ffem / fem,
-                                        color: Color(0xff000000),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                   Center(
+                     child:
+                     Row(
+                       crossAxisAlignment: CrossAxisAlignment.center,
+                       children: [
+                         if(widget.parkinglotDetail.morningFee != 0)
+                           Container(
+                             padding: EdgeInsets.fromLTRB(
+                                 15 * fem, 10 * fem, 15 * fem, 8 * fem),
+                             height: 50 * fem,
+                             decoration: BoxDecoration(
+                               color: Colors.grey[350],
+                               borderRadius: BorderRadius.circular(6 * fem),
+                             ),
+                             child: Column(
+                               crossAxisAlignment: CrossAxisAlignment.center,
+                               children: [
+
+                                 Container(
+                                   margin: EdgeInsets.only(bottom: 6 * fem),
+                                   child: Text(
+                                     'Sáng',
+                                     style: TextStyle(
+                                       fontSize: 18 * ffem,
+                                       fontWeight: FontWeight.w400,
+                                       height: 1.175 * ffem / fem,
+                                       color: const Color(0xff5b5b5b),
+                                     ),
+                                   ),
+                                 ),
+                                 Text(
+                                   '${formatCurrency.format(widget.parkinglotDetail.morningFee)}',
+                                   style: TextStyle(
+                                     fontSize: 16 * ffem,
+                                     fontWeight: FontWeight.w600,
+                                     height: 1.2175 * ffem / fem,
+                                     color: const Color(0xff000000),
+                                   ),
+                                 ),
+                               ],
+                             ),
+                           ),
+                         SizedBox(
+                           width: 5 * fem,
+                         ),
+                         if(widget.parkinglotDetail.eveningFee != 0)
+                           Container(
+                             padding: EdgeInsets.fromLTRB(
+                                 15 * fem, 10 * fem, 15 * fem, 8 * fem),
+                             height: 50 * fem,
+                             decoration: BoxDecoration(
+                               color: Colors.grey[350],
+                               borderRadius: BorderRadius.circular(6 * fem),
+                             ),
+                             child: Column(
+                               crossAxisAlignment: CrossAxisAlignment.center,
+                               children: [
+                                 Container(
+                                   margin: EdgeInsets.only(bottom: 6 * fem),
+                                   child: Text(
+                                     'Tối',
+                                     style: TextStyle(
+                                       fontSize: 18 * ffem,
+                                       fontWeight: FontWeight.w400,
+                                       height: 1.175 * ffem / fem,
+                                       color: const Color(0xff5b5b5b),
+                                     ),
+                                   ),
+                                 ),
+                                 Text(
+                                   '${formatCurrency.format(widget.parkinglotDetail.eveningFee)}',
+                                   style: TextStyle(
+                                     fontSize: 16 * ffem,
+                                     fontWeight: FontWeight.w600,
+                                     height: 1.2175 * ffem / fem,
+                                     color: const Color(0xff000000),
+                                   ),
+                                 ),
+                               ],
+                             ),
+                           ),
+                         SizedBox(
+                           width: 5 * fem,
+                         ),
+                         if(widget.parkinglotDetail.overnightFee != 0)
+                           Container(
+                             padding: EdgeInsets.fromLTRB(
+                                 12 * fem, 10 * fem, 12 * fem, 8 * fem),
+                             height: 50 * fem,
+                             decoration: BoxDecoration(
+                               color: Colors.grey[350],
+                               borderRadius: BorderRadius.circular(6 * fem),
+                             ),
+                             child: Column(
+                               crossAxisAlignment: CrossAxisAlignment.center,
+                               children: [
+                                 Container(
+                                   margin: EdgeInsets.only(bottom: 6 * fem),
+                                   child: Text(
+                                     'Qua đêm',
+                                     style: TextStyle(
+                                       fontSize: 18 * ffem,
+                                       fontWeight: FontWeight.w400,
+                                       height: 1.175 * ffem / fem,
+                                       color: const Color(0xff5b5b5b),
+                                     ),
+                                   ),
+                                 ),
+                                 Text(
+                                   '${formatCurrency.format(widget.parkinglotDetail.overnightFee)}',
+                                   style: TextStyle(
+                                     fontSize: 16 * ffem,
+                                     fontWeight: FontWeight.w600,
+                                     height: 1.2175 * ffem / fem,
+                                     color: const Color(0xff000000),
+                                   ),
+                                 ),
+                               ],
+                             ),
+                           ),
+                         SizedBox(
+                           width: 5 * fem,
+                         ),
+                         Container(
+                           padding: EdgeInsets.fromLTRB(
+                               12 * fem, 10 * fem, 12 * fem, 8 * fem),
+                           height: 50 * fem,
+                           decoration: BoxDecoration(
+                             color: Colors.grey[350],
+                             borderRadius: BorderRadius.circular(6 * fem),
+                           ),
+                           child: Column(
+                             crossAxisAlignment: CrossAxisAlignment.center,
+                             children: [
+                               Container(
+                                 margin: EdgeInsets.only(bottom: 6 * fem),
+                                 child: Text(
+                                   'Chỗ trống',
+                                   style: TextStyle(
+                                     fontSize: 18 * ffem,
+                                     fontWeight: FontWeight.w400,
+                                     height: 1.175 * ffem / fem,
+                                     color: const Color(0xff5b5b5b),
+                                   ),
+                                 ),
+                               ),
+                               Text(
+                                 widget.parkinglotDetail.currentSlot
+                                     .toString(),
+                                 style: TextStyle(
+                                   fontSize: 16 * ffem,
+                                   fontWeight: FontWeight.w600,
+                                   height: 1.2175 * ffem / fem,
+                                   color: const Color(0xff000000),
+                                 ),
+                               ),
+                             ],
+                           ),
+                         ),
+                         SizedBox(
+                           width: 5 * fem,
+                         ),
+                         Container(
+                           padding: EdgeInsets.fromLTRB(
+                               15 * fem, 10 * fem, 15 * fem, 8 * fem),
+                           height: 50 * fem,
+                           decoration: BoxDecoration(
+                             color: Colors.grey[350],
+                             borderRadius: BorderRadius.circular(6 * fem),
+                           ),
+                           child: Column(
+                             crossAxisAlignment: CrossAxisAlignment.center,
+                             children: [
+                               Container(
+                                 margin: EdgeInsets.only(bottom: 6 * fem),
+                                 child: Text(
+                                   'Cách',
+                                   style: TextStyle(
+                                     fontSize: 18 * ffem,
+                                     fontWeight: FontWeight.w400,
+                                     height: 1.175 * ffem / fem,
+                                     color: const Color(0xff5b5b5b),
+                                   ),
+                                 ),
+                               ),
+                               Text(
+                                 '${widget.distance} m',
+                                 style: TextStyle(
+                                   fontSize: 16 * ffem,
+                                   fontWeight: FontWeight.w600,
+                                   height: 1.2175 * ffem / fem,
+                                   color: const Color(0xff000000),
+                                 ),
+                               ),
+                             ],
+                           ),
+                         ),
+                       ],
+                     ),
+                   ),
+
                       Padding(
                         padding:
                             EdgeInsets.only(top: 30 * fem, bottom: 15 * fem),
@@ -359,8 +347,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                             dropdownType = selectedMap.methodName;
                             if (selectedMap.methodName.contains('Ban ngày')) {
                               price = selectedMap.price;
-                            } else if (selectedMap.methodName
-                                .contains('Ban đêm')) {
+                            } else if (selectedMap.methodName.contains('Ban đêm')) {
                               price = selectedMap.price;
                             } else {
                               price = selectedMap.price;
@@ -427,6 +414,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                         setState(() {
                                           dropdownVehicle =
                                               selectedMap.licensePlate;
+
                                         });
                                       },
                                       dropdownMenuEntries: vehicleProvider
@@ -489,19 +477,15 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                           fontSize: 22 * fem,
                                           fontWeight: FontWeight.bold),
                                     ),
-                                    Text(
-                                      dropdownType,
-                                      style: TextStyle(
-                                        fontSize: 16 * fem,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    )
+                                    Text(dropdownType, style: TextStyle(
+                                      fontSize: 16 * fem,
+                                      fontWeight: FontWeight.bold,
+                                    ),)
                                   ],
                                 ),
                                 InkWell(
                                   onTap: () {
-                                    _showAddReservationDialog(context,
-                                        widget.refreshHomeScreen, reserMethod);
+                                    _showAddReservationDialog(context, widget.refreshHomeScreen, reserMethod);
                                   },
                                   child: Container(
                                     padding: EdgeInsets.fromLTRB(
@@ -559,86 +543,23 @@ class _ReservationScreenState extends State<ReservationScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Biển số',
-                        style: TextStyle(
-                            fontSize: 15, fontWeight: FontWeight.bold)),
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 20, top: 10),
-                      padding: const EdgeInsets.fromLTRB(15, 0, 10, 0),
-                      constraints: const BoxConstraints(
-                        maxWidth: 300,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xfff5f5f5),
-                        borderRadius: BorderRadius.circular(9 * fem),
-                      ),
-                      child: TextFormField(
-                        controller: _vehicleNumberController,
-                        decoration: const InputDecoration(
-                          hintText: '12-A34567',
-                          border: InputBorder.none,
-                        ),
-                      ),
+                Container(
+                  margin: const EdgeInsets.only(bottom: 20, top: 20),
+                  padding: const EdgeInsets.fromLTRB(15, 0, 10, 0),
+                  constraints: const BoxConstraints(
+                    maxWidth: 300,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xfff5f5f5),
+                    borderRadius: BorderRadius.circular(9 * fem),
+                  ),
+                  child: TextFormField(
+                    controller: _vehicleNumberController,
+                    decoration: const InputDecoration(
+                      hintText: '12-A123456',
+                      border: InputBorder.none,
                     ),
-                  ],
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Tên xe',
-                        style: TextStyle(
-                            fontSize: 15, fontWeight: FontWeight.bold)),
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 20, top: 10),
-                      padding: const EdgeInsets.fromLTRB(15, 0, 10, 0),
-                      constraints: const BoxConstraints(
-                        maxWidth: 300,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xfff5f5f5),
-                        borderRadius: BorderRadius.circular(9 * fem),
-                      ),
-                      child: TextFormField(
-                        controller: _vehicleNameController,
-                        decoration: const InputDecoration(
-                          hintText: 'Air Blade 125',
-                          border: InputBorder.none,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Màu sắc',
-                        style: TextStyle(
-                            fontSize: 15, fontWeight: FontWeight.bold)),
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 20, top: 10),
-                      padding: const EdgeInsets.fromLTRB(15, 0, 10, 0),
-                      constraints: const BoxConstraints(
-                        maxWidth: 300,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xfff5f5f5),
-                        borderRadius: BorderRadius.circular(9 * fem),
-                      ),
-                      child: TextFormField(
-                        controller: _vehicleColorController,
-                        decoration: const InputDecoration(
-                          hintText: 'Đen',
-                          border: InputBorder.none,
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -684,23 +605,15 @@ class _ReservationScreenState extends State<ReservationScreen> {
                           ),
                           TextButton(
                             onPressed: () async {
-                              String newlicensePlate =
-                                  _vehicleNumberController.text;
-                              String newMotorColor =
-                                  _vehicleColorController.text;
-                              String newMotorName = _vehicleNameController.text;
-                              if (newlicensePlate.isNotEmpty &&
-                                  newMotorColor.isNotEmpty &&
-                                  newMotorName.isNotEmpty) {
+                              String newVehicle = _vehicleNumberController.text;
+                              if (newVehicle.isNotEmpty) {
                                 try {
-                                  await _vehicleProvider.addNewVehicle(
-                                      newlicensePlate,
-                                      newMotorColor,
-                                      newMotorName);
+                                  await _vehicleProvider
+                                      .addNewVehicle(newVehicle);
                                   Navigator.of(context).pop();
                                 } catch (e) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
+                                    SnackBar(
                                       content: Text('Thêm xe thất bại'),
                                     ),
                                   );
@@ -729,16 +642,13 @@ class _ReservationScreenState extends State<ReservationScreen> {
     );
   }
 
-  Future<void> _showAddReservationDialog(
-      BuildContext context,
-      Function refreshHomeScreen,
-      List<ReservationMethod> reservationMethod) async {
+  Future<void> _showAddReservationDialog(BuildContext context, Function refreshHomeScreen, List<ReservationMethod> reservationMethod) async {
+
     final formatCurrency = NumberFormat.simpleCurrency(locale: 'vi_VN');
-    int methodID = reservationMethod
-        .firstWhere(
+    int methodID = reservationMethod.firstWhere(
           (item) => item.methodName == dropdownType,
-        )
-        .methodID;
+    ).methodID;
+
 
     await showDialog(
       context: context,
@@ -943,18 +853,17 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                 ploChannel.sink.add(messageJson);
                                 print("Đặt chỗ socket: $messageJson");
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text('Đặt chỗ thành công')),
+                                  SnackBar(
+                                    content: Text('Đặt chỗ thành công')
+                                  ),
                                 );
-                                final walletProvider =
-                                    Provider.of<WalletDataProvider>(context,
-                                        listen: false);
-                                await walletProvider.updateTransactions();
-                                refreshHomeScreen();
-                                Navigator.of(context).pop();
+                                  final walletProvider = Provider.of<WalletDataProvider>(context, listen: false);
+                                  await walletProvider.updateTransactions();
+                                  refreshHomeScreen();
+                                  Navigator.of(context).pop();
                               } catch (e) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
+                                  SnackBar(
                                     content: Text('Đặt chỗ thất bại'),
                                   ),
                                 );

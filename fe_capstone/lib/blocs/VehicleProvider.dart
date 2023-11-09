@@ -9,8 +9,8 @@ class VehicleProvider extends ChangeNotifier {
     return vehicles = await VehicleAPI.getVehicleList();
   }
 
-  Future<void> addNewVehicle(String licensePlate, String motorbikeColor, String motorbikeName) async {
-    await VehicleAPI.addNewLicencePlate(licensePlate, motorbikeColor, motorbikeName);
+  Future<void> addNewVehicle(String licensePlate) async {
+    await VehicleAPI.addNewLicencePlate(licensePlate);
     await getVehicleList();
   }
 

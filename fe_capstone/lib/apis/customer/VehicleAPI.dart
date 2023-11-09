@@ -35,19 +35,14 @@ class VehicleAPI{
     }
   }
 
-  static Future<void> addNewLicencePlate(String licencePlate, String motorbikeColor, String motorbikeName) async {
+  static Future<void> addNewLicencePlate(String licencePlate) async {
     try {
       String? token = await UserPreferences.getAccessToken();
       if (token == null) {
         throw Exception('Access token is null');
       }
       final response = await dio.post(
-        '${UrlConstant.LICENSE_PLATE}/addLicensePlate',
-        data: {
-          "licensePlate": licencePlate,
-          "motorbikeColor": motorbikeColor,
-          "motorbikeName": motorbikeName,
-        },
+        '${UrlConstant.LICENSE_PLATE}/addLicensePlate?licensePlate=$licencePlate',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -70,7 +65,7 @@ class VehicleAPI{
         throw Exception('Access token is null');
       }
       final response = await dio.delete(
-        '${UrlConstant.LICENSE_PLATE}/deleteLicensePlate?motorbikeID=$licencePlateID',
+        '${UrlConstant.LICENSE_PLATE}/deleteLicensePlate?licensePlateID=$licencePlateID',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
