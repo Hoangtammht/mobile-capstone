@@ -24,7 +24,6 @@ class _VehicleScreenState extends State<VehicleScreen> {
   void initState() {
     super.initState();
     _vehicleProvider = Provider.of<VehicleProvider>(context, listen: false);
-    vehicleFuture = _vehicleProvider.getVehicleList();
   }
 
   @override
@@ -91,7 +90,7 @@ class _VehicleScreenState extends State<VehicleScreen> {
                     itemCount: vehicleProvider.vehicles.length,
                     itemBuilder: (context, index) {
                       return VehicleCard(
-                        vehicleNumber: vehicleProvider.vehicles[index].licencePlate, vehicleID: vehicleProvider.vehicles[index].licencePlateID,
+                        vehicleNumber: vehicleProvider.vehicles[index].licensePlate, vehicleID: vehicleProvider.vehicles[index].motorbikeID,
                       );
                     },
                   ),

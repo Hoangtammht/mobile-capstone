@@ -1,10 +1,9 @@
-
 import 'package:fe_capstone/constant/base_constant.dart';
 
 class UrlConstant {
   static const AUTH = "${BaseConstants.BASE_URL}/user";
   static const CUSTOMER = "${BaseConstants.BASE_URL}/customer";
-  static const LICENSE_PLATE = "${BaseConstants.BASE_URL}/licensePlate";
+  static const LICENSE_PLATE = "${BaseConstants.BASE_URL}/motorbike";
   static const PARKING_LOT = "${BaseConstants.BASE_URL}/parking";
   static const PARKING_OWNER = "${BaseConstants.BASE_URL}/PLO";
   static const TRANSACTION = "${BaseConstants.BASE_URL}/ploTransaction";
