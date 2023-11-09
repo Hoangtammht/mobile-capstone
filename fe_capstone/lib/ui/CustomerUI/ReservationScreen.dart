@@ -38,6 +38,8 @@ class _ReservationScreenState extends State<ReservationScreen> {
   late VehicleProvider _vehicleProvider;
   late Future<List<ListVehicleCustomer>> vehicleFuture;
   TextEditingController _vehicleNumberController = TextEditingController();
+  TextEditingController _vehicleNameController = TextEditingController();
+  TextEditingController _vehicleColorController = TextEditingController();
   late double price;
   late String dropdownType = '';
   late String dropdownVehicle = '';
@@ -543,24 +545,88 @@ class _ReservationScreenState extends State<ReservationScreen> {
                     ),
                   ),
                 ),
-                Container(
-                  margin: const EdgeInsets.only(bottom: 20, top: 20),
-                  padding: const EdgeInsets.fromLTRB(15, 0, 10, 0),
-                  constraints: const BoxConstraints(
-                    maxWidth: 300,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xfff5f5f5),
-                    borderRadius: BorderRadius.circular(9 * fem),
-                  ),
-                  child: TextFormField(
-                    controller: _vehicleNumberController,
-                    decoration: const InputDecoration(
-                      hintText: '12-A123456',
-                      border: InputBorder.none,
-                    ),
-                  ),
+                const SizedBox(
+                  height: 20,
                 ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Biển số',
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.bold)),
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 20, top: 10),
+                      padding: const EdgeInsets.fromLTRB(15, 0, 10, 0),
+                      constraints: const BoxConstraints(
+                        maxWidth: 300,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xfff5f5f5),
+                        borderRadius: BorderRadius.circular(9 * fem),
+                      ),
+                      child: TextFormField(
+                        controller: _vehicleNumberController,
+                        decoration: const InputDecoration(
+                          hintText: '12-A34567',
+                          border: InputBorder.none,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Tên xe',
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.bold)),
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 20, top: 10),
+                      padding: const EdgeInsets.fromLTRB(15, 0, 10, 0),
+                      constraints: const BoxConstraints(
+                        maxWidth: 300,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xfff5f5f5),
+                        borderRadius: BorderRadius.circular(9 * fem),
+                      ),
+                      child: TextFormField(
+                        controller: _vehicleNameController,
+                        decoration: const InputDecoration(
+                          hintText: 'Air Blade 125',
+                          border: InputBorder.none,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Màu Sắc',
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.bold)),
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 20, top: 10),
+                      padding: const EdgeInsets.fromLTRB(15, 0, 10, 0),
+                      constraints: const BoxConstraints(
+                        maxWidth: 300,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xfff5f5f5),
+                        borderRadius: BorderRadius.circular(9 * fem),
+                      ),
+                      child: TextFormField(
+                        controller: _vehicleColorController,
+                        decoration: const InputDecoration(
+                          hintText: 'Air Blade 125',
+                          border: InputBorder.none,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -605,15 +671,28 @@ class _ReservationScreenState extends State<ReservationScreen> {
                           ),
                           TextButton(
                             onPressed: () async {
-                              String newVehicle = _vehicleNumberController.text;
-                              if (newVehicle.isNotEmpty) {
+                              String newlicensePlate =
+                                  _vehicleNumberController.text;
+                              String newMotorColor =
+                                  _vehicleColorController.text;
+                              String newMotorName = _vehicleNameController.text;
+                              if (newlicensePlate.isNotEmpty &&
+                                  newMotorColor.isNotEmpty &&
+                                  newMotorName.isNotEmpty) {
                                 try {
-                                  await _vehicleProvider
-                                      .addNewVehicle(newVehicle);
+                                  await _vehicleProvider.addNewVehicle(
+                                      newlicensePlate,
+                                      newMotorColor,
+                                      newMotorName);
                                   Navigator.of(context).pop();
-                                } catch (e) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
+                                        content: Text('Thêm xe thành công')
+                                    ),
+                                  );
+                                } catch (e) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                   const SnackBar(
                                       content: Text('Thêm xe thất bại'),
                                     ),
                                   );
