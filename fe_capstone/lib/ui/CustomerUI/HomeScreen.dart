@@ -82,7 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
       reservationID = data.reservationID;
       if (data.statusID == 5) {
         if (!isRatingDialogDisplayed) {
-          _RatingDialog(context, data);
+          _RatingDialog(context, data, handleRating);
           setState(() {
             isRatingDialogDisplayed = true;
           });
@@ -91,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
         if(reservationID != 0){
           final message = {
             "reservationID": reservationID.toString(),
-            "content": "Connected",
+            "content": "Connected"
           };
           final messageJson = jsonEncode(message);
           channel.sink.add(messageJson);
@@ -131,14 +131,27 @@ class _HomeScreenState extends State<HomeScreen> {
     print(message.toString());
     if (message.toString().contains("GetStatus")) {
       customerHome = _getHomeStatus();
-      customerHome!.then((data) {
+        customerHome!.then((data) {
         reservationID = data.reservationID;
         if (data.statusID == 5) {
           if (!isRatingDialogDisplayed) {
-            _RatingDialog(context, data);
+            _RatingDialog(context, data, handleRating);
             setState(() {
               isRatingDialogDisplayed = true;
             });
+          }
+        }
+        if(reservationID != 0){
+          if(data.statusID == 2){
+          String endTime  = convertToDesiredFormat(data.endTime);
+          DateTime endDateTime = DateTime.parse(endTime);
+          DateTime beforeUpdateLater = endDateTime.subtract(Duration(minutes: 1));
+          DateTime afterUpdateStatusLater = endDateTime.add(Duration(seconds: 3));
+          print('Reservation lúc đặt là: ${reservationID}');
+          print('Thời gian kết thúc $endTime');
+          print('Thời gian thông báo updated later trước 1 phút: $beforeUpdateLater');
+          print('Thời gian phải check-out: $afterUpdateStatusLater');
+          callApiBeforeUpdateStatusLater(beforeUpdateLater.difference(DateTime.now()), afterUpdateStatusLater, reservationID);
           }
         }
       });
@@ -174,7 +187,6 @@ class _HomeScreenState extends State<HomeScreen> {
             print('Reservation lúc đặt là: ${reservationID}');
             print('Thời gian đặt $startTime');
             print('Thời gian cancel $cancelBookingTime');
-            print('StatusID ${data.statusID}');
             print('Thời gian thông báo check-in trước 1 phút: $beforeCancelBookingTime');
             print('Thời gian phải check-in: $cancelBookingDateTime');
             callApiBeforeCancelBooking(beforeCancelBookingTime.difference(DateTime.now()), cancelBookingDateTime, reservationID);
@@ -248,6 +260,42 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  void callApiBeforeUpdateStatusLater(Duration beforeUpdate, DateTime afterUpdate, int reservationID) async {
+    try {
+      bool isUpdateSuccessful = await Future.delayed(beforeUpdate, () async {
+        return await ReservationAPI.updateReservationToLater(reservationID);
+      });
+      print('Status của reservation trước khi trễ là $isUpdateSuccessful');
+      if (isUpdateSuccessful) {
+        print('Status hiện tại trước 15 phút');
+      } else {
+        callApiAfterStatusLater(afterUpdate.difference(DateTime.now()), reservationID);
+      }
+    } catch (e) {
+      print('Error calling API: $e');
+    }
+  }
+
+  Future<void> callApiAfterStatusLater(Duration duration, int reservationID) async {
+    try {
+      await Future.delayed(duration, () async {
+        bool isUpdateSuccessful = await ReservationAPI.updateReservationToLater(reservationID);
+        print('Status của reservation sau 15 phút là $isUpdateSuccessful');
+        customerHome = _getHomeStatus();
+        customerHome!.then((data) {
+          final ploMessage = {
+            "ploID": data.ploID.toString(),
+            "content": "GetParking"
+          };
+          final messageJsonPLO = jsonEncode(ploMessage);
+          ploChannel.sink.add(messageJsonPLO);
+        });
+      });
+    } catch (e) {
+      print('Error calling API: $e');
+    }
+  }
+
   Duration parseDuration(String durationString) {
     List<String> timeParts = durationString.split(':');
     int hours = int.parse(timeParts[0]);
@@ -266,7 +314,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void handleRating() {
     setState(() {
-      isRatingDialogDisplayed = true;
+      isRatingDialogDisplayed = false;
     });
   }
 
@@ -776,7 +824,7 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 Future<void> _RatingDialog(
-    BuildContext context, CustomerHome customerHome) async {
+    BuildContext context, CustomerHome customerHome, Function checkRating) async {
   late TextEditingController _feedbackController = TextEditingController();
   int selectedRating = 0;
   showDialog(
@@ -895,6 +943,7 @@ Future<void> _RatingDialog(
                                 try {
                                   await ReservationAPI.skipRating(
                                       customerHome.reservationID);
+                                  checkRating();
                                   Navigator.of(context).pop();
                                 } catch (e) {
                                   Navigator.of(context)
@@ -945,6 +994,7 @@ Future<void> _RatingDialog(
                                         customerHome.ploID,
                                         customerHome.reservationID,
                                         selectedRating);
+                                    checkRating();
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                           content:
