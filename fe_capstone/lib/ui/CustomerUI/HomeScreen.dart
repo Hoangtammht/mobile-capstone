@@ -836,98 +836,91 @@ Future<void> _RatingDialog(
               borderRadius: BorderRadius.circular(23),
             ),
             backgroundColor: const Color(0xffffffff),
-            child: Container(
-              padding: EdgeInsets.all(20),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Center(
-                    child: Text(
-                      "GỬI ĐÁNH GIÁ",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 15 * fem,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Bãi xe:',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
-                      ),
-                      Text(
-                        customerHome.parkingName,
-                        style: TextStyle(
-                          fontSize: 18,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 15 * fem,
-                  ),
-                  Center(
-                    child: RatingBar.builder(
-                      initialRating: 0,
-                      minRating: 1,
-                      direction: Axis.horizontal,
-                      allowHalfRating: false,
-                      itemCount: 5,
-                      itemSize: 33,
-                      itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                      itemBuilder: (context, _) => Icon(
-                        Icons.star,
-                        color: Colors.amber,
-                      ),
-                      onRatingUpdate: (rating) {
-                        selectedRating = rating.toInt();
-                      },
-                    ),
-                  ),
-                  SizedBox(
-                    height: 15 * fem,
-                  ),
                   Container(
-                    margin: EdgeInsets.only(bottom: 20, top: 20),
-                    padding: EdgeInsets.fromLTRB(15, 0, 10, 0),
-                    constraints: BoxConstraints(
-                      maxWidth: 300,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Color(0xfff5f5f5),
-                      borderRadius: BorderRadius.circular(9 * fem),
-                    ),
-                    child: TextFormField(
-                      controller: _feedbackController,
-                      decoration: InputDecoration(
-                        hintText: 'Nội dung',
-                        border: InputBorder.none,
-                        isDense: true,
-                      ),
-                      maxLines: 5,
+                    padding: EdgeInsets.all(20),
+                    child: Column(
+                      children: [
+                        Center(
+                          child: Text(
+                            "GỬI ĐÁNH GIÁ",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 15 * fem,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Bãi xe:',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                              ),
+                            ),
+                            Text(
+                              customerHome.parkingName,
+                              style: TextStyle(
+                                fontSize: 15,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 15 * fem,
+                        ),
+                        Center(
+                          child: RatingBar.builder(
+                            initialRating: 0,
+                            minRating: 1,
+                            direction: Axis.horizontal,
+                            allowHalfRating: false,
+                            itemCount: 5,
+                            itemSize: 33,
+                            itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                            itemBuilder: (context, _) => Icon(
+                              Icons.star,
+                              color: Colors.amber,
+                            ),
+                            onRatingUpdate: (rating) {
+                              selectedRating = rating.toInt();
+                            },
+                          ),
+                        ),
+                        SizedBox(
+                          height: 15 * fem,
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(bottom: 20, top: 20),
+                          padding: EdgeInsets.fromLTRB(15, 0, 10, 0),
+                          constraints: BoxConstraints(
+                            maxWidth: 300,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Color(0xfff5f5f5),
+                            borderRadius: BorderRadius.circular(9 * fem),
+                          ),
+                          child: TextFormField(
+                            controller: _feedbackController,
+                            decoration: InputDecoration(
+                              hintText: 'Nội dung',
+                              border: InputBorder.none,
+                              isDense: true,
+                            ),
+                            maxLines: 5,
+                          ),
+                        ),
+                        SizedBox(height: 15 * fem),
+                      ],
                     ),
                   ),
-                  SizedBox(height: 15 * fem),
-
-                  // Center(
-                  //     child: Text(
-                  //       '*Không thể gửi vì điền thiếu thông tin!',
-                  //       style: TextStyle(
-                  //         fontWeight: FontWeight.bold,
-                  //         fontSize: 10,
-                  //         color: Colors.red,
-                  //         fontStyle: FontStyle.italic,
-                  //       ),
-                  //   ),
-                  // ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -1026,8 +1019,7 @@ Future<void> _RatingDialog(
                   ),
                 ],
               ),
-            ),
-          );
+            );
     },
   );
 }
@@ -1128,7 +1120,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                                 },
                                 child: Container(
                                   margin: EdgeInsets.only(left: 5 * fem),
-                                  width: 70 * fem,
+                                  width: 80 * fem,
                                   height: 25 * fem,
                                   decoration: BoxDecoration(
                                     border:
@@ -1333,7 +1325,7 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                           color: Colors.white,
                           child: Padding(
                             padding: EdgeInsets.only(
-                                left: 10 * fem, right: 10 * fem, top: 5 * fem),
+                                left: 12 * fem, right: 12 * fem, top: 5 * fem),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -1344,7 +1336,7 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                                     Text(
                                       parkingLotDetail.parkingName,
                                       style: TextStyle(
-                                          fontSize: 30 * fem,
+                                          fontSize: 25 * fem,
                                           fontWeight: FontWeight.bold),
                                     ),
                                     IconButton(
@@ -1373,8 +1365,8 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                                     children: [
                                       if (parkingLotDetail.morningFee != 0)
                                         Container(
-                                          padding: EdgeInsets.fromLTRB(15 * fem,
-                                              10 * fem, 15 * fem, 8 * fem),
+                                          padding: EdgeInsets.fromLTRB(12 * fem,
+                                              10 * fem, 12 * fem, 8 * fem),
                                           height: 50 * fem,
                                           decoration: BoxDecoration(
                                             color: Colors.grey[350],
@@ -1387,7 +1379,7 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                                             children: [
                                               Container(
                                                 margin: EdgeInsets.only(
-                                                    bottom: 6 * fem),
+                                                    bottom: 3 * fem),
                                                 child: Text(
                                                   'Sáng',
                                                   style: TextStyle(
@@ -1415,8 +1407,8 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                                       ),
                                       if (parkingLotDetail.eveningFee != 0)
                                         Container(
-                                          padding: EdgeInsets.fromLTRB(15 * fem,
-                                              10 * fem, 15 * fem, 8 * fem),
+                                          padding: EdgeInsets.fromLTRB(12 * fem,
+                                              10 * fem, 12 * fem, 8 * fem),
                                           height: 50 * fem,
                                           decoration: BoxDecoration(
                                             color: Colors.grey[350],
@@ -1429,7 +1421,7 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                                             children: [
                                               Container(
                                                 margin: EdgeInsets.only(
-                                                    bottom: 6 * fem),
+                                                    bottom: 3 * fem),
                                                 child: Text(
                                                   'Tối',
                                                   style: TextStyle(
@@ -1457,8 +1449,8 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                                       ),
                                       if (parkingLotDetail.overnightFee != 0)
                                         Container(
-                                          padding: EdgeInsets.fromLTRB(15 * fem,
-                                              10 * fem, 15 * fem, 8 * fem),
+                                          padding: EdgeInsets.fromLTRB(12 * fem,
+                                              10 * fem, 12 * fem, 8 * fem),
                                           height: 50 * fem,
                                           decoration: BoxDecoration(
                                             color: Colors.grey[350],
@@ -1471,7 +1463,7 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                                             children: [
                                               Container(
                                                 margin: EdgeInsets.only(
-                                                    bottom: 6 * fem),
+                                                    bottom: 3 * fem),
                                                 child: Text(
                                                   'Qua đêm',
                                                   style: TextStyle(
@@ -1512,7 +1504,7 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                                           children: [
                                             Container(
                                               margin: EdgeInsets.only(
-                                                  bottom: 6 * fem),
+                                                  bottom: 3 * fem),
                                               child: Text(
                                                 'Chỗ trống',
                                                 style: TextStyle(
@@ -1540,8 +1532,8 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                                         width: 5 * fem,
                                       ),
                                       Container(
-                                        padding: EdgeInsets.fromLTRB(20 * fem,
-                                            10 * fem, 20 * fem, 8 * fem),
+                                        padding: EdgeInsets.fromLTRB(12 * fem,
+                                            10 * fem, 12 * fem, 8 * fem),
                                         height: 50 * fem,
                                         decoration: BoxDecoration(
                                           color: Colors.grey[350],
@@ -1554,7 +1546,7 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                                           children: [
                                             Container(
                                               margin: EdgeInsets.only(
-                                                  bottom: 6 * fem),
+                                                  bottom: 3 * fem),
                                               child: Text(
                                                 'Cách',
                                                 style: TextStyle(
@@ -2035,7 +2027,7 @@ class CheckInContent extends StatelessWidget {
                             left: 10 * fem, right: 10 * fem, bottom: 20 * fem),
                         child: Center(
                             child: Text(
-                          'Check-in',
+                          'Xe chưa tới bãi',
                           style: TextStyle(
                               fontSize: 30 * fem,
                               fontWeight: FontWeight.bold,
@@ -2541,7 +2533,7 @@ class CheckOutContent extends StatelessWidget {
                           alignment: Alignment.bottomCenter,
                           child: Center(
                               child: Text(
-                            'Check-out',
+                            'Xe đang trong bãi',
                             style: TextStyle(
                                 fontSize: 30 * fem,
                                 fontWeight: FontWeight.bold,

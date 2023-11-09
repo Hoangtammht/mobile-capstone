@@ -14,7 +14,7 @@ class TransactionCard extends StatelessWidget {
     return Container(
       margin: EdgeInsets.fromLTRB(4 * fem, 0 * fem, 8 * fem, 15 * fem),
       width: double.infinity,
-      height: 45 * fem,
+      height: 60 * fem,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
