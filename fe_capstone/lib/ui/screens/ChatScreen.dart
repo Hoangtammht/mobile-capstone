@@ -97,7 +97,6 @@ class _ChatScreenState extends State<ChatScreen> {
               children: [
                 Expanded(
                   child: StreamBuilder(
-                    // stream: getAllMessages(),
                     stream: stream,
                     builder: (context, snapshot) {
                       switch (snapshot.connectionState) {

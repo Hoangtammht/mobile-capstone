@@ -22,17 +22,8 @@ class _MessageCardState extends State<MessageCard> {
   @override
   void initState() {
     super.initState();
-    // getUserID();
   }
 
-  // void getUserID() async {
-  //   String? name = await UserPreferences.getUserID();
-  //   if (userID != null) {
-  //     setState(() {
-  //       userID = name!;
-  //     });
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -58,30 +49,11 @@ class _MessageCardState extends State<MessageCard> {
                   topLeft: Radius.circular(30),
                   topRight: Radius.circular(30),
                   bottomRight: Radius.circular(30))),
-          child: widget.message.type == Type.text
-              ?
-          //show text
+          child:
           Text(
             widget.message.msg,
             style: const TextStyle(fontSize: 15, color: Colors.black87),
           )
-              :
-          //show image
-          ClipRRect(
-            borderRadius: BorderRadius.circular(15),
-            child: CachedNetworkImage(
-              imageUrl: 'https://fiftyfifty.b-cdn.net/eparking/scaled_Screenshot_20231022-095624_Animal Puzzle.jpg',
-              placeholder: (context, url) => const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                ),
-              ),
-              errorWidget: (context, url, error) =>
-              const Icon(Icons.image, size: 70),
-            ),
-          ),
         ),
       ),
 
