@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:fe_capstone/apis/FirebaseAPI.dart';
 import 'package:fe_capstone/apis/plo/ParkingAPI.dart';
 import 'package:fe_capstone/constant/base_constant.dart';
 import 'package:fe_capstone/main.dart';
@@ -29,7 +30,8 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
   String scannedText = "";
   late Future<ReservationByLicensePlate> reservationByLicensePlate;
 
-  WebSocketChannel channel = IOWebSocketChannel.connect(BaseConstants.WEBSOCKET_PRIVATE_RESERVATION_URL);
+  WebSocketChannel channel = IOWebSocketChannel.connect(
+      BaseConstants.WEBSOCKET_PRIVATE_RESERVATION_URL);
   late int reservationIDByScan;
 
   @override
@@ -44,7 +46,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
         backgroundColor: Theme.of(context).primaryColor,
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(
+          icon: const Icon(
             Icons.arrow_back_ios_new,
             color: Colors.white,
           ),
@@ -58,7 +60,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
             fontSize: 30 * ffem,
             fontWeight: FontWeight.w700,
             height: 1.175 * ffem / fem,
-            color: Color(0xffffffff),
+            color: const Color(0xffffffff),
           ),
         ),
       ),
@@ -90,8 +92,8 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                         padding: const EdgeInsets.only(top: 10),
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            primary: Colors.white,
-                            onPrimary: Colors.grey,
+                            backgroundColor: Colors.white,
+                            foregroundColor: Colors.grey,
                             shadowColor: Colors.grey[400],
                             elevation: 10,
                             shape: RoundedRectangleBorder(
@@ -106,7 +108,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(
+                               const Icon(
                                   Icons.camera_alt,
                                   size: 30,
                                 ),
@@ -134,7 +136,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return CircularProgressIndicator();
+                            return const CircularProgressIndicator();
                           } else if (snapshot.hasError) {
                             return Text('Error: ${snapshot.error}');
                           } else {
@@ -154,21 +156,19 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                       fontSize: 25 * ffem,
                                       fontWeight: FontWeight.w600,
                                       height: 1.175 * ffem / fem,
-                                      color: Theme.of(context)
-                                          .primaryColor,
+                                      color: Theme.of(context).primaryColor,
                                     ),
                                     children: <TextSpan>[
-                                      TextSpan(
+                                     const TextSpan(
                                         text: 'Biển số ',
                                       ),
                                       TextSpan(
                                         text: scannedText,
-                                        style: TextStyle(
-                                          color: Colors
-                                              .black,
+                                        style: const TextStyle(
+                                          color: Colors.black,
                                         ),
                                       ),
-                                      TextSpan(
+                                     const TextSpan(
                                         text: ' không có trong giao dịch nào',
                                       ),
                                     ],
@@ -176,14 +176,14 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                 ),
                               );
                             } else {
-                               List<String> parts;
-                               String hours = '';
-                               String date = '';
-                               if(data.checkIn != ""){
-                                 parts = data.checkIn.split(' - ');
-                                 hours = parts[0];
-                                 date =  parts[1];
-                               }
+                              List<String> parts;
+                              String hours = '';
+                              String date = '';
+                              if (data.checkIn != "") {
+                                parts = data.checkIn.split(' - ');
+                                hours = parts[0];
+                                date = parts[1];
+                              }
 
                               return Container(
                                   padding: EdgeInsets.symmetric(
@@ -201,7 +201,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                                   fontSize: 35 * fem)),
                                         ],
                                       ),
-                                      SizedBox(height: 10.0),
+                                   const SizedBox(height: 10.0),
                                       Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
@@ -217,7 +217,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                                   fontSize: 25 * fem)),
                                         ],
                                       ),
-                                      SizedBox(height: 10.0),
+                                     const SizedBox(height: 10.0),
                                       if (checkStatus == 2 || checkStatus == 3)
                                         Row(
                                           mainAxisAlignment:
@@ -234,24 +234,24 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                                     fontSize: 25 * fem)),
                                           ],
                                         ),
-                                      SizedBox(height: 10.0),
+                                     const SizedBox(height: 10.0),
                                       if (checkStatus == 2 || checkStatus == 3)
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text('Ngày xe vào: ',
-                                              style: TextStyle(
-                                                  fontSize: 25 * fem,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Theme.of(context)
-                                                      .primaryColor)),
-                                          Text(date,
-                                              style: TextStyle(
-                                                  fontSize: 25 * fem)),
-                                        ],
-                                      ),
-                                      SizedBox(height: 10.0),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text('Ngày xe vào: ',
+                                                style: TextStyle(
+                                                    fontSize: 25 * fem,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Theme.of(context)
+                                                        .primaryColor)),
+                                            Text(date,
+                                                style: TextStyle(
+                                                    fontSize: 25 * fem)),
+                                          ],
+                                        ),
+                                     const SizedBox(height: 10.0),
                                       Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
@@ -266,7 +266,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                             width: 110 * fem,
                                             height: 30 * fem,
                                             decoration: BoxDecoration(
-                                              color: Color(0xffe4f6e6),
+                                              color: const Color(0xffe4f6e6),
                                               borderRadius:
                                                   BorderRadius.circular(
                                                       3 * fem),
@@ -279,18 +279,17 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                                   fontSize: 25 * ffem,
                                                   fontWeight: FontWeight.w400,
                                                   height: 1.2175 * ffem / fem,
-                                                  color: Color(0xff2b7031),
+                                                  color: const Color(0xff2b7031),
                                                 ),
                                               ),
                                             ),
                                           ),
                                         ],
                                       ),
-
                                       if (checkStatus == 3)
                                         Column(
                                           children: [
-                                            SizedBox(
+                                          const  SizedBox(
                                               height: 20,
                                             ),
                                             Center(
@@ -299,11 +298,11 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                                   style: TextStyle(
                                                       color: Colors.red,
                                                       fontSize: 20 * fem,
-                                                      fontWeight: FontWeight.w400)),
+                                                      fontWeight:
+                                                          FontWeight.w400)),
                                             ),
                                           ],
                                         ),
-
                                       if (checkStatus == 1)
                                         Row(
                                             mainAxisAlignment:
@@ -311,7 +310,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                             children: [
                                               Container(
                                                 margin:
-                                                    EdgeInsets.only(top: 40.0),
+                                                   const EdgeInsets.only(top: 40.0),
                                                 width: 150 * fem,
                                                 height: 42 * fem,
                                                 decoration: BoxDecoration(
@@ -326,7 +325,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                                   ),
                                                   boxShadow: [
                                                     BoxShadow(
-                                                      color: Color(0x82000000),
+                                                      color: const Color(0x82000000),
                                                       offset: Offset(
                                                           0 * fem, 4 * fem),
                                                       blurRadius: 10 * fem,
@@ -365,7 +364,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                               ),
                                               Container(
                                                 margin:
-                                                    EdgeInsets.only(top: 40.0),
+                                                   const EdgeInsets.only(top: 40.0),
                                                 height: 42 * fem,
                                                 width: 150 * fem,
                                                 decoration: BoxDecoration(
@@ -376,7 +375,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                                           9 * fem),
                                                   boxShadow: [
                                                     BoxShadow(
-                                                      color: Color(0x82000000),
+                                                      color: const Color(0x82000000),
                                                       offset: Offset(
                                                           0 * fem, 4 * fem),
                                                       blurRadius: 10 * fem,
@@ -400,7 +399,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                                         height:
                                                             1.175 * ffem / fem,
                                                         color:
-                                                            Color(0xffffffff),
+                                                           const Color(0xffffffff),
                                                       ),
                                                     ),
                                                   ),
@@ -414,7 +413,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                             children: [
                                               Container(
                                                 margin:
-                                                    EdgeInsets.only(top: 40.0),
+                                                   const EdgeInsets.only(top: 40.0),
                                                 width: 150 * fem,
                                                 height: 42 * fem,
                                                 decoration: BoxDecoration(
@@ -429,7 +428,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                                   ),
                                                   boxShadow: [
                                                     BoxShadow(
-                                                      color: Color(0x82000000),
+                                                      color: const Color(0x82000000),
                                                       offset: Offset(
                                                           0 * fem, 4 * fem),
                                                       blurRadius: 10 * fem,
@@ -468,7 +467,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                               ),
                                               Container(
                                                 margin:
-                                                    EdgeInsets.only(top: 40.0),
+                                                  const  EdgeInsets.only(top: 40.0),
                                                 width: 150 * fem,
                                                 height: 42 * fem,
                                                 decoration: BoxDecoration(
@@ -479,7 +478,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                                           9 * fem),
                                                   boxShadow: [
                                                     BoxShadow(
-                                                      color: Color(0x82000000),
+                                                      color: const Color(0x82000000),
                                                       offset: Offset(
                                                           0 * fem, 4 * fem),
                                                       blurRadius: 10 * fem,
@@ -489,7 +488,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                                 child: TextButton(
                                                   onPressed: () {
                                                     _showUpdateVehicleExitDialog(
-                                                        context, checkStatus);
+                                                        context, checkStatus, data.customerID);
                                                   },
                                                   child: Center(
                                                     child: Text(
@@ -509,13 +508,12 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                                   ),
                                                 ),
                                               ),
-                                              SizedBox(
-                                                height: 20 * fem,
-                                              ),
-                                            ])
+                                            ]),
+                                      SizedBox(
+                                        height: 20 * fem,
+                                      ),
                                     ],
                                   ));
-
                             }
                           }
                         },
@@ -580,15 +578,18 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
             borderRadius: BorderRadius.circular(23),
           ),
           backgroundColor: const Color(0xffffffff),
-          child: Container(
-            padding: EdgeInsets.all(30),
+          child:
+
+          Container(
+            padding: const EdgeInsets.all(30),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+
                 Center(
                   child: Container(
-                    padding: EdgeInsets.only(bottom: 30),
-                    child: Text.rich(
+                    padding: const EdgeInsets.only(bottom: 30),
+                    child: const Text.rich(
                       TextSpan(children: [
                         TextSpan(
                             text: 'Cập nhập trạng thái',
@@ -609,10 +610,10 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
 
                 Center(
                   child: Container(
-                    padding: EdgeInsets.only(bottom: 30),
+                    padding: const EdgeInsets.only(bottom: 30),
                     child: Text(
                       licensePlate,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
                       ),
@@ -628,13 +629,13 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                         children: [
                           Container(
                             height: 1,
-                            color: Color(0xffb3abab),
+                            color: const Color(0xffb3abab),
                           ),
                           TextButton(
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
-                            child: Text(
+                            child: const Text(
                               'Hủy',
                               style: TextStyle(
                                 fontSize: 20,
@@ -651,7 +652,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                         Container(
                           width: 1,
                           height: 48,
-                          color: Color(0xffb3abab),
+                          color: const Color(0xffb3abab),
                         ),
                       ],
                     ),
@@ -660,7 +661,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                         children: [
                           Container(
                             height: 1,
-                            color: Color(0xffb3abab),
+                            color: const Color(0xffb3abab),
                           ),
                           TextButton(
                             onPressed: () async {
@@ -670,13 +671,14 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                         scannedText);
                                 widget.updateUI();
                                 final message = {
-                                  "reservationID": reservationIDByScan.toString(),
+                                  "reservationID":
+                                      reservationIDByScan.toString(),
                                   "content": "GetStatus"
                                 };
                                 final messageJson = jsonEncode(message);
                                 channel.sink.add(messageJson);
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
+                                const  SnackBar(
                                     content: Text('Check-in thành công'),
                                   ),
                                 );
@@ -687,16 +689,16 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                 });
                               } catch (e) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
+                                const SnackBar(
                                     content: Text('Việc check-in thất bại'),
                                   ),
                                 );
                               }
                               Navigator.of(context).pop();
                             },
-                            child: Text(
+                            child: const Text(
                               'Xác nhận',
-                              style: TextStyle(
+                              style:  TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w600,
                                 color: Color(0xffff3737),
@@ -716,7 +718,8 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
     );
   }
 
-  Future<void> _showUpdateVehicleExitDialog(BuildContext context, int checkStatus) async {
+  Future<void> _showUpdateVehicleExitDialog(
+      BuildContext context, int checkStatus, String customerID) async {
     await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -726,14 +729,14 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
           ),
           backgroundColor: const Color(0xffffffff),
           child: Container(
-            padding: EdgeInsets.all(10),
+            padding: const EdgeInsets.all(10),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Center(
                   child: Container(
-                    padding: EdgeInsets.only(bottom: 30),
-                    child: Text.rich(
+                    padding: const EdgeInsets.only(bottom: 30),
+                    child: const Text.rich(
                       TextSpan(children: [
                         TextSpan(
                             text: 'Cập nhập trạng thái',
@@ -752,10 +755,10 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                 ),
                 Center(
                   child: Container(
-                    padding: EdgeInsets.only(bottom: 30),
+                    padding: const EdgeInsets.only(bottom: 30),
                     child: Text(
                       scannedText,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 22,
                       ),
@@ -764,7 +767,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                   ),
                 ),
                 if (checkStatus == 3)
-                  Text.rich(
+                  const Text.rich(
                     TextSpan(children: [
                       TextSpan(
                           text: '*Lưu ý: ',
@@ -788,13 +791,13 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                         children: [
                           Container(
                             height: 1,
-                            color: Color(0xffb3abab),
+                            color: const Color(0xffb3abab),
                           ),
                           TextButton(
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
-                            child: Text(
+                            child: const Text(
                               'Hủy',
                               style: TextStyle(
                                 fontSize: 20,
@@ -811,7 +814,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                         Container(
                           width: 1,
                           height: 48,
-                          color: Color(0xffb3abab),
+                          color: const Color(0xffb3abab),
                         ),
                       ],
                     ),
@@ -820,41 +823,47 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                         children: [
                           Container(
                             height: 1,
-                            color: Color(0xffb3abab),
+                            color: const Color(0xffb3abab),
                           ),
                           TextButton(
                             onPressed: () async {
                               try {
                                 await ParkingAPI
-                                    .checkoutReservationWithLicensePlate(
-                                        scannedText);
-                                widget.updateUI();
-                                final message = {
-                                  "reservationID": reservationIDByScan.toString(),
-                                  "content": "GetStatus"
-                                };
-                                final messageJson = jsonEncode(message);
-                                channel.sink.add(messageJson);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('Check-out thành công'),
-                                  ),
-                                );
-                                setState(() {
-                                  imageFile = null;
-                                  scannedText = "";
-                                  status = false;
+                                        .checkoutReservationWithLicensePlate(
+                                            scannedText)
+                                    .then((_) async {
+                                      await FirebaseAPI.deleteUser(customerID).then((_){
+                                        widget.updateUI();
+                                        final message = {
+                                          "reservationID":
+                                          reservationIDByScan.toString(),
+                                          "content": "GetStatus"
+                                        };
+                                        final messageJson = jsonEncode(message);
+                                        channel.sink.add(messageJson);
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                         const SnackBar(
+                                            content: Text('Check-out thành công'),
+                                          ),
+                                        );
+                                        setState(() {
+                                          imageFile = null;
+                                          scannedText = "";
+                                          status = false;
+                                        });
+                                      });
+
                                 });
                               } catch (e) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
+                                 const SnackBar(
                                     content: Text('Việc check-out thất bại'),
                                   ),
                                 );
                               }
                               Navigator.of(context).pop();
                             },
-                            child: Text(
+                            child: const Text(
                               'Xác nhận',
                               style: TextStyle(
                                 fontSize: 20,

@@ -1,4 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:fe_capstone/apis/FirebaseAPI.dart';
+import 'package:fe_capstone/blocs/UserPreferences.dart';
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/models/Message.dart';
 import 'package:fe_capstone/ui/helper/dialogs.dart';
@@ -7,27 +9,40 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class MessageCard extends StatefulWidget {
-  final Message message;
-  const MessageCard({Key? key, required this.message}) : super(key: key);
+  final MessageCustom message;
+  final String userID;
+  const MessageCard({Key? key, required this.message, required this.userID}) : super(key: key);
 
   @override
   State<MessageCard> createState() => _MessageCardState();
 }
 
 class _MessageCardState extends State<MessageCard> {
+
+  @override
+  void initState() {
+    super.initState();
+    // getUserID();
+  }
+
+  // void getUserID() async {
+  //   String? name = await UserPreferences.getUserID();
+  //   if (userID != null) {
+  //     setState(() {
+  //       userID = name!;
+  //     });
+  //   }
+  // }
+
   @override
   Widget build(BuildContext context) {
-    bool isMe = '1' == widget.message.fromId;
-    return InkWell(
-      child: isMe ? _ownerMessage() : _receiveMessage(),
-    );
+    return widget.message.fromId == widget.userID ?   _ownerMessage() : _receiveMessage() ;
   }
 
   Widget _receiveMessage() {
-    if (widget.message.sent.isEmpty) {
-      // APIs.updateMessageReadStatus(widget.message);
+    if (widget.message.toId == widget.userID && widget.message.read.isEmpty) {
+      FirebaseAPI.updateMessageStatus(widget.message);
     }
-
     return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
       Flexible(
         child: Container(
@@ -69,17 +84,16 @@ class _MessageCardState extends State<MessageCard> {
           ),
         ),
       ),
+
       Padding(
         padding: EdgeInsets.only(right: mq.width * .04),
         child: Text(
-          MyDateUtil.getFormattedTime(
+          MyDateUtil.getMessageTime(
               context: context, time: widget.message.sent),
           style: const TextStyle(fontSize: 13, color: Colors.black54),
         ),
       ),
-      SizedBox(
-        width: mq.width * .04,
-      )
+
     ]);
   }
 
@@ -89,17 +103,17 @@ class _MessageCardState extends State<MessageCard> {
         SizedBox(
           width: mq.width * .04,
         ),
-        if (widget.message.read.isNotEmpty)
-          Icon(
+        const SizedBox(
+          width: 2,
+        ),
+        if(widget.message.read.isNotEmpty)
+          const Icon(
             Icons.done_all_rounded,
             color: Colors.blue,
             size: 20,
           ),
-        SizedBox(
-          width: 2,
-        ),
         Text(
-          MyDateUtil.getFormattedTime(
+          MyDateUtil.getMessageTime(
               context: context, time: widget.message.sent),
           style: const TextStyle(fontSize: 13, color: Colors.black54),
         ),
@@ -112,7 +126,7 @@ class _MessageCardState extends State<MessageCard> {
           margin: EdgeInsets.symmetric(
               horizontal: mq.width * .04, vertical: mq.height * .01),
           decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 221, 245, 255),
+              color: const Color.fromARGB(255, 218, 255, 176),
               border: Border.all(color: Colors.lightGreen),
               borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(30),

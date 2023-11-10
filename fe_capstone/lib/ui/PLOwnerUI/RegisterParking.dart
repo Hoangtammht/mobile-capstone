@@ -6,12 +6,9 @@ import 'package:fe_capstone/blocs/UserPreferences.dart';
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/models/RequestResgisterParking.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/RegistrationFeeScreen.dart';
-import 'package:fe_capstone/ui/PLOwnerUI/WaitingApprovalScreen.dart';
-import 'package:fe_capstone/ui/helper/ConfirmDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:open_street_map_search_and_pick/open_street_map_search_and_pick.dart';
-import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
 class RegisterParking extends StatefulWidget {
   const RegisterParking({Key? key}) : super(key: key);
@@ -57,7 +54,7 @@ class _RegisterParkingState extends State<RegisterParking> {
   }
 
   void getName() async {
-    String? name = await UserPreferences.getFullName(userName);
+    String? name = await UserPreferences.getFullName();
 
     if (userName != null) {
       setState(() {

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:fe_capstone/apis/FirebaseAPI.dart';
 import 'package:fe_capstone/apis/customer/HomeAPI.dart';
 import 'package:fe_capstone/apis/customer/ReservationAPI.dart';
 import 'package:fe_capstone/apis/customer/SearchParkingAPI.dart';
@@ -10,6 +11,7 @@ import 'package:fe_capstone/blocs/UserPreferences.dart';
 import 'package:fe_capstone/constant/base_constant.dart';
 import 'package:fe_capstone/constant/url_constants.dart';
 import 'package:fe_capstone/main.dart';
+import 'package:fe_capstone/models/ChatUser.dart';
 import 'package:fe_capstone/models/CustomerHome.dart';
 import 'package:fe_capstone/models/Parking.dart';
 import 'package:fe_capstone/models/ParkingInformationModel.dart';
@@ -31,6 +33,7 @@ import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 typedef MethodCallback = void Function(int method);
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
@@ -69,8 +72,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<CustomerHome>? customerHome;
   late double accountBalance;
   FocusNode _searchFocusNode = FocusNode();
-  WebSocketChannel channel = IOWebSocketChannel.connect(BaseConstants.WEBSOCKET_PRIVATE_RESERVATION_URL);
-  WebSocketChannel ploChannel = IOWebSocketChannel.connect(BaseConstants.WEBSOCKET_PRIVATE_PLO_URL);
+  WebSocketChannel channel = IOWebSocketChannel.connect(
+      BaseConstants.WEBSOCKET_PRIVATE_RESERVATION_URL);
+  WebSocketChannel ploChannel =
+      IOWebSocketChannel.connect(BaseConstants.WEBSOCKET_PRIVATE_PLO_URL);
   late int reservationID = 0;
 
   @override
@@ -88,35 +93,35 @@ class _HomeScreenState extends State<HomeScreen> {
           });
         }
       }
-        if(reservationID != 0){
-          final message = {
-            "reservationID": reservationID.toString(),
-            "content": "Connected"
-          };
-          final messageJson = jsonEncode(message);
-          channel.sink.add(messageJson);
-          channel.stream.listen((message) {
-            handleMessage(message);
+      if (reservationID != 0) {
+        final message = {
+          "reservationID": reservationID.toString(),
+          "content": "Connected"
+        };
+        final messageJson = jsonEncode(message);
+        channel.sink.add(messageJson);
+        channel.stream.listen((message) {
+          handleMessage(message);
+        });
+        bool isLoggedIn = UserPreferences.isLoggedIn();
+        if (isLoggedIn) {
+          const duration = Duration(minutes: 3);
+          Timer.periodic(duration, (Timer t) {
+            final message = {
+              "reservationID": reservationID.toString(),
+              "content": "KeepAlive"
+            };
+            final messageJson = jsonEncode(message);
+            if (channel.sink != null) {
+              channel.sink.add(messageJson);
+              print('KeepAlive message sent successfully.');
+            } else {
+              print('Channel sink is closed. KeepAlive message not sent.');
+              t.cancel();
+            }
           });
-          bool isLoggedIn = UserPreferences.isLoggedIn();
-          if (isLoggedIn) {
-            const duration = Duration(minutes: 3);
-            Timer.periodic(duration, (Timer t) {
-              final message = {
-                "reservationID": reservationID.toString(),
-                "content": "KeepAlive"
-              };
-              final messageJson = jsonEncode(message);
-              if (channel.sink != null) {
-                channel.sink.add(messageJson);
-                print('KeepAlive message sent successfully.');
-              } else {
-                print('Channel sink is closed. KeepAlive message not sent.');
-                t.cancel();
-              }
-            });
-          }
         }
+      }
     });
     Future.delayed(Duration(seconds: 4), () async {
       if (!isCheckedAccount) {
@@ -131,7 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
     print(message.toString());
     if (message.toString().contains("GetStatus")) {
       customerHome = _getHomeStatus();
-        customerHome!.then((data) {
+      customerHome!.then((data) {
         reservationID = data.reservationID;
         if (data.statusID == 5) {
           if (!isRatingDialogDisplayed) {
@@ -141,17 +146,23 @@ class _HomeScreenState extends State<HomeScreen> {
             });
           }
         }
-        if(reservationID != 0){
-          if(data.statusID == 2){
-          String endTime  = convertToDesiredFormat(data.endTime);
-          DateTime endDateTime = DateTime.parse(endTime);
-          DateTime beforeUpdateLater = endDateTime.subtract(Duration(minutes: 1));
-          DateTime afterUpdateStatusLater = endDateTime.add(Duration(seconds: 3));
-          print('Reservation lúc đặt là: ${reservationID}');
-          print('Thời gian kết thúc $endTime');
-          print('Thời gian thông báo updated later trước 1 phút: $beforeUpdateLater');
-          print('Thời gian phải check-out: $afterUpdateStatusLater');
-          callApiBeforeUpdateStatusLater(beforeUpdateLater.difference(DateTime.now()), afterUpdateStatusLater, reservationID);
+        if (reservationID != 0) {
+          if (data.statusID == 2) {
+            String endTime = convertToDesiredFormat(data.endTime);
+            DateTime endDateTime = DateTime.parse(endTime);
+            DateTime beforeUpdateLater =
+                endDateTime.subtract(Duration(minutes: 1));
+            DateTime afterUpdateStatusLater =
+                endDateTime.add(Duration(seconds: 3));
+            print('Reservation lúc đặt là: ${reservationID}');
+            print('Thời gian kết thúc $endTime');
+            print(
+                'Thời gian thông báo updated later trước 1 phút: $beforeUpdateLater');
+            print('Thời gian phải check-out: $afterUpdateStatusLater');
+            callApiBeforeUpdateStatusLater(
+                beforeUpdateLater.difference(DateTime.now()),
+                afterUpdateStatusLater,
+                reservationID);
           }
         }
       });
@@ -176,20 +187,28 @@ class _HomeScreenState extends State<HomeScreen> {
       customerHome!.then((data) {
         reservationID = data.reservationID;
         print('Reservation hiện tại là: ${reservationID}');
-        if(reservationID != 0){
-          if(data.statusID == 1){
+        if (reservationID != 0) {
+          if (data.statusID == 1) {
             String startTime = convertToDesiredFormat(data.startTime);
             String cancelBookingTime = data.cancelBookingTime;
             DateTime startDateTime = DateTime.parse(startTime);
             Duration cancelBookingDuration = parseDuration(cancelBookingTime);
-            DateTime beforeCancelBookingTime = startDateTime.add(cancelBookingDuration).subtract(Duration(minutes: 1));
-            DateTime cancelBookingDateTime = startDateTime.add(cancelBookingDuration).add(Duration(seconds: 3));
+            DateTime beforeCancelBookingTime = startDateTime
+                .add(cancelBookingDuration)
+                .subtract(Duration(minutes: 1));
+            DateTime cancelBookingDateTime = startDateTime
+                .add(cancelBookingDuration)
+                .add(Duration(seconds: 3));
             print('Reservation lúc đặt là: ${reservationID}');
             print('Thời gian đặt $startTime');
             print('Thời gian cancel $cancelBookingTime');
-            print('Thời gian thông báo check-in trước 1 phút: $beforeCancelBookingTime');
+            print(
+                'Thời gian thông báo check-in trước 1 phút: $beforeCancelBookingTime');
             print('Thời gian phải check-in: $cancelBookingDateTime');
-            callApiBeforeCancelBooking(beforeCancelBookingTime.difference(DateTime.now()), cancelBookingDateTime, reservationID);
+            callApiBeforeCancelBooking(
+                beforeCancelBookingTime.difference(DateTime.now()),
+                cancelBookingDateTime,
+                reservationID);
           }
           final message = {
             "reservationID": reservationID.toString(),
@@ -224,35 +243,40 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void callApiBeforeCancelBooking(Duration beforeCancelBooking, DateTime afterCancelBooking, int reservationID) async {
+  void callApiBeforeCancelBooking(Duration beforeCancelBooking,
+      DateTime afterCancelBooking, int reservationID) async {
     try {
-      bool isUpdateSuccessful = await Future.delayed(beforeCancelBooking, () async {
+      bool isUpdateSuccessful =
+          await Future.delayed(beforeCancelBooking, () async {
         return await ReservationAPI.updateReservationToCancel(reservationID);
       });
       print('Update trước 15 phút là $isUpdateSuccessful');
       if (isUpdateSuccessful) {
         print('Hiện tại trước 15 phút');
       } else {
-        callApiAtCancelBookingTime(afterCancelBooking.difference(DateTime.now()), reservationID);
+        callApiAtCancelBookingTime(
+            afterCancelBooking.difference(DateTime.now()), reservationID);
       }
     } catch (e) {
       print('Error calling API: $e');
     }
   }
 
-  Future<void> callApiAtCancelBookingTime(Duration duration, int reservationID) async {
+  Future<void> callApiAtCancelBookingTime(
+      Duration duration, int reservationID) async {
     try {
       await Future.delayed(duration, () async {
-        bool isUpdateSuccessful = await ReservationAPI.updateReservationToCancel(reservationID);
+        bool isUpdateSuccessful =
+            await ReservationAPI.updateReservationToCancel(reservationID);
         print('Update sau 15 phút là $isUpdateSuccessful');
         customerHome = _getHomeStatus();
         customerHome!.then((data) {
-            final ploMessage = {
+          final ploMessage = {
             "ploID": data.ploID.toString(),
             "content": "GetParking"
-              };
-            final messageJsonPLO = jsonEncode(ploMessage);
-            ploChannel.sink.add(messageJsonPLO);
+          };
+          final messageJsonPLO = jsonEncode(ploMessage);
+          ploChannel.sink.add(messageJsonPLO);
         });
       });
     } catch (e) {
@@ -260,7 +284,8 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void callApiBeforeUpdateStatusLater(Duration beforeUpdate, DateTime afterUpdate, int reservationID) async {
+  void callApiBeforeUpdateStatusLater(
+      Duration beforeUpdate, DateTime afterUpdate, int reservationID) async {
     try {
       bool isUpdateSuccessful = await Future.delayed(beforeUpdate, () async {
         return await ReservationAPI.updateReservationToLater(reservationID);
@@ -269,17 +294,20 @@ class _HomeScreenState extends State<HomeScreen> {
       if (isUpdateSuccessful) {
         print('Status hiện tại trước 15 phút');
       } else {
-        callApiAfterStatusLater(afterUpdate.difference(DateTime.now()), reservationID);
+        callApiAfterStatusLater(
+            afterUpdate.difference(DateTime.now()), reservationID);
       }
     } catch (e) {
       print('Error calling API: $e');
     }
   }
 
-  Future<void> callApiAfterStatusLater(Duration duration, int reservationID) async {
+  Future<void> callApiAfterStatusLater(
+      Duration duration, int reservationID) async {
     try {
       await Future.delayed(duration, () async {
-        bool isUpdateSuccessful = await ReservationAPI.updateReservationToLater(reservationID);
+        bool isUpdateSuccessful =
+            await ReservationAPI.updateReservationToLater(reservationID);
         print('Status của reservation sau 15 phút là $isUpdateSuccessful');
         customerHome = _getHomeStatus();
         customerHome!.then((data) {
@@ -823,211 +851,211 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-Future<void> _RatingDialog(
-    BuildContext context, CustomerHome customerHome, Function checkRating) async {
+Future<void> _RatingDialog(BuildContext context, CustomerHome customerHome,
+    Function checkRating) async {
   late TextEditingController _feedbackController = TextEditingController();
   int selectedRating = 0;
   showDialog(
     barrierDismissible: false,
     context: context,
     builder: (BuildContext context) {
-     return Dialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(23),
-            ),
-            backgroundColor: const Color(0xffffffff),
-            child: Container(
-              padding: EdgeInsets.all(20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
+      return Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(23),
+        ),
+        backgroundColor: const Color(0xffffffff),
+        child: Container(
+          padding: EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Center(
+                child: Text(
+                  "GỬI ĐÁNH GIÁ",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 15 * fem,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Center(
-                    child: Text(
-                      "GỬI ĐÁNH GIÁ",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
+                  Text(
+                    'Bãi xe:',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
                     ),
                   ),
-                  SizedBox(
-                    height: 15 * fem,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Bãi xe:',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
-                      ),
-                      Text(
-                        customerHome.parkingName,
-                        style: TextStyle(
-                          fontSize: 18,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 15 * fem,
-                  ),
-                  Center(
-                    child: RatingBar.builder(
-                      initialRating: 0,
-                      minRating: 1,
-                      direction: Axis.horizontal,
-                      allowHalfRating: false,
-                      itemCount: 5,
-                      itemSize: 33,
-                      itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                      itemBuilder: (context, _) => Icon(
-                        Icons.star,
-                        color: Colors.amber,
-                      ),
-                      onRatingUpdate: (rating) {
-                        selectedRating = rating.toInt();
-                      },
+                  Text(
+                    customerHome.parkingName,
+                    style: TextStyle(
+                      fontSize: 18,
                     ),
-                  ),
-                  SizedBox(
-                    height: 15 * fem,
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(bottom: 20, top: 20),
-                    padding: EdgeInsets.fromLTRB(15, 0, 10, 0),
-                    constraints: BoxConstraints(
-                      maxWidth: 300,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Color(0xfff5f5f5),
-                      borderRadius: BorderRadius.circular(9 * fem),
-                    ),
-                    child: TextFormField(
-                      controller: _feedbackController,
-                      decoration: InputDecoration(
-                        hintText: 'Nội dung',
-                        border: InputBorder.none,
-                        isDense: true,
-                      ),
-                      maxLines: 5,
-                    ),
-                  ),
-                  SizedBox(height: 15 * fem),
-
-                  // Center(
-                  //     child: Text(
-                  //       '*Không thể gửi vì điền thiếu thông tin!',
-                  //       style: TextStyle(
-                  //         fontWeight: FontWeight.bold,
-                  //         fontSize: 10,
-                  //         color: Colors.red,
-                  //         fontStyle: FontStyle.italic,
-                  //       ),
-                  //   ),
-                  // ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          children: [
-                            Container(
-                              height: 1,
-                              color: Color(0xffb3abab),
-                            ),
-                            TextButton(
-                              onPressed: () async {
-                                try {
-                                  await ReservationAPI.skipRating(
-                                      customerHome.reservationID);
-                                  checkRating();
-                                  Navigator.of(context).pop();
-                                } catch (e) {
-                                  Navigator.of(context)
-                                      .popUntil((route) => route.isCurrent);
-                                }
-                              },
-                              child: Text(
-                                'Bỏ qua',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xff5767f5),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Column(
-                        children: [
-                          Container(
-                            width: 1,
-                            height: 48,
-                            color: Color(0xffb3abab),
-                          ),
-                        ],
-                      ),
-                      Expanded(
-                        child: Column(
-                          children: [
-                            Container(
-                              height: 1,
-                              color: Color(0xffb3abab),
-                            ),
-                            TextButton(
-                              onPressed: () async {
-                                if (selectedRating == 0 ||
-                                    _feedbackController.text.isEmpty) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                        content: Text(
-                                            '*Không thể gửi vì điền thiếu thông tin!')),
-                                  );
-                                } else {
-                                  try {
-                                    await ReservationAPI.sendRating(
-                                        _feedbackController.text,
-                                        customerHome.ploID,
-                                        customerHome.reservationID,
-                                        selectedRating);
-                                    checkRating();
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                          content:
-                                              Text('Gửi đánh giá thành công!')),
-                                    );
-                                    Navigator.of(context).pop();
-                                  } catch (e) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                            content: Text(
-                                                'Gửi đánh giá thất bại!')));
-                                    Navigator.of(context).pop();
-                                  }
-                                }
-                              },
-                              child: Text(
-                                'Gửi',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xffff3737),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
                   ),
                 ],
               ),
-            ),
-          );
+              SizedBox(
+                height: 15 * fem,
+              ),
+              Center(
+                child: RatingBar.builder(
+                  initialRating: 0,
+                  minRating: 1,
+                  direction: Axis.horizontal,
+                  allowHalfRating: false,
+                  itemCount: 5,
+                  itemSize: 33,
+                  itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                  itemBuilder: (context, _) => Icon(
+                    Icons.star,
+                    color: Colors.amber,
+                  ),
+                  onRatingUpdate: (rating) {
+                    selectedRating = rating.toInt();
+                  },
+                ),
+              ),
+              SizedBox(
+                height: 15 * fem,
+              ),
+              Container(
+                margin: EdgeInsets.only(bottom: 20, top: 20),
+                padding: EdgeInsets.fromLTRB(15, 0, 10, 0),
+                constraints: BoxConstraints(
+                  maxWidth: 300,
+                ),
+                decoration: BoxDecoration(
+                  color: Color(0xfff5f5f5),
+                  borderRadius: BorderRadius.circular(9 * fem),
+                ),
+                child: TextFormField(
+                  controller: _feedbackController,
+                  decoration: InputDecoration(
+                    hintText: 'Nội dung',
+                    border: InputBorder.none,
+                    isDense: true,
+                  ),
+                  maxLines: 5,
+                ),
+              ),
+              SizedBox(height: 15 * fem),
+
+              // Center(
+              //     child: Text(
+              //       '*Không thể gửi vì điền thiếu thông tin!',
+              //       style: TextStyle(
+              //         fontWeight: FontWeight.bold,
+              //         fontSize: 10,
+              //         color: Colors.red,
+              //         fontStyle: FontStyle.italic,
+              //       ),
+              //   ),
+              // ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 1,
+                          color: Color(0xffb3abab),
+                        ),
+                        TextButton(
+                          onPressed: () async {
+                            try {
+                              await ReservationAPI.skipRating(
+                                  customerHome.reservationID);
+                              checkRating();
+                              Navigator.of(context).pop();
+                            } catch (e) {
+                              Navigator.of(context)
+                                  .popUntil((route) => route.isCurrent);
+                            }
+                          },
+                          child: Text(
+                            'Bỏ qua',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xff5767f5),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Column(
+                    children: [
+                      Container(
+                        width: 1,
+                        height: 48,
+                        color: Color(0xffb3abab),
+                      ),
+                    ],
+                  ),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 1,
+                          color: Color(0xffb3abab),
+                        ),
+                        TextButton(
+                          onPressed: () async {
+                            if (selectedRating == 0 ||
+                                _feedbackController.text.isEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    content: Text(
+                                        '*Không thể gửi vì điền thiếu thông tin!')),
+                              );
+                            } else {
+                              try {
+                                await ReservationAPI.sendRating(
+                                    _feedbackController.text,
+                                    customerHome.ploID,
+                                    customerHome.reservationID,
+                                    selectedRating);
+                                checkRating();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content:
+                                          Text('Gửi đánh giá thành công!')),
+                                );
+                                Navigator.of(context).pop();
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content:
+                                            Text('Gửi đánh giá thất bại!')));
+                                Navigator.of(context).pop();
+                              }
+                            }
+                          },
+                          child: Text(
+                            'Gửi',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xffff3737),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
     },
   );
 }
@@ -1260,7 +1288,6 @@ class ParkingDetailContent extends StatefulWidget {
     required this.ploID,
     required this.refreshHomeScreen,
     required this.distance,
-
   });
 
   @override
@@ -1628,8 +1655,11 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                                                   builder: (context) =>
                                                       ReservationScreen(
                                                         ploID: ploID,
-                                                        distance: widget.distance,
-                                                        waitingTime: parkingLotDetail.waitingTime,
+                                                        distance:
+                                                            widget.distance,
+                                                        waitingTime:
+                                                            parkingLotDetail
+                                                                .waitingTime,
                                                         parkinglotDetail:
                                                             parkingLotDetail,
                                                         refreshHomeScreen: () {
@@ -1810,10 +1840,34 @@ class CheckInContent extends StatelessWidget {
                                         'assets/images/directionImage.png'),
                                   ),
                                 ),
+
                                 Padding(
                                   padding: EdgeInsets.only(left: 2 * fem),
-                                  child: Image.asset(
-                                      'assets/images/chatImage.png'),
+                                  child:
+                                  InkWell(
+                                    onTap: () {
+
+                                        ChatUser user = ChatUser(
+                                            id: customerHome.ploID,
+                                            name: customerHome.parkingName,
+                                            lastMessage: '',
+                                            time: '');
+                                        PersistentNavBarNavigator.pushNewScreen(
+                                          context,
+                                          screen: ChatScreen(user: user),
+                                          withNavBar: false,
+                                          pageTransitionAnimation:
+                                          PageTransitionAnimation.cupertino,
+                                        );
+
+                                    },
+                                    child: Padding(
+                                      padding: EdgeInsets.only(right: 2 * fem),
+                                      child: Image.asset(
+                                          'assets/images/chatImage.png'),
+                                    ),
+                                  ),
+
                                 ),
                               ],
                             )
@@ -1911,7 +1965,7 @@ class CheckInContent extends StatelessWidget {
                                   ],
                                 ),
                               ),
-                              Divider(
+                              const Divider(
                                 thickness: 1,
                               ),
                               Container(
@@ -2035,7 +2089,7 @@ class CheckInContent extends StatelessWidget {
                             left: 10 * fem, right: 10 * fem, bottom: 20 * fem),
                         child: Center(
                             child: Text(
-                          'Check-in',
+                          'Xe chưa tới bãi',
                           style: TextStyle(
                               fontSize: 30 * fem,
                               fontWeight: FontWeight.bold,
@@ -2054,8 +2108,8 @@ class CheckInContent extends StatelessWidget {
 
 Future<void> _showDeleteDialog(BuildContext context, CustomerHome customerHome,
     Function refreshHomeScreen) async {
-
-  WebSocketChannel ploChannel = IOWebSocketChannel.connect(BaseConstants.WEBSOCKET_PRIVATE_PLO_URL);
+  WebSocketChannel ploChannel =
+      IOWebSocketChannel.connect(BaseConstants.WEBSOCKET_PRIVATE_PLO_URL);
   await showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -2140,20 +2194,23 @@ Future<void> _showDeleteDialog(BuildContext context, CustomerHome customerHome,
                           onPressed: () async {
                             try {
                               await ReservationAPI.cancelReservation(
-                                  customerHome.reservationID);
-                              final message = {
-                                "ploID": customerHome.ploID.toString(),
-                                "content": "GetParking"
-                              };
-                              final messageJson = jsonEncode(message);
-                              ploChannel.sink.add(messageJson);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('Hủy bỏ đặt chỗ thành công'),
-                                ),
-                              );
-                              Navigator.of(context).pop();
-                              refreshHomeScreen();
+                                  customerHome.reservationID).then((_) async {
+                                await FirebaseAPI.deleteUserForCus(customerHome.ploID).then((value) {
+                                  final message = {
+                                    "ploID": customerHome.ploID.toString(),
+                                    "content": "GetParking"
+                                  };
+                                  final messageJson = jsonEncode(message);
+                                  ploChannel.sink.add(messageJson);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Hủy bỏ đặt chỗ thành công'),
+                                    ),
+                                  );
+                                  Navigator.of(context).pop();
+                                  refreshHomeScreen();
+                                });
+                              });
                             } catch (e) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
@@ -2294,14 +2351,20 @@ class CheckOutContent extends StatelessWidget {
                                     ),
                                   ),
                                 ),
+
                                 InkWell(
                                   onTap: () {
+                                    ChatUser user = ChatUser(
+                                        id: customerHome.ploID,
+                                        name: customerHome.parkingName,
+                                        lastMessage: '',
+                                        time: '');
                                     PersistentNavBarNavigator.pushNewScreen(
                                       context,
-                                      screen: ChatScreen(),
+                                      screen: ChatScreen(user: user),
                                       withNavBar: false,
                                       pageTransitionAnimation:
-                                          PageTransitionAnimation.cupertino,
+                                      PageTransitionAnimation.cupertino,
                                     );
                                   },
                                   child: Padding(
@@ -2541,7 +2604,7 @@ class CheckOutContent extends StatelessWidget {
                           alignment: Alignment.bottomCenter,
                           child: Center(
                               child: Text(
-                            'Check-out',
+                            'Xe đang trong bãi',
                             style: TextStyle(
                                 fontSize: 30 * fem,
                                 fontWeight: FontWeight.bold,

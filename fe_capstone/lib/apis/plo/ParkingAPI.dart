@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:fe_capstone/apis/FirebaseAPI.dart';
 import 'package:fe_capstone/blocs/UserPreferences.dart';
 import 'package:fe_capstone/constant/url_constants.dart';
 import 'package:fe_capstone/models/ListVehicleInParking.dart';
@@ -590,6 +591,7 @@ class ParkingAPI {
         data: {"licensePlate": licensePlate},
       );
       if (response.statusCode == 200) {
+        // await FirebaseAPI.deleteUser(cusID);
         print("Check-out successful");
       } else {
         throw Exception('Failed to check-out reservation');
@@ -741,7 +743,7 @@ class ParkingAPI {
           ));
 
       if (response.statusCode == 200) {
-        ReservationByLicensePlate reservationByLicensePlate = ReservationByLicensePlate(reservationID: 0,customerName: '', licensePlate: '', methodName: '', status: 0, statusName: '', checkIn: '', checkOut: '');
+        ReservationByLicensePlate reservationByLicensePlate = ReservationByLicensePlate(customerID: '',reservationID: 0,customerName: '', licensePlate: '', methodName: '', status: 0, statusName: '', checkIn: '', checkOut: '');
         final status = response.data['status'];
 
         if(status == 200){

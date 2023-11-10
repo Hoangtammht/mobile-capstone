@@ -15,7 +15,7 @@ class UserPreferences {
   static const _keyLoggedIn = 'loggedIn';
   static const _keyUsername = 'username';
   static const _keyPassword = 'password';
-
+  static const _keyUserID = 'userID';
   static Future init() async {
     _preferences = await SharedPreferences.getInstance();
   }
@@ -50,7 +50,7 @@ class UserPreferences {
     await _storage.write(key: _keyUserData, value: value);
   }
 
-  static Future<String?> getFullName(fullName) async {
+  static Future<String?> getFullName() async {
     return await _storage.read(key: _keyUserData);
   }
 
@@ -58,6 +58,13 @@ class UserPreferences {
     return await _storage.read(key: _keyAccessToken);
   }
 
+  static Future<void> setUserID(String value) async {
+    await _storage.write(key: _keyUserID, value: value);
+  }
+
+  static Future<String?> getUserID() async {
+    return await _storage.read(key: _keyUserID);
+  }
   static Future logout() async {
     await _storage.deleteAll();
     await setLoggedIn(false);

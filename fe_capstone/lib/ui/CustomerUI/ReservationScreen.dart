@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:fe_capstone/apis/FirebaseAPI.dart';
 import 'package:fe_capstone/apis/customer/ReservationAPI.dart';
 import 'package:fe_capstone/blocs/VehicleProvider.dart';
 import 'package:fe_capstone/blocs/WalletDataProvider.dart';
@@ -923,23 +924,30 @@ class _ReservationScreenState extends State<ReservationScreen> {
                             onPressed: () async {
                               try {
                                 await ReservationAPI.getBooking(
-                                    dropdownVehicle, methodID, widget.ploID);
-                                final message = {
-                                  "ploID": widget.ploID.toString(),
-                                  "content": "GetParking"
-                                };
-                                final messageJson = jsonEncode(message);
-                                ploChannel.sink.add(messageJson);
-                                print("Đặt chỗ socket: $messageJson");
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('Đặt chỗ thành công')
-                                  ),
-                                );
-                                  final walletProvider = Provider.of<WalletDataProvider>(context, listen: false);
-                                  await walletProvider.updateTransactions();
-                                  refreshHomeScreen();
-                                  Navigator.of(context).pop();
+                                    dropdownVehicle, methodID, widget.ploID).then((_) async {
+                                  await FirebaseAPI.createUserForCus(widget.ploID)
+                                      .then((value) async {
+                                    final message = {
+                                      "ploID": widget.ploID.toString(),
+                                      "content": "GetParking"
+                                    };
+                                    final messageJson = jsonEncode(message);
+                                    ploChannel.sink.add(messageJson);
+                                    print("Đặt chỗ socket: $messageJson");
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          content: Text('Đặt chỗ thành công')
+                                      ),
+                                    );
+                                    final walletProvider = Provider.of<WalletDataProvider>(context, listen: false);
+                                    await walletProvider.updateTransactions();
+                                    refreshHomeScreen();
+                                    Navigator.of(context).pop();
+                                  });
+
+                                });
+
+
                               } catch (e) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(

@@ -1,4 +1,5 @@
 import 'package:fe_capstone/apis/Auth.dart';
+import 'package:fe_capstone/apis/FirebaseAPI.dart';
 import 'package:fe_capstone/blocs/UserPreferences.dart';
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/ui/CustomerUI/BottomTabNavCustomer.dart';
@@ -22,6 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isPasswordVisible = false;
   String dropdownValue = 'CU';
   bool isLoading = false;
+
   void toggleUserRole() {
     setState(() {
       dropdownValue = dropdownValue == 'CU' ? 'PL' : 'CU';
@@ -233,102 +235,134 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ],
                       ),
-                      child:
-                          isLoading ?
-                              Center(
-                                child: CircularProgressIndicator(
-                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                  strokeWidth: 2.0,
-                                ),
-                              ) :
-                      TextButton(
-                        onPressed: () {
-                          setState(() {
-                            isLoading = true;
-                          });
-                          String username = getFullUserName();
-                          String password = _passwordController.text;
-                          if (username.isNotEmpty && password.isNotEmpty) {
-                            AuthAPIs.loginUser(username, password).then((_) {
-                              UserPreferences.setLoggedIn(true);
-                              UserPreferences.setUsername(username);
-                              UserPreferences.setPassword(password);
-                              if (username.startsWith('P')) {
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => BottomTabNavPlo(),
-                                  ),
-                                );
-                              } else if (username.startsWith('C')) {
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        BottomTabNavCustomer(),
-                                  ),
-                                );
-                              }
-                            }).catchError((error) {
-                              final snackBar = SnackBar(
-                                content: Text(
-                                  'Tài khoản hoặc mật khẩu không đúng. Vui lòng đăng nhập lại.',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(fontSize: 18 * fem),
-                                ),
-                                behavior: SnackBarBehavior.fixed,
-                              );
-
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(snackBar);
-
-                              Future.delayed(Duration(milliseconds: 1500), () {
-                                ScaffoldMessenger.of(context)
-                                    .hideCurrentSnackBar();
-                              });
-                            }).whenComplete(() {
-                              setState(() {
-                                isLoading = false;
-                              });
-                            });
-                          } else {
-
-                            // Dialogs.showSnackbar(context,
-                            //     "Tài khoản hoặc mật khẩu không được để trống.");
-                            setState(() {
-                              isLoading = false; // Ẩn CircularProgressIndicator khi xảy ra lỗi
-                            });
-                            final snackBar = SnackBar(
-                              content: Text(
-                                "Tài khoản hoặc mật khẩu không được để trống.",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(fontSize: 18 * fem),
+                      child: isLoading
+                          ? Center(
+                              child: CircularProgressIndicator(
+                                valueColor:
+                                    AlwaysStoppedAnimation<Color>(Colors.white),
+                                strokeWidth: 2.0,
                               ),
-                              behavior: SnackBarBehavior.fixed,
-                            );
+                            )
+                          : TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  isLoading = true;
+                                });
+                                String username = getFullUserName();
+                                String password = _passwordController.text;
+                                if (username.isNotEmpty &&
+                                    password.isNotEmpty) {
+                                  AuthAPIs.loginUser(username, password)
+                                      .then((_) async {
+                                    String? userID =
+                                        await UserPreferences.getUserID();
+                                    UserPreferences.setLoggedIn(true);
+                                    UserPreferences.setUsername(username);
+                                    UserPreferences.setPassword(password);
+                                    if (username.startsWith('P')) {
+                                      // if (await (await FirebaseAPI.userExists(
+                                      //         userID!))
+                                      //     .isEmpty) {
+                                      //   await FirebaseAPI.createUser()
+                                      //       .then((value) {
+                                      //     Navigator.pushReplacement(
+                                      //       context,
+                                      //       MaterialPageRoute(
+                                      //         builder: (context) =>
+                                      //             BottomTabNavPlo(),
+                                      //       ),
+                                      //     );
+                                      //   });
+                                      // } else {
+                                      //   Navigator.pushReplacement(
+                                      //     context,
+                                      //     MaterialPageRoute(
+                                      //       builder: (context) =>
+                                      //           BottomTabNavPlo(),
+                                      //     ),
+                                      //   );
+                                      // }
+                                      await FirebaseAPI.createUser()
+                                          .then((value) {
+                                        Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                BottomTabNavPlo(),
+                                          ),
+                                        );
+                                      });
+                                    } else if (username.startsWith('C')) {
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              BottomTabNavCustomer(),
+                                        ),
+                                      );
+                                    }
+                                  }).catchError((error) {
+                                    final snackBar = SnackBar(
+                                      content: Text(
+                                        'Tài khoản hoặc mật khẩu không đúng. Vui lòng đăng nhập lại.',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(fontSize: 18 * fem),
+                                      ),
+                                      behavior: SnackBarBehavior.fixed,
+                                    );
 
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(snackBar);
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(snackBar);
 
-                            Future.delayed(Duration(milliseconds: 1500), () {
-                              ScaffoldMessenger.of(context)
-                                  .hideCurrentSnackBar();
-                            });
-                          }
-                        },
-                        child: Center(
-                          child:  Text(
-                            'ĐĂNG NHẬP',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 25 * ffem,
-                              fontWeight: FontWeight.w600,
-                              height: 1.175 * ffem / fem,
-                              color: Color(0xffffffff),
+                                    Future.delayed(Duration(milliseconds: 1500),
+                                        () {
+                                      ScaffoldMessenger.of(context)
+                                          .hideCurrentSnackBar();
+                                    });
+                                  }).whenComplete(() {
+                                    setState(() {
+                                      isLoading = false;
+                                    });
+                                  });
+                                } else {
+                                  // Dialogs.showSnackbar(context,
+                                  //     "Tài khoản hoặc mật khẩu không được để trống.");
+                                  setState(() {
+                                    isLoading =
+                                        false; // Ẩn CircularProgressIndicator khi xảy ra lỗi
+                                  });
+                                  final snackBar = SnackBar(
+                                    content: Text(
+                                      "Tài khoản hoặc mật khẩu không được để trống.",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(fontSize: 18 * fem),
+                                    ),
+                                    behavior: SnackBarBehavior.fixed,
+                                  );
+
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(snackBar);
+
+                                  Future.delayed(Duration(milliseconds: 1500),
+                                      () {
+                                    ScaffoldMessenger.of(context)
+                                        .hideCurrentSnackBar();
+                                  });
+                                }
+                              },
+                              child: Center(
+                                child: Text(
+                                  'ĐĂNG NHẬP',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 25 * ffem,
+                                    fontWeight: FontWeight.w600,
+                                    height: 1.175 * ffem / fem,
+                                    color: Color(0xffffffff),
+                                  ),
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                      ),
                     ),
                     Center(
                       child: RichText(

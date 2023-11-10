@@ -1,50 +1,53 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
+import 'package:fe_capstone/apis/FirebaseAPI.dart';
+import 'package:fe_capstone/blocs/UserPreferences.dart';
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/models/Message.dart';
 import 'package:fe_capstone/ui/components/MessageCard.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../models/ChatUser.dart';
+
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({Key? key}) : super(key: key);
+  final ChatUser user;
+  const ChatScreen({Key? key, required this.user}) : super(key: key);
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  List<Message> _list = [];
-  List<Message> fakeMessages = [
-    Message(
-      toId: '1',
-      msg: 'Met ko?',
-      read: 'Hello',
-      type: Type.text,
-      fromId: '2',
-      sent: '1693818359802',
-    ),
-    Message(
-      toId: '2',
-      msg: 'Met moi lam nha !',
-      read: 'Met moi lam nha',
-      type: Type.text,
-      fromId: '1',
-      sent: '1693818359802',
-    ),
-    Message(
-      toId: '2',
-      msg: 'Met moi lam roi do !',
-      read: 'Met moi lam nha',
-      type: Type.text,
-      fromId: '1',
-      sent: '1693818359802',
-    ),
-  ];
+  List<MessageCustom> _list = [];
+  String userID = '';
+  Stream<QuerySnapshot<Map<String, dynamic>>>? stream;
 
-  Stream<List<Message>> getAllMessages() async* {
-    yield fakeMessages;
+  @override
+  void initState() {
+    super.initState();
+    getUserID();
+    getStream();
+  }
+
+  void getUserID() async {
+    String? name = await UserPreferences.getUserID();
+    if (userID != null) {
+      setState(() {
+        userID = name!;
+      });
+    }
+  }
+
+  void getStream() async {
+    Stream<QuerySnapshot<Map<String, dynamic>>> data = await FirebaseAPI.getAllMessages(widget.user);
+    if (data != null) {
+      setState(() {
+        stream = data!;
+      });
+    }
   }
 
   final _textController = TextEditingController();
@@ -71,7 +74,7 @@ class _ChatScreenState extends State<ChatScreen> {
               backgroundColor: Theme.of(context).primaryColor,
               centerTitle: true,
               leading: IconButton(
-                icon: Icon(
+                icon: const Icon(
                   Icons.arrow_back_ios_new,
                   color: Colors.white,
                 ),
@@ -80,7 +83,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 },
               ),
               title: Text(
-                'Khach san Romantic',
+                widget.user.name,
                 style: TextStyle(
                   fontSize: 26 * ffem,
                   fontWeight: FontWeight.w700,
@@ -94,40 +97,38 @@ class _ChatScreenState extends State<ChatScreen> {
               children: [
                 Expanded(
                   child: StreamBuilder(
-                    stream: getAllMessages(),
+                    // stream: getAllMessages(),
+                    stream: stream,
                     builder: (context, snapshot) {
-                      print('The data: ${snapshot.data}');
-                      final data = snapshot.data ?? [];
+                      switch (snapshot.connectionState) {
+                        case ConnectionState.waiting:
+                        case ConnectionState.none:
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        case ConnectionState.active:
+                        case ConnectionState.done:
+                          final data = snapshot.data?.docs;
+                          _list = data?.map((e) => MessageCustom.fromJson(e.data())).toList() ?? [];
 
-                      if (data.isEmpty) {
-                        return Center(
-                          child: Text(
-                            'No messages',
-                            style: TextStyle(fontSize: 20),
-                          ),
-                        );
-                      }
-
-                      _list = data;
-
-                      if (_list.isNotEmpty) {
-                        return ListView.builder(
-                            // reverse: true,
-                            itemCount: _list.length,
-                            padding: EdgeInsets.only(top: mq.height * .01),
-                            physics: const BouncingScrollPhysics(),
-                            itemBuilder: (context, index) {
-                              return MessageCard(
-                                message: _list[index],
-                              );
-                            });
-                      } else {
-                        return const Center(
-                          child: Text(
-                            'Xin chào ! ',
-                            style: TextStyle(fontSize: 20),
-                          ),
-                        );
+                          if (_list.isNotEmpty) {
+                            return ListView.builder(
+                              // reverse: true,
+                                itemCount: _list.length,
+                                padding: EdgeInsets.only(top: mq.height * .01),
+                                physics: const BouncingScrollPhysics(),
+                                itemBuilder: (context, index) {
+                                  return MessageCard(
+                                    message: _list[index], userID: userID,
+                                  );
+                                });
+                          } else {
+                            return const Center(
+                              child: Text(
+                                'Xin chào ! 👋 ',
+                                style: TextStyle(fontSize: 20),
+                              ),
+                            );
+                          }
                       }
                     },
                   ),
@@ -146,15 +147,11 @@ class _ChatScreenState extends State<ChatScreen> {
                   SizedBox(
                     height: mq.height * .35,
                     child: EmojiPicker(
-                      textEditingController:
-                      _textController,
+                      textEditingController: _textController,
                       config: Config(
                         bgColor: const Color.fromARGB(255, 234, 248, 255),
                         columns: 8,
-                        emojiSizeMax: 32 *
-                            (Platform.isIOS
-                                ? 1.30
-                                : 1.0),
+                        emojiSizeMax: 32 * (Platform.isIOS ? 1.30 : 1.0),
                       ),
                     ),
                   )
@@ -203,28 +200,6 @@ class _ChatScreenState extends State<ChatScreen> {
                             hintStyle: TextStyle(color: Colors.blueAccent),
                             border: InputBorder.none),
                       )),
-                  IconButton(
-                      onPressed: () async {
-                        final ImagePicker picker = ImagePicker();
-                        final List<XFile> images =
-                        await picker.pickMultiImage(imageQuality: 70);
-
-                        for (var i in images) {
-                          print('Image Path: ${i.path}');
-                          setState(() {
-                            _isUploading = true;
-                          });
-                          // await APIs.sendChatImage(widget.user, File(i.path!));
-                          setState(() {
-                            _isUploading = false;
-                          });
-                        }
-                      },
-                      icon: const Icon(
-                        Icons.image,
-                        color: Colors.blueAccent,
-                        size: 26,
-                      )),
                   SizedBox(
                     width: mq.width * .02,
                   )
@@ -235,13 +210,7 @@ class _ChatScreenState extends State<ChatScreen> {
           MaterialButton(
             onPressed: () {
               if (_textController.text.isNotEmpty) {
-                if (_list.isEmpty) {
-                  //on first message (add user to my_user collection of chat user)
-                  // APIs.sendFirstMessage(widget.user, _textController.text, Type.text);
-                } else {
-                  //simply send message
-                  // APIs.sendMessage(widget.user, _textController.text, Type.text);
-                }
+                FirebaseAPI.sendMessage(widget.user, _textController.text);
                 _textController.text = '';
               }
             },
@@ -260,5 +229,4 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
     );
   }
-
 }
