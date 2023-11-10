@@ -162,7 +162,9 @@ class _HomeScreenState extends State<HomeScreen> {
             callApiBeforeUpdateStatusLater(
                 beforeUpdateLater.difference(DateTime.now()),
                 afterUpdateStatusLater,
-                reservationID);
+                reservationID,
+                data.ploID
+            );
           }
         }
       });
@@ -208,7 +210,9 @@ class _HomeScreenState extends State<HomeScreen> {
             callApiBeforeCancelBooking(
                 beforeCancelBookingTime.difference(DateTime.now()),
                 cancelBookingDateTime,
-                reservationID);
+                reservationID,
+                data.ploID
+            );
           }
           final message = {
             "reservationID": reservationID.toString(),
@@ -244,7 +248,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void callApiBeforeCancelBooking(Duration beforeCancelBooking,
-      DateTime afterCancelBooking, int reservationID) async {
+      DateTime afterCancelBooking, int reservationID, String ploID) async {
     try {
       bool isUpdateSuccessful =
           await Future.delayed(beforeCancelBooking, () async {
@@ -255,7 +259,7 @@ class _HomeScreenState extends State<HomeScreen> {
         print('Hiện tại trước 15 phút');
       } else {
         callApiAtCancelBookingTime(
-            afterCancelBooking.difference(DateTime.now()), reservationID);
+            afterCancelBooking.difference(DateTime.now()), reservationID, ploID);
       }
     } catch (e) {
       print('Error calling API: $e');
@@ -263,21 +267,19 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> callApiAtCancelBookingTime(
-      Duration duration, int reservationID) async {
+      Duration duration, int reservationID, String ploID) async {
     try {
       await Future.delayed(duration, () async {
         bool isUpdateSuccessful =
             await ReservationAPI.updateReservationToCancel(reservationID);
         print('Update sau 15 phút là $isUpdateSuccessful');
         customerHome = _getHomeStatus();
-        customerHome!.then((data) {
           final ploMessage = {
-            "ploID": data.ploID.toString(),
+            "ploID": ploID.toString(),
             "content": "GetParking"
           };
           final messageJsonPLO = jsonEncode(ploMessage);
           ploChannel.sink.add(messageJsonPLO);
-        });
       });
     } catch (e) {
       print('Error calling API: $e');
@@ -285,7 +287,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void callApiBeforeUpdateStatusLater(
-      Duration beforeUpdate, DateTime afterUpdate, int reservationID) async {
+      Duration beforeUpdate, DateTime afterUpdate, int reservationID, String ploID) async {
     try {
       bool isUpdateSuccessful = await Future.delayed(beforeUpdate, () async {
         return await ReservationAPI.updateReservationToLater(reservationID);
@@ -295,7 +297,7 @@ class _HomeScreenState extends State<HomeScreen> {
         print('Status hiện tại trước 15 phút');
       } else {
         callApiAfterStatusLater(
-            afterUpdate.difference(DateTime.now()), reservationID);
+            afterUpdate.difference(DateTime.now()), reservationID, ploID);
       }
     } catch (e) {
       print('Error calling API: $e');
@@ -303,21 +305,19 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> callApiAfterStatusLater(
-      Duration duration, int reservationID) async {
+      Duration duration, int reservationID, String ploID) async {
     try {
       await Future.delayed(duration, () async {
         bool isUpdateSuccessful =
             await ReservationAPI.updateReservationToLater(reservationID);
         print('Status của reservation sau 15 phút là $isUpdateSuccessful');
         customerHome = _getHomeStatus();
-        customerHome!.then((data) {
           final ploMessage = {
-            "ploID": data.ploID.toString(),
+            "ploID": ploID.toString(),
             "content": "GetParking"
           };
           final messageJsonPLO = jsonEncode(ploMessage);
           ploChannel.sink.add(messageJsonPLO);
-        });
       });
     } catch (e) {
       print('Error calling API: $e');
