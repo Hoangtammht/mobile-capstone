@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:fe_capstone/apis/FirebaseAPI.dart';
 import 'package:fe_capstone/apis/plo/ParkingAPI.dart';
 import 'package:fe_capstone/constant/base_constant.dart';
 import 'package:fe_capstone/main.dart';
@@ -176,7 +177,7 @@ class _ParkingCardState extends State<ParkingCard> {
             ),
             Padding(
               padding: EdgeInsets.only(left: 3 * fem, top: 3 * fem, bottom: 3 * fem),
-              child: Divider(
+              child: const Divider(
                 thickness: 1,
               ),
             )
@@ -202,8 +203,8 @@ class _ParkingCardState extends State<ParkingCard> {
               children: [
                 Center(
                   child: Container(
-                    padding: EdgeInsets.only(bottom: 30),
-                    child: Text.rich(
+                    padding: const EdgeInsets.only(bottom: 30),
+                    child: const Text.rich(
                       TextSpan(
                           children: [
                             TextSpan(
@@ -232,7 +233,7 @@ class _ParkingCardState extends State<ParkingCard> {
                     padding: EdgeInsets.only(bottom: 30),
                     child: Text(
                       widget.vehicleData.licensePlate,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
                       ),
@@ -254,7 +255,7 @@ class _ParkingCardState extends State<ParkingCard> {
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
-                            child: Text(
+                            child: const Text(
                               'Hủy',
                               style: TextStyle(
                                 fontSize: 20,
@@ -295,20 +296,20 @@ class _ParkingCardState extends State<ParkingCard> {
                                   channel.sink.add(messageJson);
                                   widget.updateUI();
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
+                                  const  SnackBar(
                                       content: Text('Check-in thành công'),
                                     ),
                                   );
                                 } catch (e) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
+                                  const  SnackBar(
                                       content: Text('Việc check-in thất bại'),
                                     ),
                                   );
                                 }
                                 Navigator.of(context).pop();
                             },
-                            child: Text(
+                            child: const Text(
                               'Xác nhận',
                               style: TextStyle(
                                 fontSize: 20,
@@ -346,8 +347,8 @@ class _ParkingCardState extends State<ParkingCard> {
               children: [
                 Center(
                   child: Container(
-                    padding: EdgeInsets.only(bottom: 30),
-                    child: Text.rich(
+                    padding: const EdgeInsets.only(bottom: 30),
+                    child: const Text.rich(
                       TextSpan(
                           children: [
                             TextSpan(
@@ -376,7 +377,7 @@ class _ParkingCardState extends State<ParkingCard> {
                     padding: EdgeInsets.only(bottom: 30),
                     child: Text(
                       widget.vehicleData.licensePlate,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 22,
                       ),
@@ -385,7 +386,7 @@ class _ParkingCardState extends State<ParkingCard> {
                   ),
                 ),
                 if (widget.type.contains('Later'))
-                Text.rich(
+             const  Text.rich(
                   TextSpan(
                       children: [
                         TextSpan(
@@ -418,7 +419,7 @@ class _ParkingCardState extends State<ParkingCard> {
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
-                            child: Text(
+                            child: const Text(
                               'Hủy',
                               style: TextStyle(
                                 fontSize: 20,
@@ -450,29 +451,34 @@ class _ParkingCardState extends State<ParkingCard> {
                             onPressed: () async{
                                 int reservationID = int.parse(widget.vehicleData.reservationID);
                                 try {
-                                  await ParkingAPI.checkoutReservation(reservationID);
-                                  widget.updateUI();
-                                  final message = {
-                                    "reservationID": reservationID.toString(),
-                                    "content": "GetStatus"
-                                  };
-                                  final messageJson = jsonEncode(message);
-                                  channel.sink.add(messageJson);
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('Check-out thành công'),
-                                    ),
-                                  );
+                                  await ParkingAPI.checkoutReservation(reservationID).then((_) async {
+                                    print('CUS ${widget.vehicleData.customerID}');
+                                    await FirebaseAPI.deleteUser(widget.vehicleData.customerID).then((_){
+
+                                      widget.updateUI();
+                                      final message = {
+                                        "reservationID": reservationID.toString(),
+                                        "content": "GetStatus"
+                                      };
+                                      final messageJson = jsonEncode(message);
+                                      channel.sink.add(messageJson);
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const  SnackBar(
+                                          content: Text('Check-out thành công'),
+                                        ),
+                                      );
+                                    });
+                                  });
                                 } catch (e) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
+                                   const SnackBar(
                                       content: Text('Việc check-out thất bại'),
                                     ),
                                   );
                                 }
                                 Navigator.of(context).pop();
                             },
-                            child: Text(
+                            child: const Text(
                               'Xác nhận',
                               style: TextStyle(
                                 fontSize: 20,

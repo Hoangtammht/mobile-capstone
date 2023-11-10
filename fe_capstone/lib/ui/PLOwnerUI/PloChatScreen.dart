@@ -1,3 +1,7 @@
+import 'dart:math';
+
+import 'package:fe_capstone/apis/FirebaseAPI.dart';
+import 'package:fe_capstone/blocs/UserPreferences.dart';
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/models/ChatUser.dart';
 import 'package:fe_capstone/ui/components/widgetPLO/PloChatCard.dart';
@@ -11,11 +15,23 @@ class PloChatScreen extends StatefulWidget {
 }
 
 class _PloChatScreenState extends State<PloChatScreen> {
-  List<ChatUser> users = [
-    ChatUser(id: "1", name: "Hoang Tam", lastMessage: "Hello and smile", time: "3 phút trước"),
-    ChatUser(id: "2", name: "Hoang Tam lun", lastMessage: "Mệt mỏi quá à", time: "15 phút trước"),
-  ];
+  List<ChatUser> list = [];
+  String userID = '';
 
+  @override
+  void initState() {
+    super.initState();
+    getUserID();
+  }
+
+  void getUserID() async {
+    String? name = await UserPreferences.getUserID();
+    if (userID != null) {
+      setState(() {
+        userID = name!;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,15 +58,34 @@ class _PloChatScreenState extends State<PloChatScreen> {
             ),
           ),
         ),
-        body: Container(
-          margin: EdgeInsets.only(top: 15 * fem),
-          child: ListView.builder(
-              itemCount: users.length,
-              itemBuilder: (context,index){
-                final user = users[index];
-            return PloChatCard(user: user,);
-          }),
-        ),
-    );
+        body:
+
+        StreamBuilder(
+          builder: (context, snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.waiting:
+              case ConnectionState.none:
+                return const Center(child: CircularProgressIndicator());
+              case ConnectionState.active:
+              case ConnectionState.done:
+                final data = snapshot.data?.docs;
+                  list =  data?.map((e) => ChatUser.fromJson(e.data())).toList() ?? [];
+                if (list.isNotEmpty) {
+                  return Container(
+                    margin: EdgeInsets.only(top: 15 * fem),
+                    child:
+                    ListView.builder(
+                        itemCount: list.length,
+                        itemBuilder: (context, index) {
+                          return PloChatCard(user: list[index]);
+                        }),
+                  );
+                } else {
+                  return Center (child: Text('Không có hộp thoại nào', style: TextStyle(fontSize: 20)));
+                }
+            }
+          },
+          stream: FirebaseAPI.getAllUser(userID),
+        ));
   }
 }

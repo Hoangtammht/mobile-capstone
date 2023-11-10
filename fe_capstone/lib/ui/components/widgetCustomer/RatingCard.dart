@@ -44,7 +44,7 @@ class RatingCard extends StatelessWidget {
             child: Align(
               alignment: Alignment.centerRight,
               child: Text(
-                MyDateUtil.formatCheckInAndCheckOutDate(feedbackDate!),
+                feedbackDate!,
                 style: TextStyle(
                   fontSize: 15 * fem,
                   color: Colors.black,

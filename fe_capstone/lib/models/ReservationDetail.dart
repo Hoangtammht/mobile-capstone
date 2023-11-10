@@ -1,5 +1,6 @@
 class ReservationDetail {
   ReservationDetail({
+
     required this.licensePlate,
     required this.price,
     required this.methodName,
@@ -55,6 +56,7 @@ class ReservationDetail {
 
 class ReservationByLicensePlate {
   ReservationByLicensePlate({
+    required this.customerID,
     required this.reservationID,
     required this.customerName,
     required this.methodName,
@@ -64,7 +66,7 @@ class ReservationByLicensePlate {
     required this.checkOut,
     required this.licensePlate,
   });
-
+  late final String customerID;
   late final int reservationID;
   late final String customerName;
   late final String methodName;
@@ -76,6 +78,7 @@ class ReservationByLicensePlate {
 
   ReservationByLicensePlate.fromJson
       (Map<String, dynamic> json){
+    customerID = json['customerID'] ?? '';
     reservationID = json['reservationID'] ?? 0;
     customerName = json['customerName'] ?? '';
     methodName = json['methodName'] ?? '';
@@ -88,6 +91,7 @@ class ReservationByLicensePlate {
 
   Map<String, dynamic> toJson() {
     final _data = <String, dynamic>{};
+    _data['customerID'] = customerID;
     _data['reservationID'] = reservationID;
     _data['customerName'] = customerName;
     _data['licensePlate'] = licensePlate;

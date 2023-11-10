@@ -40,6 +40,15 @@ class AuthAPIs {
         if (ploData != null && ploData.containsKey('role')) {
           final fullName = ploData['fullName'];
           await UserPreferences.setFullName(fullName);
+          final userId = ploData['ploID'];
+          await UserPreferences.setUserID(userId);
+        }
+        final cusData = response.data['Customer'];
+        if (cusData != null && cusData.containsKey('role')) {
+          final fullName = cusData['fullName'];
+          await UserPreferences.setFullName(fullName);
+          final userId = cusData['customerID'];
+          await UserPreferences.setUserID(userId);
         }
       } else {
         throw Exception(
