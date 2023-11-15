@@ -22,10 +22,18 @@ class _BottomTabNavCustomerState extends State<BottomTabNavCustomer> {
     super.initState();
   }
 
+  void changeTabWalletController(){
+    _controller.jumpToTab(2);
+  }
+
+  void changeTabHomeScreenController(){
+    _controller.jumpToTab(0);
+  }
+
   List<Widget> _buildScreens() {
     return [
-      HomeScreen(),
-      HistoryScreen(),
+      HomeScreen(onNavigateToWallet: changeTabWalletController),
+      HistoryScreen(onNavigateToHomeScreen: changeTabHomeScreenController),
       WalletScreen(),
       ProfileScreen(),
       CustomerNotificationScreen(),

@@ -7,7 +7,8 @@ import 'package:intl/intl.dart';
 
 class Rebooking extends StatefulWidget {
   final int reservationId;
-  Rebooking({required this.reservationId});
+  final VoidCallback? onNavigateToHomeScreen;
+  Rebooking({required this.reservationId, this.onNavigateToHomeScreen});
   @override
   State<Rebooking> createState() => _RebookingState();
 }
@@ -303,24 +304,28 @@ class _RebookingState extends State<Rebooking> {
                         ],
                       ),
                     ),
-
-                    Container(
-                      margin: EdgeInsets.only(top: 20 * fem),
-                      width: double.infinity,
-                      height: 51 * fem,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
-                        borderRadius: BorderRadius.circular(9 * fem),
-                      ),
-                      child: Center(
-                        child:
-                        Text(
-                          'Đặt lại',
-                          style: TextStyle(
-                            fontSize: 25 * ffem,
-                            fontWeight: FontWeight.w600,
-                            height: 1.175 * ffem / fem,
-                            color: Color(0xffffffff),
+                    InkWell(
+                      onTap: (){
+                        widget.onNavigateToHomeScreen?.call();
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(top: 20 * fem),
+                        width: double.infinity,
+                        height: 51 * fem,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).primaryColor,
+                          borderRadius: BorderRadius.circular(9 * fem),
+                        ),
+                        child: Center(
+                          child:
+                          Text(
+                            'Đặt lại',
+                            style: TextStyle(
+                              fontSize: 25 * ffem,
+                              fontWeight: FontWeight.w600,
+                              height: 1.175 * ffem / fem,
+                              color: Color(0xffffffff),
+                            ),
                           ),
                         ),
                       ),

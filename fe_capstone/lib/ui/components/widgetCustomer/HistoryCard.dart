@@ -1,4 +1,3 @@
-
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/models/History.dart';
 import 'package:fe_capstone/ui/CustomerUI/ReBooking.dart';
@@ -6,15 +5,14 @@ import 'package:flutter/material.dart';
 
 class HistoryCard extends StatelessWidget {
   final History history;
-  const HistoryCard({Key? key, required this.history}) : super(key: key);
-
-
+  final VoidCallback? onNavigateToHomeScreen;
+  const HistoryCard({Key? key, required this.history, this.onNavigateToHomeScreen}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context) => Rebooking(reservationId: history.reservationID)));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => Rebooking(reservationId: history.reservationID, onNavigateToHomeScreen: onNavigateToHomeScreen)));
       },
       child: Card(
         child: Padding(
