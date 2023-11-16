@@ -20,10 +20,9 @@ class FirebaseAPI {
     return fcmToken;
   }
 
-  static Future<Stream<QuerySnapshot<Map<String, dynamic>>>> userExists(
-      String ploID) async {
+  static Future<Stream<QuerySnapshot<Map<String, dynamic>>>> userExists() async {
     String? userID = await UserPreferences.getUserID();
-    return fireStore.collection('plo/${ploID}/cus').where(
+    return fireStore.collection('admin/ADMIN1/user').where(
         'id', isEqualTo: userID).snapshots();
   }
 
@@ -50,6 +49,19 @@ class FirebaseAPI {
     final user = ChatUser(
         id: userID!, name: fullName!, lastMessage: '', time: time);
     await fireStore.collection('plo/${ploId}/cus').doc(user.id).set(
+        user.toJson());
+  }
+
+  static Future<void> createUserForAdmin() async {
+    String? userID = await UserPreferences.getUserID();
+    String? fullName = await UserPreferences.getFullName();
+    final time = DateTime
+        .now()
+        .millisecondsSinceEpoch
+        .toString();
+    final user = ChatUser(
+        id: userID!, name: fullName!, lastMessage: '', time: time);
+    await fireStore.collection('admin/ADMIN1/user').doc(userID).set(
         user.toJson());
   }
 
@@ -90,6 +102,11 @@ class FirebaseAPI {
           .snapshots();
     }
   }
+
+  static Future<Stream<QuerySnapshot<Map<String, dynamic>>>> getAllMessagesAdmin() async {
+    String? thisUserID = await UserPreferences.getUserID();
+    return fireStore.collection('admin/ADMIN1/user/${thisUserID}/messages').snapshots();
+  }
   static Future<void> sendMessage(ChatUser user, String msg) async {
     final time = DateTime
         .now()
@@ -114,6 +131,26 @@ class FirebaseAPI {
     }
   }
 
+  static Future<void> sendMessageAdmin(String msg) async {
+
+    final time = DateTime
+        .now()
+        .millisecondsSinceEpoch
+        .toString();
+    String? thisUserID = await UserPreferences.getUserID();
+    final MessageCustom message = MessageCustom(
+        toId: 'ADMIN1',
+        msg: msg,
+        read: '',
+        type: Type.text,
+        fromId: thisUserID!,
+        sent: time);
+
+      final ref =
+      fireStore.collection('admin/ADMIN1/user/${thisUserID}/messages');
+      await ref.doc(time).set(message.toJson());
+  }
+
   static Future<void> updateMessageStatus(MessageCustom message) async {
     final time = DateTime
         .now()
@@ -128,6 +165,20 @@ class FirebaseAPI {
           'plo/${message.toId}/cus/${message.fromId}/messages').doc(
           message.sent).update({'read': time});
     }
+  }
+
+  static Future<void> updateMessageStatusAdmin(MessageCustom message) async {
+
+    final time = DateTime
+        .now()
+        .millisecondsSinceEpoch
+        .toString();
+    String? thisUserID = await UserPreferences.getUserID();
+    print(thisUserID);
+    print(message.sent);
+      fireStore.collection(
+          'admin/ADMIN1/user/$thisUserID/messages').doc(
+          message.sent).update({'read': time});
   }
 
   static Future<Stream<QuerySnapshot<Map<String, dynamic>>>> getLastMessage(

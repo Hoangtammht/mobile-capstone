@@ -1,6 +1,5 @@
 class ReservationDetail {
   ReservationDetail({
-
     required this.licensePlate,
     required this.price,
     required this.methodName,

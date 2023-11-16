@@ -1,10 +1,13 @@
 import 'package:fe_capstone/apis/plo/ParkingAPI.dart';
 import 'package:fe_capstone/main.dart';
+import 'package:fe_capstone/models/ChatUser.dart';
 import 'package:fe_capstone/models/ReservationDetail.dart';
 import 'package:fe_capstone/ui/helper/ConfirmDialog.dart';
 import 'package:fe_capstone/ui/helper/my_date_until.dart';
+import 'package:fe_capstone/ui/screens/ChatScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ParkingDetailCard extends StatefulWidget {
@@ -20,7 +23,6 @@ class ParkingDetailCard extends StatefulWidget {
 
 class _ParkingDetailCardState extends State<ParkingDetailCard> {
   late Future<ReservationDetail> reservationDetailFuture;
-
   @override
   void initState() {
     super.initState();
@@ -108,36 +110,48 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if(!widget.type.contains("History"))
-                    Container(
-                      margin: EdgeInsets.fromLTRB(0 * fem, 0 * fem, 0 * fem, 5 * fem),
-                      padding: EdgeInsets.fromLTRB(14 * fem, 14 * fem, 4 * fem, 10 * fem),
-                      width: 120 * fem,
-                      decoration: BoxDecoration(
-                        color: Color(0xffdcdada),
-                        borderRadius: BorderRadius.circular(6 * fem),
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                            width: 20 * fem,
-                            height: 20 * fem,
-                            child: Icon(Icons.message),
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(left: 8 * fem),
-                            child: Text(
-                              'Nhắn tin',
-                              style: TextStyle(
-                                fontSize: 20 * ffem,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xff000000),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    // Container(
+                    //   margin: EdgeInsets.fromLTRB(0 * fem, 0 * fem, 0 * fem, 5 * fem),
+                    //   padding: EdgeInsets.fromLTRB(14 * fem, 14 * fem, 4 * fem, 10 * fem),
+                    //   width: 120 * fem,
+                    //   decoration: BoxDecoration(
+                    //     color: Color(0xffdcdada),
+                    //     borderRadius: BorderRadius.circular(6 * fem),
+                    //   ),
+                    //   child: Row(
+                    //     crossAxisAlignment: CrossAxisAlignment.center,
+                    //     children: [
+                    //       Container(
+                    //         width: 20 * fem,
+                    //         height: 20 * fem,
+                    //         child: Icon(Icons.message),
+                    //       ),
+                    //       Container(
+                    //         margin: EdgeInsets.only(left: 8 * fem),
+                    //         child:
+                    //         InkWell(
+                    //           onTap: () {
+                    //             PersistentNavBarNavigator.pushNewScreen(
+                    //               context,
+                    //               screen: ChatScreen(user: widget.user),
+                    //               withNavBar: false,
+                    //               pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                    //             );
+                    //           },
+                    //           child:
+                    //           Text(
+                    //             'Nhắn tin',
+                    //             style: TextStyle(
+                    //               fontSize: 20 * ffem,
+                    //               fontWeight: FontWeight.bold,
+                    //               color: Color(0xff000000),
+                    //             ),
+                    //           ),
+                    //         )
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
                   Container(
                     margin: EdgeInsets.only(top: 25 * fem),
                     padding: EdgeInsets.fromLTRB(8 * fem, 0, 8 * fem, 16 * fem),

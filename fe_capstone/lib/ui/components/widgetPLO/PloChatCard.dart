@@ -52,7 +52,7 @@ class _PloChatCard extends State<PloChatCard> {
         onTap: () {
           PersistentNavBarNavigator.pushNewScreen(
             context,
-            screen: ChatScreen(user: widget.user),
+            screen: ChatScreen(user: widget.user, admin: false,),
             withNavBar: false,
             pageTransitionAnimation: PageTransitionAnimation.cupertino,
           );

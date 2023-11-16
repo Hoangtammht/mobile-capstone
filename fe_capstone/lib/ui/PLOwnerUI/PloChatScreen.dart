@@ -5,7 +5,9 @@ import 'package:fe_capstone/blocs/UserPreferences.dart';
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/models/ChatUser.dart';
 import 'package:fe_capstone/ui/components/widgetPLO/PloChatCard.dart';
+import 'package:fe_capstone/ui/screens/ChatScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
 class PloChatScreen extends StatefulWidget {
   const PloChatScreen({Key? key}) : super(key: key);
@@ -57,10 +59,22 @@ class _PloChatScreenState extends State<PloChatScreen> {
               color: Color(0xffffffff),
             ),
           ),
+          actions: [
+            InkWell(
+                onTap: () {
+                  ChatUser user = ChatUser(
+                      id: 'ADMIN1', name: 'ADMIN1', lastMessage: '', time: '');
+                  PersistentNavBarNavigator.pushNewScreen(
+                    context,
+                    screen: ChatScreen(user: user, admin: true),
+                    withNavBar: false,
+                    pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                  );
+                },
+                child: Image.asset('assets/images/admin-white.png')),
+          ],
         ),
-        body:
-
-        StreamBuilder(
+        body: StreamBuilder(
           builder: (context, snapshot) {
             switch (snapshot.connectionState) {
               case ConnectionState.waiting:
@@ -69,19 +83,21 @@ class _PloChatScreenState extends State<PloChatScreen> {
               case ConnectionState.active:
               case ConnectionState.done:
                 final data = snapshot.data?.docs;
-                  list =  data?.map((e) => ChatUser.fromJson(e.data())).toList() ?? [];
+                list = data?.map((e) => ChatUser.fromJson(e.data())).toList() ??
+                    [];
                 if (list.isNotEmpty) {
                   return Container(
                     margin: EdgeInsets.only(top: 15 * fem),
-                    child:
-                    ListView.builder(
+                    child: ListView.builder(
                         itemCount: list.length,
                         itemBuilder: (context, index) {
                           return PloChatCard(user: list[index]);
                         }),
                   );
                 } else {
-                  return Center (child: Text('Không có hộp thoại nào', style: TextStyle(fontSize: 20)));
+                  return Center(
+                      child: Text('Không có hộp thoại nào',
+                          style: TextStyle(fontSize: 20)));
                 }
             }
           },

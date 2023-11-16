@@ -11,7 +11,8 @@ import 'package:flutter/services.dart';
 class MessageCard extends StatefulWidget {
   final MessageCustom message;
   final String userID;
-  const MessageCard({Key? key, required this.message, required this.userID}) : super(key: key);
+  final bool admin;
+  const MessageCard({Key? key, required this.message, required this.userID, required this.admin}) : super(key: key);
 
   @override
   State<MessageCard> createState() => _MessageCardState();
@@ -32,7 +33,11 @@ class _MessageCardState extends State<MessageCard> {
 
   Widget _receiveMessage() {
     if (widget.message.toId == widget.userID && widget.message.read.isEmpty) {
-      FirebaseAPI.updateMessageStatus(widget.message);
+      if(widget.admin){
+        FirebaseAPI.updateMessageStatusAdmin(widget.message);
+      } else {
+        FirebaseAPI.updateMessageStatus(widget.message);
+      }
     }
     return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
       Flexible(
