@@ -252,7 +252,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       onTap: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => EditProfileScreen(),
+                            builder: (context) => EditProfileScreen(roleName: "CUSTOMER"),
                           ),
                         );
                       },

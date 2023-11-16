@@ -1,9 +1,6 @@
 import 'package:fe_capstone/apis/Auth.dart';
-import 'package:fe_capstone/apis/plo/AuthAPI.dart';
 import 'package:fe_capstone/main.dart';
-import 'package:fe_capstone/ui/screens/EditProfileScreen.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({Key? key}) : super(key: key);
@@ -276,7 +273,17 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                 String reNewPassword = _ReNewPasswordController.text;
 
                                 if (newPassword != reNewPassword) {
-                                  _showFailureDialog(context);
+                                  final snackBar = SnackBar(
+                                    content: Text(
+                                      'Mật khẩu mới không trùng khớp',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(fontSize: 18 * fem),
+                                    ),
+                                    behavior: SnackBarBehavior.fixed,
+                                  );
+
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(snackBar);
                                 } else {
                                     await AuthAPIs.changePassword(oldPassword, newPassword, reNewPassword)
                                         .then((_) {

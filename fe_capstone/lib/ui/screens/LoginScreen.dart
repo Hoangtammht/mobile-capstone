@@ -325,8 +325,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                     });
                                   });
                                 } else {
-                                  // Dialogs.showSnackbar(context,
-                                  //     "Tài khoản hoặc mật khẩu không được để trống.");
                                   setState(() {
                                     isLoading =
                                         false; // Ẩn CircularProgressIndicator khi xảy ra lỗi
