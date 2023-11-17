@@ -475,7 +475,7 @@ class _OtpFormState extends State<OtpForm> {
                   });
                 }
               },
-              keyboardType: TextInputType.text,
+              keyboardType: TextInputType.number,
               maxLength: 1,
               decoration: InputDecoration(counterText: ""),
               textAlign: TextAlign.center,
@@ -499,7 +499,7 @@ class _OtpFormState extends State<OtpForm> {
                   });
                 }
               },
-              keyboardType: TextInputType.text,
+              keyboardType: TextInputType.number,
               maxLength: 1,
               decoration: InputDecoration(counterText: ""),
               textAlign: TextAlign.center,
@@ -523,7 +523,7 @@ class _OtpFormState extends State<OtpForm> {
                   });
                 }
               },
-              keyboardType: TextInputType.text,
+              keyboardType: TextInputType.number,
               maxLength: 1,
               decoration: InputDecoration(counterText: ""),
               textAlign: TextAlign.center,
@@ -547,7 +547,7 @@ class _OtpFormState extends State<OtpForm> {
                   });
                 }
               },
-              keyboardType: TextInputType.text,
+              keyboardType: TextInputType.number,
               maxLength: 1,
               decoration: InputDecoration(counterText: ""),
               textAlign: TextAlign.center,

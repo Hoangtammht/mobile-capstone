@@ -6,7 +6,8 @@ import 'package:fe_capstone/ui/components/widgetCustomer/HistoryCard.dart';
 import 'package:flutter/material.dart';
 
 class HistoryList extends StatefulWidget {
-  const HistoryList({Key? key}) : super(key: key);
+  final VoidCallback? onNavigateToHomeScreen;
+  const HistoryList({Key? key, this.onNavigateToHomeScreen}) : super(key: key);
 
   @override
   State<HistoryList> createState() => _HistoryListState();
@@ -102,7 +103,7 @@ class _HistoryListState extends State<HistoryList> {
                       child: ListView.builder(
                     itemCount: displayedHistory.length,
                     itemBuilder: (BuildContext context, int index) {
-                      return HistoryCard(history: displayedHistory[index]);
+                      return HistoryCard(history: displayedHistory[index], onNavigateToHomeScreen: widget.onNavigateToHomeScreen,);
                     },
                   )),
                 ],

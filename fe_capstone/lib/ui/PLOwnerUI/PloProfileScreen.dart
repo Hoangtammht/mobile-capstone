@@ -252,7 +252,7 @@ class _PloProfileScreenState extends State<PloProfileScreen> {
                       onTap: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => EditProfileScreen(),
+                            builder: (context) => EditProfileScreen(roleName: "PLO",),
                           ),
                         );
                       },

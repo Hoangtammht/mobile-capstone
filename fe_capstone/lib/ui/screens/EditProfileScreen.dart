@@ -2,12 +2,14 @@ import 'package:fe_capstone/apis/Auth.dart';
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/models/CustomerDetail.dart';
 import 'package:fe_capstone/models/UpdateProfileRequest.dart';
+import 'package:fe_capstone/ui/CustomerUI/ProfileScreen.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/PloProfileScreen.dart';
 import 'package:fe_capstone/ui/helper/ConfirmDialog.dart';
 import 'package:flutter/material.dart';
 
 class EditProfileScreen extends StatefulWidget {
-  const EditProfileScreen({Key? key}) : super(key: key);
+  final String roleName;
+  const EditProfileScreen({Key? key, required this.roleName}) : super(key: key);
 
   @override
   State<EditProfileScreen> createState() => _EditProfileScreenState();
@@ -194,7 +196,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                           email: newEmail,
                                           fullName: newFullName,
                                         ));
-                                        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => PloProfileScreen()), (route) => false);
+                                        if(widget.roleName == "PLO") {
+                                          Navigator.pushAndRemoveUntil(context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      PloProfileScreen()), (
+                                                  route) => false);
+                                        }else if(widget.roleName == "CUSTOMER") {
+                                          Navigator.pushAndRemoveUntil(context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ProfileScreen()), (
+                                                  route) => false);
+                                        }
                                     },
                                 );
                               },

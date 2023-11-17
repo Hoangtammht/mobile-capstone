@@ -3,7 +3,8 @@ import 'package:fe_capstone/ui/CustomerUI/HistoryList.dart';
 import 'package:flutter/material.dart';
 
 class HistoryScreen extends StatefulWidget {
-  const HistoryScreen({Key? key}) : super(key: key);
+  final VoidCallback? onNavigateToHomeScreen;
+  const HistoryScreen({Key? key, this.onNavigateToHomeScreen}) : super(key: key);
 
   @override
   State<HistoryScreen> createState() => _HistoryScreenState();
@@ -32,7 +33,7 @@ class _HistoryScreenState extends State<HistoryScreen>{
           ),
         ),
       ),
-      body: HistoryList(),
+      body: HistoryList(onNavigateToHomeScreen: widget.onNavigateToHomeScreen),
     );
   }
 }

@@ -24,7 +24,8 @@ class ReservationScreen extends StatefulWidget {
   final String waitingTime;
   const ReservationScreen({
     required this.parkinglotDetail,
-    required this.ploID, required this.refreshHomeScreen,
+    required this.ploID,
+    required this.refreshHomeScreen,
     required this.distance,
     required this.waitingTime,
   });

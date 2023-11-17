@@ -35,7 +35,8 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 typedef MethodCallback = void Function(int method);
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  final VoidCallback? onNavigateToWallet;
+  const HomeScreen({Key? key,  this.onNavigateToWallet}) : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -367,21 +368,35 @@ class _HomeScreenState extends State<HomeScreen> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text("Thông báo", style: TextStyle(fontSize: 24 * fem)),
+            title: Text("Thông báo", style: TextStyle(fontSize: 24)),
             content: Text(
                 "Số dư tài khoản của bạn chỉ còn $formattedBalanceđ. Vui lòng nạp tiền!",
-                style: TextStyle(fontSize: 20 * fem)),
+                style: TextStyle(fontSize: 20)),
             actions: <Widget>[
               TextButton(
-                child: Text("Đóng", style: TextStyle(fontSize: 18 * fem)),
+                child: Text("Đóng", style: TextStyle(fontSize: 18)),
                 onPressed: () {
                   Navigator.of(context).pop();
+                },
+              ),
+              TextButton(
+                child: Text("Nạp tiền", style: TextStyle(fontSize: 18)),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  widget.onNavigateToWallet?.call();
                 },
               ),
             ],
           );
         },
       );
+      setState(() {
+        canPerformSearch = false;
+      });
+    } else {
+      setState(() {
+        canPerformSearch = true;
+      });
     }
   }
 
@@ -423,6 +438,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return await Geolocator.getCurrentPosition();
   }
 
+  bool canPerformSearch = true;
   void performAutoSearch(String searchText) async {
     double circleRadius = 200.0;
     String url =
@@ -656,7 +672,12 @@ class _HomeScreenState extends State<HomeScreen> {
                               hintText: 'Bạn muốn đi đến đâu?',
                               border: InputBorder.none,
                             ),
-                            onChanged: (value) {
+                            onChanged: (value) async {
+                              await checkWalletCustomer();
+                              checkAccount();
+                              if (!canPerformSearch) {
+                                return;
+                              }
                               performAutoSearch(value);
                               setState(() {
                                 showSearchResults = true;
@@ -674,7 +695,12 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                         InkWell(
-                          onTap: () {
+                          onTap: () async {
+                            await checkWalletCustomer();
+                            checkAccount();
+                            if (!canPerformSearch) {
+                              return;
+                            }
                             performAutoSearch(_searchController.text);
                             setState(() {
                               showSearchResults = true;
@@ -791,7 +817,12 @@ class _HomeScreenState extends State<HomeScreen> {
             child: FloatingActionButton(
               tooltip: 'Vị trí hiện tại',
               backgroundColor: Colors.white,
-              onPressed: () {
+              onPressed: () async {
+                await checkWalletCustomer();
+                checkAccount();
+                if (!canPerformSearch) {
+                  return;
+                }
                 _getCurrentLocation().then((value) async {
                   lat = double.parse('${value.latitude}');
                   long = double.parse('${value.longitude}');
