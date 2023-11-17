@@ -14,7 +14,8 @@ import '../../models/ChatUser.dart';
 
 class ChatScreen extends StatefulWidget {
   final ChatUser user;
-  const ChatScreen({Key? key, required this.user}) : super(key: key);
+  final bool admin;
+  const ChatScreen({Key? key, required this.user, required this.admin}) : super(key: key);
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -42,7 +43,13 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void getStream() async {
-    Stream<QuerySnapshot<Map<String, dynamic>>> data = await FirebaseAPI.getAllMessages(widget.user);
+    Stream<QuerySnapshot<Map<String, dynamic>>>? data;
+    if(widget.admin){
+      data = await FirebaseAPI.getAllMessagesAdmin();
+    } else {
+      data = await FirebaseAPI.getAllMessages(widget.user);
+    }
+
     if (data != null) {
       setState(() {
         stream = data!;
@@ -117,16 +124,25 @@ class _ChatScreenState extends State<ChatScreen> {
                                 physics: const BouncingScrollPhysics(),
                                 itemBuilder: (context, index) {
                                   return MessageCard(
-                                    message: _list[index], userID: userID,
+                                    message: _list[index], userID: userID, admin: widget.admin
                                   );
                                 });
                           } else {
-                            return const Center(
-                              child: Text(
-                                'Xin chào ! 👋 ',
-                                style: TextStyle(fontSize: 20),
-                              ),
-                            );
+                            if (widget.admin) {
+                              return const Center(
+                                child: Text(
+                                  'Đây là Admin! 👋 ',
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                              );
+                            } else {
+                              return const Center(
+                                child: Text(
+                                  'Xin chào! 👋 ',
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                              );
+                            }
                           }
                       }
                     },
@@ -209,7 +225,12 @@ class _ChatScreenState extends State<ChatScreen> {
           MaterialButton(
             onPressed: () {
               if (_textController.text.isNotEmpty) {
-                FirebaseAPI.sendMessage(widget.user, _textController.text);
+                if(widget.admin){
+                    FirebaseAPI.createUserForAdmin();
+                    FirebaseAPI.sendMessageAdmin(_textController.text);
+                } else {
+                  FirebaseAPI.sendMessage(widget.user, _textController.text);
+                }
                 _textController.text = '';
               }
             },

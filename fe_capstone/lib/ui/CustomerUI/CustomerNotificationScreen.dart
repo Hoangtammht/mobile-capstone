@@ -14,7 +14,6 @@ class CustomerNotificationScreen extends StatefulWidget {
 class _NotificationScreenState extends State<CustomerNotificationScreen> {
   Future<List<CustomerNotification>>? customerNoti;
 
-
   @override
   void initState() {
     super.initState();
@@ -42,25 +41,23 @@ class _NotificationScreenState extends State<CustomerNotificationScreen> {
         ),
       ),
       body: FutureBuilder<List<CustomerNotification>>(
-        future: customerNoti, // Thay thế customerNoti bằng Future bạn muốn sử dụng
+        future: customerNoti,
+        // Thay thế customerNoti bằng Future bạn muốn sử dụng
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Lỗi: ${snapshot.error}'));
           } else if (snapshot.data!.isEmpty) {
-            return Center(child: Text('Không có thông báo'));
+            return const Center(child: Text('Không có thông báo'));
           } else {
-
-            return SingleChildScrollView(
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: snapshot.data!.length,
-                itemBuilder: (context, index) {
-                  final notification = snapshot.data![index];
-                  return CustomerNotificationCard(notification: notification);
-                },
-              ),
+            return ListView.builder(
+              shrinkWrap: true,
+              itemCount: snapshot.data!.length,
+              itemBuilder: (context, index) {
+                final notification = snapshot.data![index];
+                return CustomerNotificationCard(notification: notification);
+              },
             );
           }
         },

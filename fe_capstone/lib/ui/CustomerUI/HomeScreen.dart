@@ -154,7 +154,7 @@ class _HomeScreenState extends State<HomeScreen> {
             DateTime beforeUpdateLater =
                 endDateTime.subtract(Duration(minutes: 1));
             DateTime afterUpdateStatusLater =
-                endDateTime.add(Duration(seconds: 3));
+                endDateTime.add(Duration(seconds: 5));
             print('Reservation lúc đặt là: ${reservationID}');
             print('Thời gian kết thúc $endTime');
             print(
@@ -201,7 +201,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 .subtract(Duration(minutes: 1));
             DateTime cancelBookingDateTime = startDateTime
                 .add(cancelBookingDuration)
-                .add(Duration(seconds: 3));
+                .add(Duration(seconds: 5));
             print('Reservation lúc đặt là: ${reservationID}');
             print('Thời gian đặt $startTime');
             print('Thời gian cancel $cancelBookingTime');
@@ -639,13 +639,31 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                         ),
-                        Container(
-                          margin: EdgeInsets.fromLTRB(
-                              0 * fem, 0 * fem, 0 * fem, 1 * fem),
-                          width: 25 * fem,
-                          height: 24 * fem,
-                          child: Icon(Icons.wallet),
-                        ),
+                        InkWell(
+                          onTap: () {
+                            ChatUser user = ChatUser(
+                                id: 'ADMIN1',
+                                name: 'ADMIN1',
+                                lastMessage: '',
+                                time: '');
+                            PersistentNavBarNavigator.pushNewScreen(
+                              context,
+                              screen: ChatScreen(user: user, admin: true),
+                              withNavBar: false,
+                              pageTransitionAnimation:
+                              PageTransitionAnimation.cupertino,
+                            );
+
+                          },
+                          child:   Container(
+                            margin: EdgeInsets.fromLTRB(
+                                0 * fem, 0 * fem, 0 * fem, 1 * fem),
+                            width: 25 * fem,
+                            height: 24 * fem,
+                            child: Image.asset(
+                                'assets/images/admin-white.png'),
+                          ),
+                          ),
                       ],
                     ),
                   ),
@@ -896,97 +914,92 @@ Future<void> _RatingDialog(BuildContext context, CustomerHome customerHome,
         ),
         backgroundColor: const Color(0xffffffff),
         child: Container(
-          padding: EdgeInsets.all(20),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Center(
-                child: Text(
-                  "GỬI ĐÁNH GIÁ",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 15 * fem,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Bãi xe:',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                    ),
-                  ),
-                  Text(
-                    customerHome.parkingName,
-                    style: TextStyle(
-                      fontSize: 18,
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 15 * fem,
-              ),
-              Center(
-                child: RatingBar.builder(
-                  initialRating: 0,
-                  minRating: 1,
-                  direction: Axis.horizontal,
-                  allowHalfRating: false,
-                  itemCount: 5,
-                  itemSize: 33,
-                  itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                  itemBuilder: (context, _) => Icon(
-                    Icons.star,
-                    color: Colors.amber,
-                  ),
-                  onRatingUpdate: (rating) {
-                    selectedRating = rating.toInt();
-                  },
-                ),
-              ),
-              SizedBox(
-                height: 15 * fem,
-              ),
               Container(
-                margin: EdgeInsets.only(bottom: 20, top: 20),
-                padding: EdgeInsets.fromLTRB(15, 0, 10, 0),
-                constraints: BoxConstraints(
-                  maxWidth: 300,
-                ),
-                decoration: BoxDecoration(
-                  color: Color(0xfff5f5f5),
-                  borderRadius: BorderRadius.circular(9 * fem),
-                ),
-                child: TextFormField(
-                  controller: _feedbackController,
-                  decoration: InputDecoration(
-                    hintText: 'Nội dung',
-                    border: InputBorder.none,
-                    isDense: true,
-                  ),
-                  maxLines: 5,
+                padding: EdgeInsets.all(20),
+                child:
+                Column(
+                  children: [
+                   const Center(
+                      child: Text(
+                        "GỬI ĐÁNH GIÁ",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 15 * fem,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                       const Text(
+                          'Bãi xe:',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        ),
+                        Text(
+                          customerHome.parkingName,
+                          style: TextStyle(
+                            fontSize: 18,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15 * fem,
+                    ),
+                    Center(
+                      child: RatingBar.builder(
+                        initialRating: 0,
+                        minRating: 1,
+                        direction: Axis.horizontal,
+                        allowHalfRating: false,
+                        itemCount: 5,
+                        itemSize: 33,
+                        itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                        itemBuilder: (context, _) => Icon(
+                          Icons.star,
+                          color: Colors.amber,
+                        ),
+                        onRatingUpdate: (rating) {
+                          selectedRating = rating.toInt();
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      height: 15 * fem,
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(bottom: 20, top: 20),
+                      padding: EdgeInsets.fromLTRB(15, 0, 10, 0),
+                      constraints: BoxConstraints(
+                        maxWidth: 300,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Color(0xfff5f5f5),
+                        borderRadius: BorderRadius.circular(9 * fem),
+                      ),
+                      child: TextFormField(
+                        controller: _feedbackController,
+                        decoration: InputDecoration(
+                          hintText: 'Nội dung',
+                          border: InputBorder.none,
+                          isDense: true,
+                        ),
+                        maxLines: 5,
+                      ),
+                    ),
+                    SizedBox(height: 15 * fem),
+                  ],
                 ),
               ),
-              SizedBox(height: 15 * fem),
-
-              // Center(
-              //     child: Text(
-              //       '*Không thể gửi vì điền thiếu thông tin!',
-              //       style: TextStyle(
-              //         fontWeight: FontWeight.bold,
-              //         fontSize: 10,
-              //         color: Colors.red,
-              //         fontStyle: FontStyle.italic,
-              //       ),
-              //   ),
-              // ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -1009,7 +1022,7 @@ Future<void> _RatingDialog(BuildContext context, CustomerHome customerHome,
                                   .popUntil((route) => route.isCurrent);
                             }
                           },
-                          child: Text(
+                          child: const Text(
                             'Bỏ qua',
                             style: TextStyle(
                               fontSize: 20,
@@ -1042,7 +1055,7 @@ Future<void> _RatingDialog(BuildContext context, CustomerHome customerHome,
                             if (selectedRating == 0 ||
                                 _feedbackController.text.isEmpty) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
+                               const SnackBar(
                                     content: Text(
                                         '*Không thể gửi vì điền thiếu thông tin!')),
                               );
@@ -1055,21 +1068,21 @@ Future<void> _RatingDialog(BuildContext context, CustomerHome customerHome,
                                     selectedRating);
                                 checkRating();
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
+                                const  SnackBar(
                                       content:
                                           Text('Gửi đánh giá thành công!')),
                                 );
                                 Navigator.of(context).pop();
                               } catch (e) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
+                                 const   SnackBar(
                                         content:
                                             Text('Gửi đánh giá thất bại!')));
                                 Navigator.of(context).pop();
                               }
                             }
                           },
-                          child: Text(
+                          child: const Text(
                             'Gửi',
                             style: TextStyle(
                               fontSize: 20,
@@ -1885,7 +1898,7 @@ class CheckInContent extends StatelessWidget {
                                             time: '');
                                         PersistentNavBarNavigator.pushNewScreen(
                                           context,
-                                          screen: ChatScreen(user: user),
+                                          screen: ChatScreen(user: user, admin: false),
                                           withNavBar: false,
                                           pageTransitionAnimation:
                                           PageTransitionAnimation.cupertino,
@@ -2150,35 +2163,43 @@ Future<void> _showDeleteDialog(BuildContext context, CustomerHome customerHome,
         ),
         backgroundColor: const Color(0xffffffff),
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 10 * fem),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 12 * fem),
-                child: Center(
-                  child: Text(
-                    'HỦY BỎ ĐẶT XE',
-                    style: TextStyle(
-                      fontSize: 25 * fem,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xff000000),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 10 * fem),
+                child:
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 12 * fem),
+                      child: Center(
+                        child: Text(
+                          'HỦY BỎ ĐẶT XE',
+                          style: TextStyle(
+                            fontSize: 25 * fem,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xff000000),
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
+                    Center(
+                        child: Container(
+                          margin: EdgeInsets.only(top: 20 * fem, bottom: 20 * fem),
+                          child: Text(
+                            'Bạn có chắc chắn hủy việc đặt chỗ ở ${customerHome.parkingName} ',
+                            style: TextStyle(
+                              fontSize: 20 * fem,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        )),
+                  ],
                 ),
               ),
-              Center(
-                  child: Container(
-                margin: EdgeInsets.only(top: 20 * fem, bottom: 20 * fem),
-                child: Text(
-                  'Bạn có chắc chắn hủy việc đặt chỗ ở ${customerHome.parkingName} ',
-                  style: TextStyle(
-                    fontSize: 20 * fem,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              )),
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -2392,7 +2413,7 @@ class CheckOutContent extends StatelessWidget {
                                         time: '');
                                     PersistentNavBarNavigator.pushNewScreen(
                                       context,
-                                      screen: ChatScreen(user: user),
+                                      screen: ChatScreen(user: user, admin: false,),
                                       withNavBar: false,
                                       pageTransitionAnimation:
                                       PageTransitionAnimation.cupertino,

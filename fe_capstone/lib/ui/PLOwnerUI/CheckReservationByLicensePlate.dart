@@ -581,44 +581,48 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
           child:
 
           Container(
-            padding: const EdgeInsets.all(30),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-
-                Center(
-                  child: Container(
-                    padding: const EdgeInsets.only(bottom: 30),
-                    child: const Text.rich(
-                      TextSpan(children: [
-                        TextSpan(
-                            text: 'Cập nhập trạng thái',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 18)),
-                        TextSpan(
-                            text: ' vào bãi',
-                            style: TextStyle(
-                                color: Colors.green,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18))
-                      ]),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-                //
-
-                Center(
-                  child: Container(
-                    padding: const EdgeInsets.only(bottom: 30),
-                    child: Text(
-                      licensePlate,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
+                Container(
+                   padding: const EdgeInsets.all(10),
+                  child:
+                  Column(
+                    children: [
+                      Center(
+                        child: Container(
+                          padding: const EdgeInsets.only(bottom: 30),
+                          child: const Text.rich(
+                            TextSpan(children: [
+                              TextSpan(
+                                  text: 'Cập nhập trạng thái',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold, fontSize: 20)),
+                              TextSpan(
+                                  text: ' vào bãi',
+                                  style: TextStyle(
+                                      color: Colors.green,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20))
+                            ]),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
                       ),
-                      textAlign: TextAlign.center,
-                    ),
+                      Center(
+                        child: Container(
+                          padding: const EdgeInsets.only(bottom: 30),
+                          child: Text(
+                            licensePlate,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 23,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 Row(
@@ -728,61 +732,67 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
             borderRadius: BorderRadius.circular(23),
           ),
           backgroundColor: const Color(0xffffffff),
-          child: Container(
-            padding: const EdgeInsets.all(10),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Center(
-                  child: Container(
-                    padding: const EdgeInsets.only(bottom: 30),
-                    child: const Text.rich(
-                      TextSpan(children: [
-                        TextSpan(
-                            text: 'Cập nhập trạng thái',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 22)),
-                        TextSpan(
-                            text: ' rời bãi',
-                            style: TextStyle(
-                                color: Colors.red,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 22))
-                      ]),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-                Center(
-                  child: Container(
-                    padding: const EdgeInsets.only(bottom: 30),
-                    child: Text(
-                      scannedText,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 22,
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  child:
+                  Column(
+                    children: [
+                      Center(
+                        child: Container(
+                          padding: const EdgeInsets.only(bottom: 30),
+                          child: const Text.rich(
+                            TextSpan(children: [
+                              TextSpan(
+                                  text: 'Cập nhập trạng thái',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold, fontSize: 20)),
+                              TextSpan(
+                                  text: ' rời bãi',
+                                  style: TextStyle(
+                                      color: Colors.red,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20))
+                            ]),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
                       ),
-                      textAlign: TextAlign.center,
-                    ),
+                      Center(
+                        child: Container(
+                          padding: const EdgeInsets.only(bottom: 30),
+                          child: Text(
+                            scannedText,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 23,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                      if (checkStatus == 3)
+                        const Text.rich(
+                          TextSpan(children: [
+                            TextSpan(
+                                text: '*Lưu ý: ',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                )),
+                            TextSpan(
+                                text:
+                                'Biển số xe này đã rời bãi trễ giờ. Phải đóng phí phạt',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                ))
+                          ]),
+                          textAlign: TextAlign.center,
+                        ),
+                    ],
                   ),
                 ),
-                if (checkStatus == 3)
-                  const Text.rich(
-                    TextSpan(children: [
-                      TextSpan(
-                          text: '*Lưu ý: ',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          )),
-                      TextSpan(
-                          text:
-                              'Biển số xe này đã rời bãi trễ giờ. Phải đóng phí phạt',
-                          style: TextStyle(
-                            fontSize: 18,
-                          ))
-                    ]),
-                    textAlign: TextAlign.center,
-                  ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -879,7 +889,6 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                 ),
               ],
             ),
-          ),
         );
       },
     );
