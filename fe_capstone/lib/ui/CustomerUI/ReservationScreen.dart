@@ -734,6 +734,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
           (item) => item.methodName == dropdownType,
         )
         .methodID;
+
     await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -933,33 +934,44 @@ class _ReservationScreenState extends State<ReservationScreen> {
                             height: 1,
                             color: const Color(0xffb3abab),
                           ),
+
                           TextButton(
+
                             onPressed: () async {
                               try {
                                 await ReservationAPI.getBooking(
                                         dropdownVehicle, methodID, widget.ploID)
-                                    .then((_) async {
-                                  await FirebaseAPI.createUserForCus(
-                                          widget.ploID)
-                                      .then((value) async {
-                                    final message = {
-                                      "ploID": widget.ploID.toString(),
-                                      "content": "GetParking"
-                                    };
-                                    final messageJson = jsonEncode(message);
-                                    ploChannel.sink.add(messageJson);
-                                    print("Đặt chỗ socket: $messageJson");
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                          content: Text('Đặt chỗ thành công')),
-                                    );
-                                    final walletProvider =
-                                        Provider.of<WalletDataProvider>(context,
-                                            listen: false);
-                                    await walletProvider.updateTransactions();
-                                    refreshHomeScreen();
-                                    Navigator.of(context).pop();
-                                  });
+                                    .then((value) async {
+                                     if(value == 1){
+                                       await FirebaseAPI.createUserForCus(
+                                           widget.ploID)
+                                           .then((value) async {
+                                         final message = {
+                                           "ploID": widget.ploID.toString(),
+                                           "content": "GetParking"
+                                         };
+                                         final messageJson = jsonEncode(message);
+                                         ploChannel.sink.add(messageJson);
+                                         print("Đặt chỗ socket: $messageJson");
+                                         Navigator.of(context).pop();
+                                         refreshHomeScreen();
+                                         ScaffoldMessenger.of(context).showSnackBar(
+                                           const SnackBar(
+                                               content: Text('Đặt chỗ thành công')),
+                                         );
+                                         final walletProvider =
+                                         Provider.of<WalletDataProvider>(context,
+                                             listen: false);
+                                         await walletProvider.updateTransactions();
+                                       });
+                                     } else {
+                                       Navigator.of(context).pop();
+                                       ScaffoldMessenger.of(context).showSnackBar(
+                                         const SnackBar(
+                                           content: Text('Bãi xe hiện tại đã hết chỗ, xin vui lòng đặt nơi khác!'),
+                                         ),
+                                       );
+                                     }
                                 });
                               } catch (e) {
                                 ScaffoldMessenger.of(context).showSnackBar(
