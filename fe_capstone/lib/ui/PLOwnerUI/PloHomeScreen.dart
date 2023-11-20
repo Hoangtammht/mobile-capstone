@@ -66,7 +66,7 @@ class _PloHomeScreenState extends State<PloHomeScreen> {
     });
     bool isLoggedIn = UserPreferences.isLoggedIn();
     if (isLoggedIn) {
-      const duration = Duration(minutes: 3);
+      const duration = Duration(minutes: 1);
       Timer.periodic(duration, (Timer t) {
         final message = {
           "ploID": ploID,

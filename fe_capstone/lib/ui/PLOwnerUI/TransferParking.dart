@@ -152,20 +152,50 @@ class _TransferParkingState extends State<TransferParking> {
                             ),
                             InkWell(
                               onTap: () async {
-                                String phoneNumber =
-                                    _phoneNumberController.text;
+                                String phoneNumber = _phoneNumberController.text;
                                 try {
-                                  await ParkingAPI.checkPLOTransfer(
-                                      phoneNumber);
+                                  await ParkingAPI.checkPLOTransfer(phoneNumber);
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => OTPConfirmScreen(
-                                              phoneNumber: phoneNumber,
-                                            )),
+                                      builder: (context) => OTPConfirmScreen(
+                                        phoneNumber: phoneNumber,
+                                      ),
+                                    ),
                                   );
                                 } catch (e) {
-                                  print('Error: $e');
+                                  if (e is Exception && e.toString().contains('The PLO is already exists')) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: Text(
+                                            'Số điện thoại đã được sử dụng ở 1 nơi khác',
+                                            style: TextStyle(
+                                              fontSize: 22 * fem,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          actions: <Widget>[
+                                            TextButton(
+                                              child: Text(
+                                                'OK',
+                                                style: TextStyle(
+                                                  fontSize: 22 * fem,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  } else {
+                                    print('Error: $e');
+                                  }
                                 }
                               },
                               child: Container(

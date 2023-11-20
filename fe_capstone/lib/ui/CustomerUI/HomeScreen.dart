@@ -106,7 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
         });
         bool isLoggedIn = UserPreferences.isLoggedIn();
         if (isLoggedIn) {
-          const duration = Duration(minutes: 3);
+          const duration = Duration(minutes: 1);
           Timer.periodic(duration, (Timer t) {
             final message = {
               "reservationID": reservationID.toString(),
@@ -154,7 +154,7 @@ class _HomeScreenState extends State<HomeScreen> {
             DateTime beforeUpdateLater =
                 endDateTime.subtract(Duration(minutes: 1));
             DateTime afterUpdateStatusLater =
-                endDateTime.add(Duration(seconds: 5));
+                endDateTime.add(Duration(seconds: 3));
             print('Reservation lúc đặt là: ${reservationID}');
             print('Thời gian kết thúc $endTime');
             print(
@@ -191,6 +191,15 @@ class _HomeScreenState extends State<HomeScreen> {
         reservationID = data.reservationID;
         print('Reservation hiện tại là: ${reservationID}');
         if (reservationID != 0) {
+          final message = {
+            "reservationID": reservationID.toString(),
+            "content": "Connected",
+          };
+          final messageJson = jsonEncode(message);
+          channel.sink.add(messageJson);
+          channel.stream.listen((message) {
+            handleMessage(message);
+          });
           if (data.statusID == 1) {
             String startTime = convertToDesiredFormat(data.startTime);
             String cancelBookingTime = data.cancelBookingTime;
@@ -201,7 +210,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 .subtract(Duration(minutes: 1));
             DateTime cancelBookingDateTime = startDateTime
                 .add(cancelBookingDuration)
-                .add(Duration(seconds: 5));
+                .add(Duration(seconds: 3));
             print('Reservation lúc đặt là: ${reservationID}');
             print('Thời gian đặt $startTime');
             print('Thời gian cancel $cancelBookingTime');
@@ -215,22 +224,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 data.ploID
             );
           }
-          final message = {
-            "reservationID": reservationID.toString(),
-            "content": "Connected",
-          };
-          final messageJson = jsonEncode(message);
-          channel.sink.add(messageJson);
-          channel.stream.listen((message) {
-            handleMessage(message);
-          });
         }
       });
     });
 
     bool isLoggedIn = UserPreferences.isLoggedIn();
     if (isLoggedIn) {
-      const duration = Duration(minutes: 3);
+      const duration = Duration(minutes: 1);
       Timer.periodic(duration, (Timer t) {
         final message = {
           "reservationID": reservationID.toString(),

@@ -342,7 +342,11 @@ class ParkingAPI {
           },
         ),
       );
+
       if (response.statusCode == 200) {
+        if (response.data == 'The PLO is already exists') {
+          throw Exception('The PLO is already exists');
+        }
         print('Gửi otp để xác nhận số điện thoại');
       } else {
         throw Exception('Failed to check PLO transfer');
