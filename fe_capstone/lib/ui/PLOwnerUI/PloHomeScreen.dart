@@ -31,7 +31,6 @@ class _PloHomeScreenState extends State<PloHomeScreen> {
   int parkingStatusID = 0;
   late ParkingStatus currentParkingStatus;
   WebSocketChannel ploChannel = IOWebSocketChannel.connect(BaseConstants.WEBSOCKET_PRIVATE_PLO_URL);
-
   List<TotalComing> totalComing = [];
 
   late Future<double> walletPLO;
@@ -66,7 +65,7 @@ class _PloHomeScreenState extends State<PloHomeScreen> {
     });
     bool isLoggedIn = UserPreferences.isLoggedIn();
     if (isLoggedIn) {
-      const duration = Duration(minutes: 1);
+      const duration = Duration(seconds: 30);
       Timer.periodic(duration, (Timer t) {
         final message = {
           "ploID": ploID,

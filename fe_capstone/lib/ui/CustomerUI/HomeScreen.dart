@@ -75,8 +75,6 @@ class _HomeScreenState extends State<HomeScreen> {
   FocusNode _searchFocusNode = FocusNode();
   WebSocketChannel channel = IOWebSocketChannel.connect(
       BaseConstants.WEBSOCKET_PRIVATE_RESERVATION_URL);
-  WebSocketChannel ploChannel =
-      IOWebSocketChannel.connect(BaseConstants.WEBSOCKET_PRIVATE_PLO_URL);
   late int reservationID = 0;
 
   @override
@@ -106,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
         });
         bool isLoggedIn = UserPreferences.isLoggedIn();
         if (isLoggedIn) {
-          const duration = Duration(minutes: 1);
+          const duration = Duration(seconds: 30);
           Timer.periodic(duration, (Timer t) {
             final message = {
               "reservationID": reservationID.toString(),
@@ -187,19 +185,25 @@ class _HomeScreenState extends State<HomeScreen> {
   void refreshHomeScreen() {
     setState(() {
       customerHome = _getHomeStatus();
+      const duration = Duration(seconds: 30);
+      Timer.periodic(duration, (Timer t) {
+        final message = {
+          "reservationID": reservationID.toString(),
+          "content": "KeepAlive"
+        };
+        final messageJson = jsonEncode(message);
+        if (channel.sink != null) {
+          channel.sink.add(messageJson);
+          print('KeepAlive message sent successfully.');
+        } else {
+          print('Channel sink is closed. KeepAlive message not sent.');
+          t.cancel();
+        }
+      });
       customerHome!.then((data) {
         reservationID = data.reservationID;
         print('Reservation hiện tại là: ${reservationID}');
         if (reservationID != 0) {
-          final message = {
-            "reservationID": reservationID.toString(),
-            "content": "Connected",
-          };
-          final messageJson = jsonEncode(message);
-          channel.sink.add(messageJson);
-          channel.stream.listen((message) {
-            handleMessage(message);
-          });
           if (data.statusID == 1) {
             String startTime = convertToDesiredFormat(data.startTime);
             String cancelBookingTime = data.cancelBookingTime;
@@ -224,28 +228,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 data.ploID
             );
           }
+          final message = {
+            "reservationID": reservationID.toString(),
+            "content": "Connected"
+          };
+          final messageJson = jsonEncode(message);
+          channel.sink.add(messageJson);
+          channel.stream.listen((message) {
+            handleMessage(message);
+          });
         }
       });
     });
-
-    bool isLoggedIn = UserPreferences.isLoggedIn();
-    if (isLoggedIn) {
-      const duration = Duration(minutes: 1);
-      Timer.periodic(duration, (Timer t) {
-        final message = {
-          "reservationID": reservationID.toString(),
-          "content": "KeepAlive"
-        };
-        final messageJson = jsonEncode(message);
-        if (channel.sink != null) {
-          channel.sink.add(messageJson);
-          print('KeepAlive message sent successfully.');
-        } else {
-          print('Channel sink is closed. KeepAlive message not sent.');
-          t.cancel();
-        }
-      });
-    }
   }
 
   void callApiBeforeCancelBooking(Duration beforeCancelBooking,
@@ -275,12 +269,14 @@ class _HomeScreenState extends State<HomeScreen> {
             await ReservationAPI.updateReservationToCancel(reservationID);
         print('Update sau 15 phút là $isUpdateSuccessful');
         customerHome = _getHomeStatus();
-          final ploMessage = {
-            "ploID": ploID.toString(),
-            "content": "GetParking"
-          };
-          final messageJsonPLO = jsonEncode(ploMessage);
-          ploChannel.sink.add(messageJsonPLO);
+        WebSocketChannel ploChannel =
+        IOWebSocketChannel.connect(BaseConstants.WEBSOCKET_PRIVATE_PLO_URL);
+        final message = {
+          "ploID": ploID,
+          "content": "GetParking"
+        };
+        final messageJson = jsonEncode(message);
+        ploChannel.sink.add(messageJson);
       });
     } catch (e) {
       print('Error calling API: $e');
@@ -313,6 +309,8 @@ class _HomeScreenState extends State<HomeScreen> {
             await ReservationAPI.updateReservationToLater(reservationID);
         print('Status của reservation sau 15 phút là $isUpdateSuccessful');
         customerHome = _getHomeStatus();
+        WebSocketChannel ploChannel =
+        IOWebSocketChannel.connect(BaseConstants.WEBSOCKET_PRIVATE_PLO_URL);
           final ploMessage = {
             "ploID": ploID.toString(),
             "content": "GetParking"

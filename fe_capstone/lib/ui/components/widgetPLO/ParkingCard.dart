@@ -28,9 +28,6 @@ class ParkingCard extends StatefulWidget {
 }
 
 class _ParkingCardState extends State<ParkingCard> {
-  WebSocketChannel channel = IOWebSocketChannel.connect(
-      BaseConstants.WEBSOCKET_PRIVATE_RESERVATION_URL);
-
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -412,13 +409,16 @@ class _ParkingCardState extends State<ParkingCard> {
                             try {
                               await ParkingAPI.checkInReservation(
                                   reservationID);
+                              widget.updateUI();
+                              WebSocketChannel channel = IOWebSocketChannel.connect(
+                                  BaseConstants.WEBSOCKET_PRIVATE_RESERVATION_URL);
                               final message = {
                                 "reservationID": reservationID.toString(),
                                 "content": "GetStatus"
                               };
                               final messageJson = jsonEncode(message);
                               channel.sink.add(messageJson);
-                              widget.updateUI();
+                              print(messageJson);
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text('Check-in thành công'),
@@ -578,12 +578,15 @@ class _ParkingCardState extends State<ParkingCard> {
                                         widget.vehicleData.customerID)
                                     .then((_) {
                                   widget.updateUI();
+                                  WebSocketChannel channel = IOWebSocketChannel.connect(
+                                      BaseConstants.WEBSOCKET_PRIVATE_RESERVATION_URL);
                                   final message = {
                                     "reservationID": reservationID.toString(),
                                     "content": "GetStatus"
                                   };
                                   final messageJson = jsonEncode(message);
                                   channel.sink.add(messageJson);
+                                  print(messageJson);
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                       content: Text('Check-out thành công'),

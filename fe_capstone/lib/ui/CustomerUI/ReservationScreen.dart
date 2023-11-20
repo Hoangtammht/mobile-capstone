@@ -954,6 +954,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                          ploChannel.sink.add(messageJson);
                                          print("Đặt chỗ socket: $messageJson");
                                          Navigator.of(context).pop();
+                                         refreshHomeScreen();
                                          ScaffoldMessenger.of(context).showSnackBar(
                                            const SnackBar(
                                                content: Text('Đặt chỗ thành công')),
@@ -963,7 +964,6 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                              listen: false);
                                          await walletProvider.updateTransactions();
                                        });
-                                       refreshHomeScreen();
                                      } else {
                                        Navigator.of(context).pop();
                                        ScaffoldMessenger.of(context).showSnackBar(

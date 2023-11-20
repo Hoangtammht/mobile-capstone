@@ -57,7 +57,7 @@ class _ParkingScreenState extends State<ParkingScreen>
 
     bool isLoggedIn = UserPreferences.isLoggedIn();
     if (isLoggedIn) {
-      const duration = Duration(minutes: 1);
+      const duration = Duration(seconds: 30);
       Timer.periodic(duration, (Timer t) {
         final message = {
           "ploID": ploID,

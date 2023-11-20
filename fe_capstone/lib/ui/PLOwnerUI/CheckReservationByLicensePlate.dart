@@ -29,9 +29,6 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
 
   String scannedText = "";
   late Future<ReservationByLicensePlate> reservationByLicensePlate;
-
-  WebSocketChannel channel = IOWebSocketChannel.connect(
-      BaseConstants.WEBSOCKET_PRIVATE_RESERVATION_URL);
   late int reservationIDByScan;
 
   @override
@@ -674,6 +671,8 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                     .checkinReservationWithLicensePlate(
                                         scannedText);
                                 widget.updateUI();
+                                WebSocketChannel channel = IOWebSocketChannel.connect(
+                                    BaseConstants.WEBSOCKET_PRIVATE_RESERVATION_URL);
                                 final message = {
                                   "reservationID":
                                       reservationIDByScan.toString(),
@@ -681,6 +680,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                 };
                                 final messageJson = jsonEncode(message);
                                 channel.sink.add(messageJson);
+                                print(messageJson);
                                 ScaffoldMessenger.of(context).showSnackBar(
                                 const  SnackBar(
                                     content: Text('Check-in thành công'),
@@ -844,6 +844,8 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                     .then((_) async {
                                       await FirebaseAPI.deleteUser(customerID).then((_){
                                         widget.updateUI();
+                                        WebSocketChannel channel = IOWebSocketChannel.connect(
+                                            BaseConstants.WEBSOCKET_PRIVATE_RESERVATION_URL);
                                         final message = {
                                           "reservationID":
                                           reservationIDByScan.toString(),
@@ -851,6 +853,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                         };
                                         final messageJson = jsonEncode(message);
                                         channel.sink.add(messageJson);
+                                        print(messageJson);
                                         ScaffoldMessenger.of(context).showSnackBar(
                                          const SnackBar(
                                             content: Text('Check-out thành công'),
