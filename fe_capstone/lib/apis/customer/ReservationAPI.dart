@@ -9,7 +9,7 @@ class ReservationAPI {
   static Dio dio =  Dio();
 
 
-  static Future<void> getBooking(String licensePlate, int methodID, String ploID) async {
+  static Future<int> getBooking(String licensePlate, int methodID, String ploID) async {
     try {
       String? token = await UserPreferences.getAccessToken();
       if (token == null) {
@@ -29,9 +29,12 @@ class ReservationAPI {
           },
         ),
       );
-
       if (response.statusCode == 200) {
-        print("Booking xe thành công");
+        String responseMessage = response.data;
+        if(responseMessage.contains('Full')){
+          return 2;
+        }
+        return 1;
       } else {
         throw Exception('Failed to get booking reservation');
       }

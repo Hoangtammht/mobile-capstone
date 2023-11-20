@@ -2188,13 +2188,17 @@ Future<void> _showDeleteDialog(BuildContext context, CustomerHome customerHome,
                     Center(
                         child: Container(
                           margin: EdgeInsets.only(top: 20 * fem, bottom: 20 * fem),
-                          child: Text(
-                            'Bạn có chắc chắn hủy việc đặt chỗ ở ${customerHome.parkingName} ',
-                            style: TextStyle(
-                              fontSize: 20 * fem,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
+                          child:
+                              Center(
+                                  child:  Text(
+                                    'Bạn có chắc chắn hủy việc đặt chỗ ở ${customerHome.parkingName} ',
+                                    style: TextStyle(
+                                      fontSize: 20 * fem,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                              )
+
                         )),
                   ],
                 ),
