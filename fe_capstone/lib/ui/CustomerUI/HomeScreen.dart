@@ -134,38 +134,41 @@ class _HomeScreenState extends State<HomeScreen> {
   void handleMessage(dynamic message) {
     print(message.toString());
     if (message.toString().contains("GetStatus")) {
-      customerHome = _getHomeStatus();
-      customerHome!.then((data) {
-        reservationID = data.reservationID;
-        if (data.statusID == 5) {
-          if (!isRatingDialogDisplayed) {
-            _RatingDialog(context, data, handleRating);
-            setState(() {
-              isRatingDialogDisplayed = true;
-            });
+      setState(() {
+        print('Update lai UI');
+        customerHome = _getHomeStatus();
+        customerHome!.then((data) {
+          reservationID = data.reservationID;
+          if (data.statusID == 5) {
+            if (!isRatingDialogDisplayed) {
+              _RatingDialog(context, data, handleRating);
+              setState(() {
+                isRatingDialogDisplayed = true;
+              });
+            }
           }
-        }
-        if (reservationID != 0) {
-          if (data.statusID == 2) {
-            String endTime = convertToDesiredFormat(data.endTime);
-            DateTime endDateTime = DateTime.parse(endTime);
-            DateTime beforeUpdateLater =
-                endDateTime.subtract(Duration(minutes: 1));
-            DateTime afterUpdateStatusLater =
-                endDateTime.add(Duration(seconds: 3));
-            print('Reservation lúc đặt là: ${reservationID}');
-            print('Thời gian kết thúc $endTime');
-            print(
-                'Thời gian thông báo updated later trước 1 phút: $beforeUpdateLater');
-            print('Thời gian phải check-out: $afterUpdateStatusLater');
-            callApiBeforeUpdateStatusLater(
-                beforeUpdateLater.difference(DateTime.now()),
-                afterUpdateStatusLater,
-                reservationID,
-                data.ploID
-            );
+          if (reservationID != 0) {
+            if (data.statusID == 2) {
+              String endTime = convertToDesiredFormat(data.endTime);
+              DateTime endDateTime = DateTime.parse(endTime);
+              DateTime beforeUpdateLater =
+              endDateTime.subtract(Duration(minutes: 1));
+              DateTime afterUpdateStatusLater =
+              endDateTime.add(Duration(seconds: 3));
+              print('Reservation lúc đặt là: ${reservationID}');
+              print('Thời gian kết thúc $endTime');
+              print(
+                  'Thời gian thông báo updated later trước 1 phút: $beforeUpdateLater');
+              print('Thời gian phải check-out: $afterUpdateStatusLater');
+              callApiBeforeUpdateStatusLater(
+                  beforeUpdateLater.difference(DateTime.now()),
+                  afterUpdateStatusLater,
+                  reservationID,
+                  data.ploID
+              );
+            }
           }
-        }
+        });
       });
     }
   }
@@ -185,21 +188,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void refreshHomeScreen() {
     setState(() {
       customerHome = _getHomeStatus();
-      const duration = Duration(seconds: 30);
-      Timer.periodic(duration, (Timer t) {
-        final message = {
-          "reservationID": reservationID.toString(),
-          "content": "KeepAlive"
-        };
-        final messageJson = jsonEncode(message);
-        if (channel.sink != null) {
-          channel.sink.add(messageJson);
-          print('KeepAlive message sent successfully.');
-        } else {
-          print('Channel sink is closed. KeepAlive message not sent.');
-          t.cancel();
-        }
-      });
       customerHome!.then((data) {
         reservationID = data.reservationID;
         print('Reservation hiện tại là: ${reservationID}');
@@ -239,6 +227,21 @@ class _HomeScreenState extends State<HomeScreen> {
           });
         }
       });
+      const duration = Duration(seconds: 30);
+      Timer.periodic(duration, (Timer t) {
+        final message = {
+          "reservationID": reservationID.toString(),
+          "content": "KeepAlive"
+        };
+        final messageJson = jsonEncode(message);
+        if (channel.sink != null) {
+          channel.sink.add(messageJson);
+          print('KeepAlive message sent successfully.');
+        } else {
+          print('Channel sink is closed. KeepAlive message not sent.');
+          t.cancel();
+        }
+      });
     });
   }
 
@@ -268,7 +271,9 @@ class _HomeScreenState extends State<HomeScreen> {
         bool isUpdateSuccessful =
             await ReservationAPI.updateReservationToCancel(reservationID);
         print('Update sau 15 phút là $isUpdateSuccessful');
-        customerHome = _getHomeStatus();
+        setState(() {
+          customerHome = _getHomeStatus();
+        });
         WebSocketChannel ploChannel =
         IOWebSocketChannel.connect(BaseConstants.WEBSOCKET_PRIVATE_PLO_URL);
         final message = {
@@ -308,7 +313,9 @@ class _HomeScreenState extends State<HomeScreen> {
         bool isUpdateSuccessful =
             await ReservationAPI.updateReservationToLater(reservationID);
         print('Status của reservation sau 15 phút là $isUpdateSuccessful');
-        customerHome = _getHomeStatus();
+        setState(() {
+          customerHome = _getHomeStatus();
+        });
         WebSocketChannel ploChannel =
         IOWebSocketChannel.connect(BaseConstants.WEBSOCKET_PRIVATE_PLO_URL);
           final ploMessage = {
