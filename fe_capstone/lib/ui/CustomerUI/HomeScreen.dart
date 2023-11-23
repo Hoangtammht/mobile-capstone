@@ -1123,7 +1123,7 @@ class HomeScreenContent extends StatefulWidget {
 }
 
 class _HomeScreenContentState extends State<HomeScreenContent> {
-  bool isNearestSelected = false;
+  bool isNearestSelected = true;
   bool isCheapestSelected = false;
 
   void selectMethod(int method) {
@@ -1287,11 +1287,11 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
               ),
               Container(
                 height: 410 * fem,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Colors.white,
                 ),
                 child: widget.parkingList.isEmpty
-                    ? Center(
+                    ? const Center(
                         child: Text(
                           'Không có bãi đỗ xe',
                           style: TextStyle(
@@ -1413,24 +1413,26 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      parkingLotDetail.parkingName,
-                                      style: TextStyle(
-                                          fontSize: 30 * fem,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    IconButton(
-                                      onPressed: () {
-                                        widget.closeParkingDetail();
-                                      },
-                                      icon: Icon(Icons.close),
-                                    )
-                                  ],
+
+                                ListTile(
+                                  title:  Text(
+                                    parkingLotDetail.parkingName,
+
+                                    style: TextStyle(
+                                        fontSize: 30 * fem,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  trailing:
+                                  IconButton(
+                                          onPressed: () {
+                                            widget.closeParkingDetail();
+                                          },
+                                          icon: Icon(Icons.close),
+                                      color: Colors.black,
+                                        ),
+                                  contentPadding: EdgeInsets.zero,
                                 ),
+
                                 Text(
                                   parkingLotDetail.address,
                                   style: TextStyle(
