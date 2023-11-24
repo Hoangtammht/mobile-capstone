@@ -768,28 +768,26 @@ class _ReservationScreenState extends State<ReservationScreen> {
                       ),
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 8 * fem),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Tên bãi:  ',
-                              style: TextStyle(
-                                fontSize: 18 * fem,
-                                fontWeight: FontWeight.w600,
-                                color: const Color(0xff000000),
-                              ),
-                            ),
-                            Text(
-                              widget.parkinglotDetail.parkingName,
-                              style: TextStyle(
-                                fontSize: 18 * fem,
-                                fontWeight: FontWeight.w600,
-                                color: const Color(0xff000000),
-                              ),
-                            ),
-                          ],
-                        ),
+                        child:
+                        ListTile(
+                            contentPadding: EdgeInsets.zero,
+                          leading: Text(
+                                  'Tên bãi:  ',
+                                  style: TextStyle(
+                                    fontSize: 18 * fem,
+                                    fontWeight: FontWeight.w600,
+                                    color: const Color(0xff000000),
+                                  ),
+                                ),
+                          title: Text(
+                                  widget.parkinglotDetail.parkingName,
+                                  style: TextStyle(
+                                    fontSize: 18 * fem,
+                                    fontWeight: FontWeight.w600,
+                                    color: const Color(0xff000000),
+                                  ),
+                                ),
+                        )
                       ),
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 4 * fem),
