@@ -363,7 +363,7 @@ class _RegisterParkingState extends State<RegisterParking> {
                 SizedBox(
                   height: 500,
                   child: OpenStreetMapSearchAndPick(
-                    center: LatLong(10.828813446468915, 106.62925166053212),
+                    center: LatLong(10.841306724264104, 106.80992591180306),
                     buttonColor: Colors.blue,
                     buttonText: 'Xác nhận',
                     onPicked: (pickedData) {
