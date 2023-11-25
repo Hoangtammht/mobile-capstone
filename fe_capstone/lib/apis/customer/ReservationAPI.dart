@@ -9,7 +9,7 @@ class ReservationAPI {
   static Dio dio =  Dio();
 
 
-  static Future<int> getBooking(String licensePlate, int methodID, String ploID) async {
+  static Future<int> getBooking(int licensePlateID, int methodID, String ploID) async {
     try {
       String? token = await UserPreferences.getAccessToken();
       if (token == null) {
@@ -18,8 +18,8 @@ class ReservationAPI {
       final response = await dio.post(
         '${UrlConstant.RESERVATION}/bookingReservation',
         data: {
-          "licensePlate": licensePlate,
           "methodID": methodID,
+          "motorbikeID": licensePlateID,
           "ploID": ploID
         },
         options: Options(
