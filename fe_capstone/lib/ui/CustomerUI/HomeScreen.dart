@@ -1658,95 +1658,6 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                                     ],
                                   ),
                                 ),
-                                Padding(
-                                  padding:
-                                      EdgeInsets.symmetric(vertical: 10 * fem),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      InkWell(
-                                        onTap: () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      RatingScreen(
-                                                          ploID: ploID)));
-                                        },
-                                        child: Container(
-                                          padding: EdgeInsets.fromLTRB(10 * fem,
-                                              10 * fem, 10 * fem, 10 * fem),
-                                          margin:
-                                              EdgeInsets.only(right: 10 * fem),
-                                          width: 137 * fem,
-                                          decoration: BoxDecoration(
-                                            color: Color(0xffdcdada),
-                                            borderRadius:
-                                                BorderRadius.circular(6 * fem),
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              'Xem đánh giá',
-                                              style: TextStyle(
-                                                fontSize: 20 * ffem,
-                                                fontWeight: FontWeight.w600,
-                                                height: 1.175 * ffem / fem,
-                                                color: Color(0xff000000),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      InkWell(
-                                        onTap: () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      ReservationScreen(
-                                                        ploID: ploID,
-                                                        distance:
-                                                            widget.distance,
-                                                        waitingTime:
-                                                            parkingLotDetail
-                                                                .waitingTime,
-                                                        parkinglotDetail:
-                                                            parkingLotDetail,
-                                                        refreshHomeScreen: () {
-                                                          widget
-                                                              .refreshHomeScreen();
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                      )));
-                                        },
-                                        child: Container(
-                                          padding: EdgeInsets.fromLTRB(10 * fem,
-                                              10 * fem, 10 * fem, 10 * fem),
-                                          width: 137 * fem,
-                                          decoration: BoxDecoration(
-                                            color:
-                                                Theme.of(context).primaryColor,
-                                            borderRadius:
-                                                BorderRadius.circular(6 * fem),
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              'Đặt chỗ gửi',
-                                              style: TextStyle(
-                                                fontSize: 20 * ffem,
-                                                fontWeight: FontWeight.w600,
-                                                height: 1.175 * ffem / fem,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
                                 Container(
                                     height: 215 * fem,
                                     child: ListView(
@@ -1771,7 +1682,120 @@ class _ParkingDetailContentState extends State<ParkingDetailContent> {
                                             ),
                                           ),
                                       ],
-                                    ))
+                                    )),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Text(
+                                  'Mô tả bãi xe:',
+                                  style: TextStyle(
+                                      fontSize: 23 * fem, color: Colors.black),
+                                ),
+                                Text(
+                                  '- Bạn có thêm ${parkingLotDetail.waitingTime} để lấy xe, nếu quá giờ bạn sẽ phải đóng thêm phí trễ.',
+                                  style: TextStyle(
+                                      fontSize: 18 * fem, color: Colors.grey),
+                                ),
+                                Text(
+                                  '- Sau ${parkingLotDetail.cancelBookingTime} kể từ khi đặt. Nếu bạn chưa cập nhật tới bãi thì hệ thống sẽ hủy việc đặt và không hoàn lại tiền.',
+                                  style: TextStyle(
+                                      fontSize: 18 * fem, color: Colors.grey),
+                                ),
+                                Text(
+                                  '- ${parkingLotDetail.description}.',
+                                  style: TextStyle(
+                                      fontSize: 18 * fem, color: Colors.grey),
+                                ),
+
+                                Padding(
+                                  padding:
+                                  EdgeInsets.symmetric(vertical: 10 * fem),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      InkWell(
+                                        onTap: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      RatingScreen(
+                                                          ploID: ploID)));
+                                        },
+                                        child: Container(
+                                          padding: EdgeInsets.fromLTRB(10 * fem,
+                                              10 * fem, 10 * fem, 10 * fem),
+                                          margin:
+                                          EdgeInsets.only(right: 10 * fem),
+                                          width: 137 * fem,
+                                          decoration: BoxDecoration(
+                                            color: Color(0xffdcdada),
+                                            borderRadius:
+                                            BorderRadius.circular(6 * fem),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              'Xem đánh giá',
+                                              style: TextStyle(
+                                                fontSize: 20 * ffem,
+                                                fontWeight: FontWeight.w600,
+                                                height: 1.175 * ffem / fem,
+                                                color: Color(0xff000000),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      InkWell(
+                                        onTap: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ReservationScreen(
+                                                        ploID: ploID,
+                                                        distance:
+                                                        widget.distance,
+                                                        waitingTime:
+                                                        parkingLotDetail
+                                                            .waitingTime,
+                                                        parkinglotDetail:
+                                                        parkingLotDetail,
+                                                        refreshHomeScreen: () {
+                                                          widget
+                                                              .refreshHomeScreen();
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                      )));
+                                        },
+                                        child: Container(
+                                          padding: EdgeInsets.fromLTRB(10 * fem,
+                                              10 * fem, 10 * fem, 10 * fem),
+                                          width: 137 * fem,
+                                          decoration: BoxDecoration(
+                                            color:
+                                            Theme.of(context).primaryColor,
+                                            borderRadius:
+                                            BorderRadius.circular(6 * fem),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              'Đặt chỗ gửi',
+                                              style: TextStyle(
+                                                fontSize: 20 * ffem,
+                                                fontWeight: FontWeight.w600,
+                                                height: 1.175 * ffem / fem,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ],
                             ),
                           )),

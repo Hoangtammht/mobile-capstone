@@ -37,7 +37,6 @@ class ReservationScreen extends StatefulWidget {
 
 class _ReservationScreenState extends State<ReservationScreen> {
   Future<List<ReservationMethod>>? reservationMethod;
-  int vehicleID = 0;
   late VehicleProvider _vehicleProvider;
   late Future<List<ListVehicleCustomer>> vehicleFuture;
   TextEditingController _vehicleNumberController = TextEditingController();
@@ -46,6 +45,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
   late double price;
   late String dropdownType = '';
   late String dropdownVehicle = '';
+  late int dropdownVehicleID;
   late List<ReservationMethod> reserMethod;
   final formatCurrency = NumberFormat.simpleCurrency(locale: 'vi_VN');
   WebSocketChannel ploChannel =
@@ -59,6 +59,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
     vehicleFuture = _vehicleProvider.getVehicleList();
     vehicleFuture.then((value) {
       dropdownVehicle = value.first.licensePlate;
+      dropdownVehicleID = value.first.motorbikeID;
     });
     reservationMethod = _getReservationMethod();
     reservationMethod!.then((data) {
@@ -418,6 +419,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                         setState(() {
                                           dropdownVehicle =
                                               selectedMap.licensePlate;
+                                          dropdownVehicleID = selectedMap.motorbikeID;
                                         });
                                       },
                                       dropdownMenuEntries: vehicleProvider
@@ -938,7 +940,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                             onPressed: () async {
                               try {
                                 await ReservationAPI.getBooking(
-                                        dropdownVehicle, methodID, widget.ploID)
+                                        dropdownVehicleID, methodID, widget.ploID)
                                     .then((value) async {
                                      if(value == 1){
                                        await FirebaseAPI.createUserForCus(
