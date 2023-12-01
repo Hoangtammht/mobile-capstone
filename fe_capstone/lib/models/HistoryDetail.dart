@@ -7,6 +7,9 @@ class HistoryDetail {
   late final String statusName;
   late final String checkIn;
   late final String checkOut;
+  late final String startTime;
+  late final String endTime;
+
 
   HistoryDetail({
     required this.parkingName,
@@ -17,6 +20,8 @@ class HistoryDetail {
     required this.statusName,
     required this.checkIn,
     required this.checkOut,
+    required this.startTime,
+    required this.endTime,
   });
 
   factory HistoryDetail.fromJson(Map<String, dynamic> json){
@@ -29,6 +34,8 @@ class HistoryDetail {
       statusName: json['statusName'] ?? '',
       checkIn: json['checkIn'] ?? '',
       checkOut: json['checkOut'] ?? '',
+      startTime: json['startTime'] ?? '',
+      endTime: json['endTime'] ?? '',
     );
   }
 
@@ -42,8 +49,8 @@ class HistoryDetail {
     _data['statusName'] = statusName;
     _data['checkIn'] = checkIn;
     _data['checkOut'] = checkOut;
+    _data['startTime'] = startTime;
+    _data['endTime'] = endTime;
     return _data;
   }
 }
-
-

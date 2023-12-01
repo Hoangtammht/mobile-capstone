@@ -4,11 +4,12 @@ import 'package:fe_capstone/models/HistoryDetail.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-
 class Rebooking extends StatefulWidget {
   final int reservationId;
   final VoidCallback? onNavigateToHomeScreen;
+
   Rebooking({required this.reservationId, this.onNavigateToHomeScreen});
+
   @override
   State<Rebooking> createState() => _RebookingState();
 }
@@ -16,11 +17,12 @@ class Rebooking extends StatefulWidget {
 class _RebookingState extends State<Rebooking> {
   late Future<HistoryDetail> historyDetail;
   late String parkingName = '';
+
   @override
   void initState() {
     super.initState();
     final parameterValue = widget.reservationId;
-    historyDetail =  _fetchHistoryDetailData(parameterValue);
+    historyDetail = _fetchHistoryDetailData(parameterValue);
     historyDetail.then((data) {
       setState(() {
         parkingName = data.parkingName;
@@ -29,7 +31,7 @@ class _RebookingState extends State<Rebooking> {
   }
 
   Future<HistoryDetail> _fetchHistoryDetailData(int reservationId) async {
-   return HistoryAPI.getHistoryDetail(reservationId);
+    return HistoryAPI.getHistoryDetail(reservationId);
   }
 
   @override
@@ -103,7 +105,8 @@ class _RebookingState extends State<Rebooking> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
-                            padding: EdgeInsets.fromLTRB(16 * fem, 30 * fem, 0, 0),
+                            padding:
+                                EdgeInsets.fromLTRB(16 * fem, 30 * fem, 0, 0),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
@@ -117,11 +120,12 @@ class _RebookingState extends State<Rebooking> {
                                 ),
                                 Spacer(),
                                 Text(
-                                  snapshot.connectionState == ConnectionState.waiting
+                                  snapshot.connectionState ==
+                                          ConnectionState.waiting
                                       ? 'Đang tải...'
                                       : (historyDetail != null
-                                      ? '${NumberFormat("#,##0", "vi_VN").format(historyDetail.fee)} đ'
-                                      : '${NumberFormat("#,##0", "vi_VN").format(0.0)} đ'),
+                                          ? '${NumberFormat("#,##0", "vi_VN").format(historyDetail.fee)} đ'
+                                          : '${NumberFormat("#,##0", "vi_VN").format(0.0)} đ'),
                                   style: TextStyle(
                                     fontSize: 22 * ffem,
                                     fontWeight: FontWeight.w600,
@@ -132,7 +136,8 @@ class _RebookingState extends State<Rebooking> {
                             ),
                           ),
                           Container(
-                            padding: EdgeInsets.fromLTRB(16 * fem, 25 * fem, 0, 0),
+                            padding:
+                                EdgeInsets.fromLTRB(16 * fem, 25 * fem, 0, 0),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
@@ -146,29 +151,38 @@ class _RebookingState extends State<Rebooking> {
                                 ),
                                 Spacer(),
                                 Container(
-                                  width:  70* fem,
+                                  width: 70 * fem,
                                   height: 20 * fem,
                                   decoration: BoxDecoration(
                                     color: statusColor,
-                                    borderRadius: BorderRadius.circular(100 * fem),
+                                    borderRadius:
+                                        BorderRadius.circular(100 * fem),
                                   ),
                                   child: Center(
                                     child: Text(
-                                      snapshot.connectionState == ConnectionState.waiting
+                                      snapshot.connectionState ==
+                                              ConnectionState.waiting
                                           ? 'Đang tải...'
                                           : () {
-                                        if (historyDetail.statusName == 'Checked In') {
-                                          return 'Trong bãi';
-                                        } else if (historyDetail.statusName == 'Occupied') {
-                                          return 'Đang tới';
-                                        } else if (historyDetail.statusName == 'Overdue') {
-                                          return 'Trễ giờ';
-                                        } else if (historyDetail.statusName == 'Historical') {
-                                          return 'Đã rời';
-                                        } else {
-                                          return 'Hủy đặt';
-                                        }
-                                      }(),
+                                              if (historyDetail.statusName ==
+                                                  'Checked In') {
+                                                return 'Trong bãi';
+                                              } else if (historyDetail
+                                                      .statusName ==
+                                                  'Occupied') {
+                                                return 'Đang tới';
+                                              } else if (historyDetail
+                                                      .statusName ==
+                                                  'Overdue') {
+                                                return 'Trễ giờ';
+                                              } else if (historyDetail
+                                                      .statusName ==
+                                                  'Historical') {
+                                                return 'Đã rời';
+                                              } else {
+                                                return 'Hủy đặt';
+                                              }
+                                            }(),
                                       style: TextStyle(
                                         fontSize: 22 * ffem,
                                         fontWeight: FontWeight.w600,
@@ -187,7 +201,8 @@ class _RebookingState extends State<Rebooking> {
                             ),
                           ),
                           Container(
-                            padding: EdgeInsets.fromLTRB(16 * fem, 15 * fem, 0, 0),
+                            padding:
+                                EdgeInsets.fromLTRB(16 * fem, 15 * fem, 0, 0),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
@@ -212,7 +227,8 @@ class _RebookingState extends State<Rebooking> {
                             ),
                           ),
                           Container(
-                            padding: EdgeInsets.fromLTRB(16 * fem, 21 * fem, 0, 0),
+                            padding:
+                                EdgeInsets.fromLTRB(16 * fem, 21 * fem, 0, 0),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
@@ -245,7 +261,8 @@ class _RebookingState extends State<Rebooking> {
                             ),
                           ),
                           Container(
-                            padding: EdgeInsets.fromLTRB(16 * fem, 15 * fem, 0, 0),
+                            padding:
+                                EdgeInsets.fromLTRB(16 * fem, 15 * fem, 0, 0),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
@@ -269,6 +286,68 @@ class _RebookingState extends State<Rebooking> {
                               ],
                             ),
                           ),
+                          Container(
+                            padding:
+                                EdgeInsets.fromLTRB(16 * fem, 15 * fem, 0, 0),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  historyDetail.statusName
+                                          .contains('Historical')
+                                      ? 'Ngày giờ vào bãi'
+                                      : 'Ngày giờ đặt',
+                                  style: TextStyle(
+                                    fontSize: 22 * ffem,
+                                    fontWeight: FontWeight.w400,
+                                    color: Color(0xff5b5b5b),
+                                  ),
+                                ),
+                                Spacer(),
+                                Text(
+                                  historyDetail.statusName
+                                          .contains('Historical')
+                                      ? historyDetail.checkIn
+                                      : historyDetail.startTime,
+                                  style: TextStyle(
+                                    fontSize: 22 * ffem,
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xff000000),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                            Container(
+                              padding:
+                                  EdgeInsets.fromLTRB(16 * fem, 15 * fem, 0, 0),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    historyDetail.statusName
+                                        .contains('Historical')
+                                        ? 'Ngày giờ rời bãi'
+                                        : 'Ngày giờ hủy đặt',
+                                    style: TextStyle(
+                                      fontSize: 22 * ffem,
+                                      fontWeight: FontWeight.w400,
+                                      color: Color(0xff5b5b5b),
+                                    ),
+                                  ),
+                                  Spacer(),
+                                  Text(
+                                    historyDetail.checkOut,
+                                    style: TextStyle(
+                                      fontSize: 22 * ffem,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xff000000),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Divider(
@@ -276,60 +355,56 @@ class _RebookingState extends State<Rebooking> {
                             ),
                           ),
                           Container(
-                            padding: EdgeInsets.fromLTRB(15 * fem, 10 * fem, 0, 0),
-                            child:  Column(
+                            padding:
+                                EdgeInsets.fromLTRB(15 * fem, 10 * fem, 0, 0),
+                            child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                        Text(
-                                            'Địa chỉ ',
-                                            style: TextStyle(
-                                                fontSize: 22 * fem
-                                            )
-                                        ),
-                                        SizedBox(
-                                          height: 30 * fem,
-                                        ),
-                                        Text(
-                                            historyDetail.address,
-                                            style: TextStyle(
-                                              fontSize: 18 * fem,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          // maxLines: 2,
-                                          // overflow: TextOverflow.ellipsis,
+                                Text('Địa chỉ ',
+                                    style: TextStyle(fontSize: 22 * fem)),
+                                SizedBox(
+                                  height: 30 * fem,
+                                ),
+                                Text(
+                                  historyDetail.address,
+                                  style: TextStyle(
+                                    fontSize: 18 * fem,
+                                    fontWeight: FontWeight.bold,
                                   ),
+                                  // maxLines: 2,
+                                  // overflow: TextOverflow.ellipsis,
+                                ),
                               ],
                             ),
                           ),
                         ],
                       ),
                     ),
-                    InkWell(
-                      onTap: (){
-                        widget.onNavigateToHomeScreen?.call();
-                      },
-                      child: Container(
-                        margin: EdgeInsets.only(top: 20 * fem),
-                        width: double.infinity,
-                        height: 51 * fem,
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).primaryColor,
-                          borderRadius: BorderRadius.circular(9 * fem),
-                        ),
-                        child: Center(
-                          child:
-                          Text(
-                            'Đặt lại',
-                            style: TextStyle(
-                              fontSize: 25 * ffem,
-                              fontWeight: FontWeight.w600,
-                              height: 1.175 * ffem / fem,
-                              color: Color(0xffffffff),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                    // InkWell(
+                    //   onTap: () {
+                    //     widget.onNavigateToHomeScreen?.call();
+                    //   },
+                    //   child: Container(
+                    //     margin: EdgeInsets.only(top: 20 * fem),
+                    //     width: double.infinity,
+                    //     height: 51 * fem,
+                    //     decoration: BoxDecoration(
+                    //       color: Theme.of(context).primaryColor,
+                    //       borderRadius: BorderRadius.circular(9 * fem),
+                    //     ),
+                    //     child: Center(
+                    //       child: Text(
+                    //         'Đặt lại',
+                    //         style: TextStyle(
+                    //           fontSize: 25 * ffem,
+                    //           fontWeight: FontWeight.w600,
+                    //           height: 1.175 * ffem / fem,
+                    //           color: Color(0xffffffff),
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
               );
@@ -340,4 +415,3 @@ class _RebookingState extends State<Rebooking> {
     );
   }
 }
-
