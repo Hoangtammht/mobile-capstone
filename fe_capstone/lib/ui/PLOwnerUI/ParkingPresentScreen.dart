@@ -45,8 +45,8 @@ class _ParkingPresentState extends State<ParkingPresent> {
     return Scaffold(
       appBar: widget.type.contains('History')
           ? AppBar(
-        backgroundColor: Colors.grey[400], // Đặt màu nền là trong suốt
-        elevation: 0, // Loại bỏ đường viền shadow
+        backgroundColor: Colors.grey[400],
+        elevation: 0,
         title: Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
           child: Container(
@@ -69,8 +69,7 @@ class _ParkingPresentState extends State<ParkingPresent> {
         ),
       )
           : null,
-
-      body: ListView.builder(
+      body: widget.type.contains('History') ? ListView.builder(
         itemCount: filteredList.length,
         itemBuilder: (BuildContext context, int index) {
           return ParkingCard(
@@ -79,7 +78,18 @@ class _ParkingPresentState extends State<ParkingPresent> {
             updateUI: widget.updateUI,
           );
         },
-      ),
+      ) :
+      ListView.builder(
+        itemCount: widget.vehicleList.length,
+        itemBuilder: (BuildContext context, int index) {
+          return ParkingCard(
+            type: widget.type,
+            vehicleData: widget.vehicleList[index],
+            updateUI: widget.updateUI,
+          );
+        },
+      )
+      ,
     );
   }
 }

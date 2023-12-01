@@ -3,7 +3,6 @@ import 'dart:convert';
 
 import 'package:fe_capstone/apis/customer/HomeAPI.dart';
 import 'package:fe_capstone/apis/customer/ReservationAPI.dart';
-import 'package:fe_capstone/blocs/UserPreferences.dart';
 import 'package:fe_capstone/constant/base_constant.dart';
 import 'package:fe_capstone/models/CustomerHome.dart';
 import 'package:fe_capstone/ui/CustomerUI/CustomerNotificationScreen.dart';
@@ -107,48 +106,6 @@ class _BottomTabNavCustomerState extends State<BottomTabNavCustomer> {
     }
   }
 
-  void callApiBeforeUpdateStatusLater(
-      Duration beforeUpdate, DateTime afterUpdate, int reservationID, String ploID) async {
-    try {
-      bool isUpdateSuccessful = await Future.delayed(beforeUpdate, () async {
-        return await ReservationAPI.updateReservationToLater(reservationID);
-      });
-      print('Status của reservation trước khi trễ là $isUpdateSuccessful');
-      if (isUpdateSuccessful) {
-        print('Status hiện tại trước 15 phút');
-      } else {
-        callApiAfterStatusLater(
-            afterUpdate.difference(DateTime.now()), reservationID, ploID);
-      }
-    } catch (e) {
-      print('Error calling API: $e');
-    }
-  }
-
-  Future<void> callApiAfterStatusLater(
-      Duration duration, int reservationID, String ploID) async {
-    try {
-      await Future.delayed(duration, () async {
-        bool isUpdateSuccessful =
-        await ReservationAPI.updateReservationToLater(reservationID);
-        print('Status của reservation sau 15 phút là $isUpdateSuccessful');
-        setState(() {
-          customerHome = _getHomeStatus();
-        });
-        WebSocketChannel ploChannel =
-        IOWebSocketChannel.connect(BaseConstants.WEBSOCKET_PRIVATE_PLO_URL);
-        final ploMessage = {
-          "ploID": ploID.toString(),
-          "content": "GetParking"
-        };
-        final messageJsonPLO = jsonEncode(ploMessage);
-        ploChannel.sink.add(messageJsonPLO);
-      });
-    } catch (e) {
-      print('Error calling API: $e');
-    }
-  }
-
   List<Widget> _buildScreens() {
     return [
       HomeScreen(onNavigateToWallet: changeTabWalletController),
@@ -244,20 +201,6 @@ class _BottomTabNavCustomerState extends State<BottomTabNavCustomer> {
                           callApiBeforeCancelBooking(
                               beforeCancelBookingTime.difference(DateTime.now()),
                               cancelBookingDateTime,
-                              data.reservationID,
-                              data.ploID
-                          );
-                        }
-                        if (data.statusID == 2) {
-                          String endTime = convertToDesiredFormat(data.endTime);
-                          DateTime endDateTime = DateTime.parse(endTime);
-                          DateTime beforeUpdateLater =
-                          endDateTime.subtract(Duration(minutes: 1));
-                          DateTime afterUpdateStatusLater =
-                          endDateTime.add(Duration(seconds: 3));
-                          callApiBeforeUpdateStatusLater(
-                              beforeUpdateLater.difference(DateTime.now()),
-                              afterUpdateStatusLater,
                               data.reservationID,
                               data.ploID
                           );
