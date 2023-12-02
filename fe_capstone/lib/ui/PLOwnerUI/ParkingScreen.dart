@@ -28,17 +28,15 @@ class _ParkingScreenState extends State<ParkingScreen>
   late List<ListVehicleInParking> list1 = [];
   late List<ListVehicleInParking> list2 = [];
   late List<ListVehicleInParking> list3 = [];
-  late List<ListVehicleInParking> list4 = [];
   late int list1Length = 0;
   late int list2Length = 0;
-  late int list3Length = 0;
   WebSocketChannel ploChannel = IOWebSocketChannel.connect(BaseConstants.WEBSOCKET_PRIVATE_PLO_URL);
 
 
   @override
   void initState() {
     super.initState();
-    _controller = TabController(length: 4, vsync: this, initialIndex: 0);
+    _controller = TabController(length: 3, vsync: this, initialIndex: 0);
     fetchData();
     initializeState();
   }
@@ -90,12 +88,10 @@ class _ParkingScreenState extends State<ParkingScreen>
     try {
       list1 = await ParkingAPI.fetchListVehicleInParking(2);
       list2 = await ParkingAPI.fetchListVehicleInParking(1);
-      list3 = await ParkingAPI.fetchListVehicleInParking(3);
-      list4 = await ParkingAPI.fetchListVehicleInParking(4);
+      list3 = await ParkingAPI.fetchListVehicleInParking(4);
       setState(() {
         list1Length = list1.length;
         list2Length = list2.length;
-        list3Length = list3.length;
       });
     } catch (e) {
       // Xử lý lỗi ở đây
@@ -200,9 +196,6 @@ class _ParkingScreenState extends State<ParkingScreen>
               text: 'Đang tới ($list2Length)',
             ),
             Tab(
-              text: 'Quá giờ ($list3Length)',
-            ),
-            Tab(
               text: 'Lịch sử',
             ),
           ],
@@ -219,9 +212,7 @@ class _ParkingScreenState extends State<ParkingScreen>
           ParkingPresent(
               type: ["Going"], vehicleList: list2, updateUI: updateUI),
           ParkingPresent(
-              type: ["Later"], vehicleList: list3, updateUI: updateUI),
-          ParkingPresent(
-              type: ["History"], vehicleList: list4, updateUI: updateUI),
+              type: ["History"], vehicleList: list3, updateUI: updateUI),
         ],
       ),
     );

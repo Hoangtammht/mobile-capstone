@@ -135,7 +135,6 @@ class _HomeScreenState extends State<HomeScreen> {
     print(message.toString());
     if (message.toString().contains("GetStatus")) {
       setState(() {
-        print('Update lai UI');
         customerHome = _getHomeStatus();
         customerHome!.then((data) {
           reservationID = data.reservationID;
@@ -145,27 +144,6 @@ class _HomeScreenState extends State<HomeScreen> {
               setState(() {
                 isRatingDialogDisplayed = true;
               });
-            }
-          }
-          if (reservationID != 0) {
-            if (data.statusID == 2) {
-              String endTime = convertToDesiredFormat(data.endTime);
-              DateTime endDateTime = DateTime.parse(endTime);
-              DateTime beforeUpdateLater =
-              endDateTime.subtract(Duration(minutes: 1));
-              DateTime afterUpdateStatusLater =
-              endDateTime.add(Duration(seconds: 3));
-              print('Reservation lúc đặt là: ${reservationID}');
-              print('Thời gian kết thúc $endTime');
-              print(
-                  'Thời gian thông báo updated later trước 1 phút: $beforeUpdateLater');
-              print('Thời gian phải check-out: $afterUpdateStatusLater');
-              callApiBeforeUpdateStatusLater(
-                  beforeUpdateLater.difference(DateTime.now()),
-                  afterUpdateStatusLater,
-                  reservationID,
-                  data.ploID
-              );
             }
           }
         });
@@ -282,48 +260,6 @@ class _HomeScreenState extends State<HomeScreen> {
         };
         final messageJson = jsonEncode(message);
         ploChannel.sink.add(messageJson);
-      });
-    } catch (e) {
-      print('Error calling API: $e');
-    }
-  }
-
-  void callApiBeforeUpdateStatusLater(
-      Duration beforeUpdate, DateTime afterUpdate, int reservationID, String ploID) async {
-    try {
-      bool isUpdateSuccessful = await Future.delayed(beforeUpdate, () async {
-        return await ReservationAPI.updateReservationToLater(reservationID);
-      });
-      print('Status của reservation trước khi trễ là $isUpdateSuccessful');
-      if (isUpdateSuccessful) {
-        print('Status hiện tại trước 15 phút');
-      } else {
-        callApiAfterStatusLater(
-            afterUpdate.difference(DateTime.now()), reservationID, ploID);
-      }
-    } catch (e) {
-      print('Error calling API: $e');
-    }
-  }
-
-  Future<void> callApiAfterStatusLater(
-      Duration duration, int reservationID, String ploID) async {
-    try {
-      await Future.delayed(duration, () async {
-        bool isUpdateSuccessful =
-            await ReservationAPI.updateReservationToLater(reservationID);
-        print('Status của reservation sau 15 phút là $isUpdateSuccessful');
-        setState(() {
-          customerHome = _getHomeStatus();
-        });
-        WebSocketChannel ploChannel =
-        IOWebSocketChannel.connect(BaseConstants.WEBSOCKET_PRIVATE_PLO_URL);
-          final ploMessage = {
-            "ploID": ploID.toString(),
-            "content": "GetParking"
-          };
-          final messageJsonPLO = jsonEncode(ploMessage);
-          ploChannel.sink.add(messageJsonPLO);
       });
     } catch (e) {
       print('Error calling API: $e');

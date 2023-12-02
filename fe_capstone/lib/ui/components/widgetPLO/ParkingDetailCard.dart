@@ -109,49 +109,6 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if(!widget.type.contains("History"))
-                    // Container(
-                    //   margin: EdgeInsets.fromLTRB(0 * fem, 0 * fem, 0 * fem, 5 * fem),
-                    //   padding: EdgeInsets.fromLTRB(14 * fem, 14 * fem, 4 * fem, 10 * fem),
-                    //   width: 120 * fem,
-                    //   decoration: BoxDecoration(
-                    //     color: Color(0xffdcdada),
-                    //     borderRadius: BorderRadius.circular(6 * fem),
-                    //   ),
-                    //   child: Row(
-                    //     crossAxisAlignment: CrossAxisAlignment.center,
-                    //     children: [
-                    //       Container(
-                    //         width: 20 * fem,
-                    //         height: 20 * fem,
-                    //         child: Icon(Icons.message),
-                    //       ),
-                    //       Container(
-                    //         margin: EdgeInsets.only(left: 8 * fem),
-                    //         child:
-                    //         InkWell(
-                    //           onTap: () {
-                    //             PersistentNavBarNavigator.pushNewScreen(
-                    //               context,
-                    //               screen: ChatScreen(user: widget.user),
-                    //               withNavBar: false,
-                    //               pageTransitionAnimation: PageTransitionAnimation.cupertino,
-                    //             );
-                    //           },
-                    //           child:
-                    //           Text(
-                    //             'Nhắn tin',
-                    //             style: TextStyle(
-                    //               fontSize: 20 * ffem,
-                    //               fontWeight: FontWeight.bold,
-                    //               color: Color(0xff000000),
-                    //             ),
-                    //           ),
-                    //         )
-                    //       ),
-                    //     ],
-                    //   ),
-                    // ),
                   Container(
                     margin: EdgeInsets.only(top: 25 * fem),
                     padding: EdgeInsets.fromLTRB(8 * fem, 0, 8 * fem, 16 * fem),
@@ -178,11 +135,11 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
                               ),
                               Spacer(),
                               Text(
-                                  snapshot.connectionState == ConnectionState.waiting
-                                      ? 'Đang tải...'
-                                      : (reservationDetail != null
-                                      ? '${NumberFormat("#,##0", "vi_VN").format(reservationDetail.price)} đ'
-                                      : '${NumberFormat("#,##0", "vi_VN").format(0.0)} đ'),
+                                snapshot.connectionState == ConnectionState.waiting
+                                    ? 'Đang tải...'
+                                    : (reservationDetail != null
+                                    ? '${NumberFormat("#,##0", "vi_VN").format(reservationDetail.totalPrice != null && reservationDetail.totalPrice != 0.0 ? reservationDetail.totalPrice : reservationDetail.price)} đ'
+                                    : '${NumberFormat("#,##0", "vi_VN").format(0.0)} đ'),
                                 style: TextStyle(
                                   fontSize: 22 * ffem,
                                   fontWeight: FontWeight.w600,

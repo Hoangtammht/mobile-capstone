@@ -243,7 +243,6 @@ class ParkingAPI {
   }
 
   static Future<void> checkoutReservation(int reservationID) async {
-  print(reservationID);
     try {
       String? token = await UserPreferences.getAccessToken();
       if (token == null) {
@@ -261,8 +260,39 @@ class ParkingAPI {
       );
       if (response.statusCode == 200) {
         print("Checkout successfully");
+      }
+    } catch (e) {
+      if (e is DioException) {
+        if (e.response != null) {
+          throw DioException(requestOptions: e.requestOptions, error: 'Failed to checkout reservation', response: e.response);
+        }
+      }else {
+        throw Exception("Fail to checkout reservation");
+      }
+    }
+  }
+
+
+  static Future<void> checkoutWithOutCondition(int reservationID) async {
+    try {
+      String? token = await UserPreferences.getAccessToken();
+      if (token == null) {
+        throw Exception('Access token is null');
+      }
+      var response = await dio.put(
+        '${UrlConstant.RESERVATION}/checkOutWithoutCondition',
+        queryParameters: {"reservationID": reservationID},
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+      if (response.statusCode == 200) {
+        print("Checkout successfully");
       } else {
-        throw Exception('Failed to update parking setting');
+        throw Exception('Failed to check out reservation');
       }
     } catch (e) {
       throw Exception('Failed to checkout reservation: $e');
@@ -288,10 +318,10 @@ class ParkingAPI {
       if (response.statusCode == 200) {
         print("CheckIn successfully");
       } else {
-        throw Exception('Failed to update parking setting');
+        throw Exception('Failed to check-in reservation');
       }
     } catch (e) {
-      throw Exception('Failed to checkout reservation: $e');
+      throw Exception('Failed to check-in reservation: $e');
     }
   }
 
@@ -595,13 +625,18 @@ class ParkingAPI {
         data: {"licensePlate": licensePlate},
       );
       if (response.statusCode == 200) {
-        // await FirebaseAPI.deleteUser(cusID);
         print("Check-out successful");
       } else {
         throw Exception('Failed to check-out reservation');
       }
     } catch (e) {
-      throw Exception('Failed to check-out reservation: $e');
+      if (e is DioException) {
+        if (e.response != null) {
+          throw DioException(requestOptions: e.requestOptions, error: 'Failed to checkout reservation', response: e.response);
+        }
+      }else {
+        throw Exception("Fail to checkout reservation");
+      }
     }
   }
 

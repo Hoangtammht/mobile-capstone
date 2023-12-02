@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:fe_capstone/apis/FirebaseAPI.dart';
 import 'package:fe_capstone/apis/plo/ParkingAPI.dart';
 import 'package:fe_capstone/constant/base_constant.dart';
@@ -868,11 +869,34 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
 
                                 });
                               } catch (e) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                 const SnackBar(
-                                    content: Text('Việc check-out thất bại'),
-                                  ),
-                                );
+                                if (e is DioException) {
+                                  if (e.response != null &&
+                                      e.response!.statusCode == 500) {
+                                    final errorResponse = e.response!;
+                                    final errorData = errorResponse.data;
+                                    if (errorData is Map<String, dynamic> &&
+                                        errorData.containsKey('message')) {
+                                      final errorMessage = errorData['message'];
+                                      print("Lỗi gặp phải là $errorMessage");
+                                      if (errorMessage.contains(
+                                          'Failed checkOut user.Customer not enough wallet. Need')) {
+                                        Navigator.of(context).pop();
+                                        _showUpdateVehicleExitDialogWithoutCondition(
+                                          context,
+                                          errorMessage,
+                                          customerID
+                                        );
+                                      }
+                                    } else {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Text('Check out thất bại'),
+                                        ),
+                                      );
+                                      Navigator.of(context).pop();
+                                    }
+                                  }
+                                }
                               }
                               Navigator.of(context).pop();
                             },
@@ -892,6 +916,169 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                 ),
               ],
             ),
+        );
+      },
+    );
+  }
+
+  Future<void> _showUpdateVehicleExitDialogWithoutCondition(
+      BuildContext context, String message, String customerID) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(23),
+          ),
+          backgroundColor: const Color(0xffffffff),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  children: [
+                    Center(
+                      child: Container(
+                        padding: const EdgeInsets.only(bottom: 30),
+                        child: Text.rich(
+                          TextSpan(children: [
+                            TextSpan(
+                              text: message,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                              ),
+                            ),
+                            TextSpan(
+                              text:
+                              '\nBạn có chắc chắn cho xe rời bãi hay không ?',
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                              ),
+                            ),
+                          ]),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                    Center(
+                      child: Container(
+                        padding: const EdgeInsets.only(bottom: 30),
+                        child: Text(
+                          scannedText,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 23,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 1,
+                          color: Color(0xffb3abab),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text(
+                            'Hủy',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xff5767f5),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Column(
+                    children: [
+                      Container(
+                        width: 1,
+                        height: 48,
+                        color: Color(0xffb3abab),
+                      ),
+                    ],
+                  ),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 1,
+                          color: Color(0xffb3abab),
+                        ),
+                        TextButton(
+                          onPressed: () async {
+                            int reservationID =
+                            int.parse(reservationIDByScan.toString());
+                            try {
+                              await ParkingAPI.checkoutWithOutCondition(
+                                  reservationID)
+                                  .then((_) async {
+                                await FirebaseAPI.deleteUser(customerID).then((_){
+                                  widget.updateUI();
+                                  WebSocketChannel channel = IOWebSocketChannel.connect(
+                                      BaseConstants.WEBSOCKET_PRIVATE_RESERVATION_URL);
+                                  final message = {
+                                    "reservationID":
+                                    reservationIDByScan.toString(),
+                                    "content": "GetStatus"
+                                  };
+                                  final messageJson = jsonEncode(message);
+                                  channel.sink.add(messageJson);
+                                  print(messageJson);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Check-out thành công'),
+                                    ),
+                                  );
+                                  setState(() {
+                                    imageFile = null;
+                                    scannedText = "";
+                                    status = false;
+                                  });
+                                });
+                              });
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Việc check-out thất bại'),
+                                ),
+                              );
+                            }
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text(
+                            'Xác nhận',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xffff3737),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         );
       },
     );

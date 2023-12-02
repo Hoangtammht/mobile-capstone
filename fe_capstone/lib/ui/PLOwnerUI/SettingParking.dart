@@ -181,7 +181,7 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
                                 Center(
                                   child:
                                   Text(
-                                    '18 PM',
+                                    '17 PM',
                                     style:  TextStyle (
                                       fontSize:  22*ffem,
                                       fontWeight:  FontWeight.w400,
@@ -283,7 +283,7 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
                                 Center(
                                   child:
                                   Text(
-                                    '18 PM',
+                                    '17 PM',
                                     style:  TextStyle (
                                       fontSize:  22*ffem,
                                       fontWeight:  FontWeight.w400,
@@ -444,7 +444,7 @@ class _SettingParkingScreenState extends State<SettingParkingScreen> {
                                 Center(
                                   child:
                                   Text(
-                                    '11 PM',
+                                    '6 AM',
                                     style: TextStyle(
                                       fontSize: 22 * ffem,
                                       fontWeight: FontWeight.w400,

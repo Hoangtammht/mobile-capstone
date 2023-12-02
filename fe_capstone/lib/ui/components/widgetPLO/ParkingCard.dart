@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:dio/dio.dart';
 import 'package:fe_capstone/apis/FirebaseAPI.dart';
 import 'package:fe_capstone/apis/plo/ParkingAPI.dart';
 import 'package:fe_capstone/constant/base_constant.dart';
@@ -8,6 +9,7 @@ import 'package:fe_capstone/ui/components/widgetPLO/ParkingDetailCard.dart';
 import 'package:fe_capstone/ui/helper/my_date_until.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -209,103 +211,6 @@ class _ParkingCardState extends State<ParkingCard> {
     );
   }
 
-  // Future<void> _showUpdateVehicleEntryDialog1(BuildContext context) async {
-  //   await showDialog(
-  //       context: context,
-  //       builder: (BuildContext context) {
-  //         return CupertinoAlertDialog(
-  //           title: Center(
-  //             child: Container(
-  //               padding: const EdgeInsets.only(bottom: 30),
-  //               child: const Text.rich(
-  //                 TextSpan(children: [
-  //                   TextSpan(
-  //                       text: 'Cập nhập trạng thái',
-  //                       style: TextStyle(
-  //                           fontWeight: FontWeight.bold, fontSize: 20)),
-  //                   TextSpan(
-  //                       text: ' vào bãi',
-  //                       style: TextStyle(
-  //                           color: Colors.green,
-  //                           fontWeight: FontWeight.bold,
-  //                           fontSize: 20))
-  //                 ]),
-  //                 textAlign: TextAlign.center,
-  //               ),
-  //             ),
-  //           ),
-  //           content: Center(
-  //             child: Container(
-  //               padding: const EdgeInsets.only(bottom: 30),
-  //               child: Text(
-  //                 widget.vehicleData.licensePlate,
-  //                 style: const TextStyle(
-  //                   fontWeight: FontWeight.bold,
-  //                   fontSize: 23,
-  //                 ),
-  //                 textAlign: TextAlign.center,
-  //               ),
-  //             ),
-  //           ),
-  //           actions: [
-  //             CupertinoDialogAction(child:
-  //             TextButton(
-  //               onPressed: () {
-  //                 Navigator.of(context).pop();
-  //               },
-  //               child: const Text(
-  //                 'Hủy',
-  //                 style: TextStyle(
-  //                   fontSize: 20,
-  //                   fontWeight: FontWeight.w600,
-  //                   color: Color(0xff5767f5),
-  //                 ),
-  //               ),
-  //             ),
-  //             ),
-  //             CupertinoDialogAction(child:
-  //             TextButton(
-  //               onPressed: () async {
-  //                 int reservationID =
-  //                 int.parse(widget.vehicleData.reservationID);
-  //                 try {
-  //                   await ParkingAPI.checkInReservation(
-  //                       reservationID);
-  //                   final message = {
-  //                     "reservationID": reservationID.toString(),
-  //                     "content": "GetStatus"
-  //                   };
-  //                   final messageJson = jsonEncode(message);
-  //                   channel.sink.add(messageJson);
-  //                   widget.updateUI();
-  //                   ScaffoldMessenger.of(context).showSnackBar(
-  //                     const SnackBar(
-  //                       content: Text('Check-in thành công'),
-  //                     ),
-  //                   );
-  //                 } catch (e) {
-  //                   ScaffoldMessenger.of(context).showSnackBar(
-  //                     const SnackBar(
-  //                       content: Text('Việc check-in thất bại'),
-  //                     ),
-  //                   );
-  //                 }
-  //                 Navigator.of(context).pop();
-  //               },
-  //               child: const Text(
-  //                 'Xác nhận',
-  //                 style: TextStyle(
-  //                   fontSize: 20,
-  //                   fontWeight: FontWeight.w600,
-  //                   color: Color(0xffff3737),
-  //                 ),
-  //               ),
-  //             ),
-  //             )
-  //           ],
-  //         );
-  //       });
-  // }
   Future<void> _showUpdateVehicleEntryDialog(BuildContext context) async {
     await showDialog(
       context: context,
@@ -362,8 +267,7 @@ class _ParkingCardState extends State<ParkingCard> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Expanded(
-                    child:
-                    Column(
+                    child: Column(
                       children: [
                         Container(
                           height: 1,
@@ -385,7 +289,6 @@ class _ParkingCardState extends State<ParkingCard> {
                       ],
                     ),
                   ),
-
                   Column(
                     children: [
                       Container(
@@ -410,8 +313,9 @@ class _ParkingCardState extends State<ParkingCard> {
                               await ParkingAPI.checkInReservation(
                                   reservationID);
                               widget.updateUI();
-                              WebSocketChannel channel = IOWebSocketChannel.connect(
-                                  BaseConstants.WEBSOCKET_PRIVATE_RESERVATION_URL);
+                              WebSocketChannel channel =
+                                  IOWebSocketChannel.connect(BaseConstants
+                                      .WEBSOCKET_PRIVATE_RESERVATION_URL);
                               final message = {
                                 "reservationID": reservationID.toString(),
                                 "content": "GetStatus"
@@ -573,20 +477,202 @@ class _ParkingCardState extends State<ParkingCard> {
                               await ParkingAPI.checkoutReservation(
                                       reservationID)
                                   .then((_) async {
-                                print('CUS ${widget.vehicleData.customerID}');
                                 await FirebaseAPI.deleteUser(
                                         widget.vehicleData.customerID)
                                     .then((_) {
                                   widget.updateUI();
-                                  WebSocketChannel channel = IOWebSocketChannel.connect(
-                                      BaseConstants.WEBSOCKET_PRIVATE_RESERVATION_URL);
+                                  WebSocketChannel channel =
+                                      IOWebSocketChannel.connect(
+                                    BaseConstants
+                                        .WEBSOCKET_PRIVATE_RESERVATION_URL,
+                                  );
+                                  final message = {
+                                    "reservationID": reservationID.toString(),
+                                    "content": "GetStatus",
+                                  };
+                                  final messageJson = jsonEncode(message);
+                                  channel.sink.add(messageJson);
+                                  print(messageJson);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Check-out thành công'),
+                                    ),
+                                  );
+                                });
+                              });
+                              Navigator.of(context).pop();
+                            } catch (e) {
+                              if (e is DioException) {
+                                if (e.response != null &&
+                                    e.response!.statusCode == 500) {
+                                  final errorResponse = e.response!;
+                                  final errorData = errorResponse.data;
+                                  if (errorData is Map<String, dynamic> &&
+                                      errorData.containsKey('message')) {
+                                    final errorMessage = errorData['message'];
+                                    if (errorMessage.contains(
+                                        'Failed checkOut user.Tài khoản này cần:')) {
+                                      Navigator.of(context).pop();
+                                      _showUpdateVehicleExitDialogWithoutCondition(
+                                        context,
+                                        convertErrorMessage(errorMessage),
+                                      );
+                                    }
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('Check out thất bại'),
+                                      ),
+                                    );
+                                    Navigator.of(context).pop();
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          child: const Text(
+                            'Xác nhận',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xffff3737),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _showUpdateVehicleExitDialogWithoutCondition(
+      BuildContext context, String message) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(23),
+          ),
+          backgroundColor: const Color(0xffffffff),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  children: [
+                    Center(
+                      child: Container(
+                        padding: const EdgeInsets.only(bottom: 30),
+                        child: Text.rich(
+                          TextSpan(children: [
+                            TextSpan(
+                              text: message,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                              ),
+                            ),
+                            TextSpan(
+                              text:
+                                  '\nBạn có chắc chắn cho xe rời bãi hay không ?',
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                              ),
+                            ),
+                          ]),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                    Center(
+                      child: Container(
+                        padding: const EdgeInsets.only(bottom: 30),
+                        child: Text(
+                          widget.vehicleData.licensePlate,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 23,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 1,
+                          color: Color(0xffb3abab),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text(
+                            'Hủy',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xff5767f5),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Column(
+                    children: [
+                      Container(
+                        width: 1,
+                        height: 48,
+                        color: Color(0xffb3abab),
+                      ),
+                    ],
+                  ),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 1,
+                          color: Color(0xffb3abab),
+                        ),
+                        TextButton(
+                          onPressed: () async {
+                            int reservationID =
+                                int.parse(widget.vehicleData.reservationID);
+                            try {
+                              await ParkingAPI.checkoutWithOutCondition(
+                                      reservationID)
+                                  .then((_) async {
+                                await FirebaseAPI.deleteUser(
+                                        widget.vehicleData.customerID)
+                                    .then((_) {
+                                  widget.updateUI();
+                                  WebSocketChannel channel =
+                                      IOWebSocketChannel.connect(BaseConstants
+                                          .WEBSOCKET_PRIVATE_RESERVATION_URL);
                                   final message = {
                                     "reservationID": reservationID.toString(),
                                     "content": "GetStatus"
                                   };
                                   final messageJson = jsonEncode(message);
                                   channel.sink.add(messageJson);
-                                  print(messageJson);
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                       content: Text('Check-out thành công'),
@@ -622,5 +708,18 @@ class _ParkingCardState extends State<ParkingCard> {
         );
       },
     );
+  }
+
+  String convertErrorMessage(String originalMessage) {
+    if (originalMessage.contains('Failed checkOut user.')) {
+      String cleanedMessage = originalMessage.replaceAll('Failed checkOut user.', '');
+        cleanedMessage = cleanedMessage.replaceAllMapped(
+          RegExp(r'(\d+\.\d+)'),
+              (match) => NumberFormat.currency(locale: 'vi_VN', symbol: 'VNĐ').format(double.parse(match.group(1)!)),
+        );
+
+        return cleanedMessage;
+    }
+    return originalMessage;
   }
 }
