@@ -10,6 +10,7 @@ import 'package:fe_capstone/ui/PLOwnerUI/CheckReservationByLicensePlate.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/ParkingInformation.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/ParkingPresentScreen.dart';
 import 'package:fe_capstone/ui/PLOwnerUI/SettingParking.dart';
+import 'package:fe_capstone/ui/PLOwnerUI/StrangerBooking.dart';
 import 'package:flutter/material.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -175,6 +176,31 @@ class _ParkingScreenState extends State<ParkingScreen>
                           padding: EdgeInsets.only(left: 4 * fem),
                           child: Text('Thông tin', style: TextStyle(
                             fontSize: 20 * fem
+                          ),),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                PopupMenuItem<String>(
+                  value: 'StrangerBooking',
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => StrangerBooking(updateUI: updateUI)));
+                    },
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.accessibility,
+                          color: Colors.black,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 4 * fem),
+                          child: Text('Khách vãng lai', style: TextStyle(
+                              fontSize: 20 * fem
                           ),),
                         )
                       ],

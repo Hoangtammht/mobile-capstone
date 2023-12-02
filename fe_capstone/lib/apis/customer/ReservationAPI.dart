@@ -70,14 +70,14 @@ class ReservationAPI {
     }
   }
 
-  static Future<List<ReservationMethod>> getMethodofPLO(String ploID) async {
+  static Future<ReservationMethod> getMethodofPLO(String ploID) async {
     try {
       String? token = await UserPreferences.getAccessToken();
       if (token == null) {
         throw Exception('Access token is null');
       }
       final response = await dio.get(
-        '${UrlConstant.CUSTOMER}/getListMethodByTime?ploID=$ploID',
+        '${UrlConstant.CUSTOMER}/getMethodByTime?ploID=$ploID',
 
         options: Options(
           headers: {
@@ -89,8 +89,8 @@ class ReservationAPI {
 
       if (response.statusCode == 200) {
         print('data ${response.data}');
-        final List<dynamic> data = response.data;
-        List<ReservationMethod>  reservationMethod = data.map((item) => ReservationMethod.fromJson(item)).toList();
+        final Map<String, dynamic> data = response.data;
+        ReservationMethod  reservationMethod =  ReservationMethod.fromJson(data);
         return reservationMethod;
       } else {
         throw Exception('Failed to get method of Parking lot');

@@ -6,6 +6,7 @@ import 'package:fe_capstone/apis/plo/ParkingAPI.dart';
 import 'package:fe_capstone/constant/base_constant.dart';
 import 'package:fe_capstone/main.dart';
 import 'package:fe_capstone/models/ReservationDetail.dart';
+import 'package:fe_capstone/ui/PLOwnerUI/StrangerBooking.dart';
 import 'package:flutter/material.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:image_picker/image_picker.dart';
@@ -36,6 +37,9 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
     super.initState();
   }
 
+  void update() {
+    widget.updateUI();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -105,7 +109,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                               const Icon(
+                                const Icon(
                                   Icons.camera_alt,
                                   size: 30,
                                 ),
@@ -142,35 +146,78 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                             final checkStatus = data.status;
                             print('status : $checkStatus');
                             if (checkStatus == 0) {
-                              return Container(
-                                width: 300 * fem,
-                                height: 100 * fem,
-                                margin: EdgeInsets.only(top: 30 * fem),
-                                child: RichText(
-                                  textAlign: TextAlign.center,
-                                  text: TextSpan(
-                                    style: TextStyle(
-                                      fontSize: 25 * ffem,
-                                      fontWeight: FontWeight.w600,
-                                      height: 1.175 * ffem / fem,
-                                      color: Theme.of(context).primaryColor,
-                                    ),
-                                    children: <TextSpan>[
-                                     const TextSpan(
-                                        text: 'Biển số ',
+                              return Column(
+                                children: [
+                                  Container(
+                                    width: 300 * fem,
+                                    height: 100 * fem,
+                                    margin: EdgeInsets.only(top: 30 * fem),
+                                    child: RichText(
+                                      textAlign: TextAlign.center,
+                                      text: TextSpan(
+                                        style: TextStyle(
+                                          fontSize: 25 * ffem,
+                                          fontWeight: FontWeight.w600,
+                                          height: 1.175 * ffem / fem,
+                                          color: Theme.of(context).primaryColor,
+                                        ),
+                                        children: <TextSpan>[
+                                          const TextSpan(
+                                            text: 'Biển số ',
+                                          ),
+                                          TextSpan(
+                                            text: scannedText,
+                                            style: const TextStyle(
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                          const TextSpan(
+                                            text:
+                                                ' không có trong giao dịch nào',
+                                          ),
+                                        ],
                                       ),
-                                      TextSpan(
-                                        text: scannedText,
-                                        style: const TextStyle(
-                                          color: Colors.black,
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: const EdgeInsets.only(top: 20.0, bottom: 20.0),
+                                    width: 150 * fem,
+                                    height: 42 * fem,
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context).primaryColor,
+                                      borderRadius:
+                                          BorderRadius.circular(9 * fem),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: const Color(0x82000000),
+                                          offset: Offset(0 * fem, 4 * fem),
+                                          blurRadius: 10 * fem,
+                                        ),
+                                      ],
+                                    ),
+                                    child: TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) => StrangerBooking(updateUI: update ),
+                                          ),
+                                        );
+                                      },
+                                      child: Center(
+                                        child: Text(
+                                          'Tạo giao dịch',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontSize: 25 * ffem,
+                                            fontWeight: FontWeight.w600,
+                                            height: 1.175 * ffem / fem,
+                                            color: Color(0xffffffff),
+                                          ),
                                         ),
                                       ),
-                                     const TextSpan(
-                                        text: ' không có trong giao dịch nào',
-                                      ),
-                                    ],
+                                    ),
                                   ),
-                                ),
+                                ],
                               );
                             } else {
                               List<String> parts;
@@ -198,7 +245,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                                   fontSize: 35 * fem)),
                                         ],
                                       ),
-                                   const SizedBox(height: 10.0),
+                                      const SizedBox(height: 10.0),
                                       Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
@@ -214,7 +261,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                                   fontSize: 25 * fem)),
                                         ],
                                       ),
-                                     const SizedBox(height: 10.0),
+                                      const SizedBox(height: 10.0),
                                       if (checkStatus == 2 || checkStatus == 3)
                                         Row(
                                           mainAxisAlignment:
@@ -231,7 +278,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                                     fontSize: 25 * fem)),
                                           ],
                                         ),
-                                     const SizedBox(height: 10.0),
+                                      const SizedBox(height: 10.0),
                                       if (checkStatus == 2 || checkStatus == 3)
                                         Row(
                                           mainAxisAlignment:
@@ -248,7 +295,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                                     fontSize: 25 * fem)),
                                           ],
                                         ),
-                                     const SizedBox(height: 10.0),
+                                      const SizedBox(height: 10.0),
                                       Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
@@ -276,7 +323,8 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                                   fontSize: 25 * ffem,
                                                   fontWeight: FontWeight.w400,
                                                   height: 1.2175 * ffem / fem,
-                                                  color: const Color(0xff2b7031),
+                                                  color:
+                                                      const Color(0xff2b7031),
                                                 ),
                                               ),
                                             ),
@@ -286,7 +334,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                       if (checkStatus == 3)
                                         Column(
                                           children: [
-                                          const  SizedBox(
+                                            const SizedBox(
                                               height: 20,
                                             ),
                                             Center(
@@ -306,8 +354,8 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                                 MainAxisAlignment.center,
                                             children: [
                                               Container(
-                                                margin:
-                                                   const EdgeInsets.only(top: 40.0),
+                                                margin: const EdgeInsets.only(
+                                                    top: 40.0),
                                                 width: 150 * fem,
                                                 height: 42 * fem,
                                                 decoration: BoxDecoration(
@@ -322,7 +370,8 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                                   ),
                                                   boxShadow: [
                                                     BoxShadow(
-                                                      color: const Color(0x82000000),
+                                                      color: const Color(
+                                                          0x82000000),
                                                       offset: Offset(
                                                           0 * fem, 4 * fem),
                                                       blurRadius: 10 * fem,
@@ -360,8 +409,8 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                                 width: 20 * fem,
                                               ),
                                               Container(
-                                                margin:
-                                                   const EdgeInsets.only(top: 40.0),
+                                                margin: const EdgeInsets.only(
+                                                    top: 40.0),
                                                 height: 42 * fem,
                                                 width: 150 * fem,
                                                 decoration: BoxDecoration(
@@ -372,7 +421,8 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                                           9 * fem),
                                                   boxShadow: [
                                                     BoxShadow(
-                                                      color: const Color(0x82000000),
+                                                      color: const Color(
+                                                          0x82000000),
                                                       offset: Offset(
                                                           0 * fem, 4 * fem),
                                                       blurRadius: 10 * fem,
@@ -395,8 +445,8 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                                             FontWeight.w600,
                                                         height:
                                                             1.175 * ffem / fem,
-                                                        color:
-                                                           const Color(0xffffffff),
+                                                        color: const Color(
+                                                            0xffffffff),
                                                       ),
                                                     ),
                                                   ),
@@ -409,8 +459,8 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                                 MainAxisAlignment.center,
                                             children: [
                                               Container(
-                                                margin:
-                                                   const EdgeInsets.only(top: 40.0),
+                                                margin: const EdgeInsets.only(
+                                                    top: 40.0),
                                                 width: 150 * fem,
                                                 height: 42 * fem,
                                                 decoration: BoxDecoration(
@@ -425,7 +475,8 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                                   ),
                                                   boxShadow: [
                                                     BoxShadow(
-                                                      color: const Color(0x82000000),
+                                                      color: const Color(
+                                                          0x82000000),
                                                       offset: Offset(
                                                           0 * fem, 4 * fem),
                                                       blurRadius: 10 * fem,
@@ -463,8 +514,8 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                                 width: 20 * fem,
                                               ),
                                               Container(
-                                                margin:
-                                                  const  EdgeInsets.only(top: 40.0),
+                                                margin: const EdgeInsets.only(
+                                                    top: 40.0),
                                                 width: 150 * fem,
                                                 height: 42 * fem,
                                                 decoration: BoxDecoration(
@@ -475,7 +526,8 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                                           9 * fem),
                                                   boxShadow: [
                                                     BoxShadow(
-                                                      color: const Color(0x82000000),
+                                                      color: const Color(
+                                                          0x82000000),
                                                       offset: Offset(
                                                           0 * fem, 4 * fem),
                                                       blurRadius: 10 * fem,
@@ -485,7 +537,9 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                                 child: TextButton(
                                                   onPressed: () {
                                                     _showUpdateVehicleExitDialog(
-                                                        context, checkStatus, data.customerID);
+                                                        context,
+                                                        checkStatus,
+                                                        data.customerID);
                                                   },
                                                   child: Center(
                                                     child: Text(
@@ -575,16 +629,13 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
             borderRadius: BorderRadius.circular(23),
           ),
           backgroundColor: const Color(0xffffffff),
-          child:
-
-          Container(
+          child: Container(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                   padding: const EdgeInsets.all(10),
-                  child:
-                  Column(
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
                     children: [
                       Center(
                         child: Container(
@@ -594,7 +645,8 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                               TextSpan(
                                   text: 'Cập nhập trạng thái',
                                   style: TextStyle(
-                                      fontWeight: FontWeight.bold, fontSize: 20)),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20)),
                               TextSpan(
                                   text: ' vào bãi',
                                   style: TextStyle(
@@ -671,8 +723,9 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                     .checkinReservationWithLicensePlate(
                                         scannedText);
                                 widget.updateUI();
-                                WebSocketChannel channel = IOWebSocketChannel.connect(
-                                    BaseConstants.WEBSOCKET_PRIVATE_RESERVATION_URL);
+                                WebSocketChannel channel =
+                                    IOWebSocketChannel.connect(BaseConstants
+                                        .WEBSOCKET_PRIVATE_RESERVATION_URL);
                                 final message = {
                                   "reservationID":
                                       reservationIDByScan.toString(),
@@ -682,7 +735,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                 channel.sink.add(messageJson);
                                 print(messageJson);
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                const  SnackBar(
+                                  const SnackBar(
                                     content: Text('Check-in thành công'),
                                   ),
                                 );
@@ -693,7 +746,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                 });
                               } catch (e) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
+                                  const SnackBar(
                                     content: Text('Việc check-in thất bại'),
                                   ),
                                 );
@@ -702,7 +755,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                             },
                             child: const Text(
                               'Xác nhận',
-                              style:  TextStyle(
+                              style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w600,
                                 color: Color(0xffff3737),
@@ -732,166 +785,166 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
             borderRadius: BorderRadius.circular(23),
           ),
           backgroundColor: const Color(0xffffffff),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  child:
-                  Column(
-                    children: [
-                      Center(
-                        child: Container(
-                          padding: const EdgeInsets.only(bottom: 30),
-                          child: const Text.rich(
-                            TextSpan(children: [
-                              TextSpan(
-                                  text: 'Cập nhập trạng thái',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold, fontSize: 20)),
-                              TextSpan(
-                                  text: ' rời bãi',
-                                  style: TextStyle(
-                                      color: Colors.red,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20))
-                            ]),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                      Center(
-                        child: Container(
-                          padding: const EdgeInsets.only(bottom: 30),
-                          child: Text(
-                            scannedText,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 23,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                      if (checkStatus == 3)
-                        const Text.rich(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  children: [
+                    Center(
+                      child: Container(
+                        padding: const EdgeInsets.only(bottom: 30),
+                        child: const Text.rich(
                           TextSpan(children: [
                             TextSpan(
-                                text: '*Lưu ý: ',
+                                text: 'Cập nhập trạng thái',
                                 style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                )),
+                                    fontWeight: FontWeight.bold, fontSize: 20)),
                             TextSpan(
-                                text:
-                                'Biển số xe này đã rời bãi trễ giờ. Phải đóng phí phạt',
+                                text: ' rời bãi',
                                 style: TextStyle(
-                                  fontSize: 18,
-                                ))
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20))
                           ]),
                           textAlign: TextAlign.center,
                         ),
-                    ],
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        children: [
-                          Container(
-                            height: 1,
-                            color: const Color(0xffb3abab),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: const Text(
-                              'Hủy',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xff5767f5),
-                              ),
-                            ),
-                          ),
-                        ],
                       ),
                     ),
-                    Column(
+                    Center(
+                      child: Container(
+                        padding: const EdgeInsets.only(bottom: 30),
+                        child: Text(
+                          scannedText,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 23,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                    if (checkStatus == 3)
+                      const Text.rich(
+                        TextSpan(children: [
+                          TextSpan(
+                              text: '*Lưu ý: ',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              )),
+                          TextSpan(
+                              text:
+                                  'Biển số xe này đã rời bãi trễ giờ. Phải đóng phí phạt',
+                              style: TextStyle(
+                                fontSize: 18,
+                              ))
+                        ]),
+                        textAlign: TextAlign.center,
+                      ),
+                  ],
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                    child: Column(
                       children: [
                         Container(
-                          width: 1,
-                          height: 48,
+                          height: 1,
                           color: const Color(0xffb3abab),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text(
+                            'Hủy',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xff5767f5),
+                            ),
+                          ),
                         ),
                       ],
                     ),
-                    Expanded(
-                      child: Column(
-                        children: [
-                          Container(
-                            height: 1,
-                            color: const Color(0xffb3abab),
-                          ),
-                          TextButton(
-                            onPressed: () async {
-                              try {
-                                await ParkingAPI
-                                        .checkoutReservationWithLicensePlate(
-                                            scannedText)
-                                    .then((_) async {
-                                      await FirebaseAPI.deleteUser(customerID).then((_){
-                                        widget.updateUI();
-                                        WebSocketChannel channel = IOWebSocketChannel.connect(
-                                            BaseConstants.WEBSOCKET_PRIVATE_RESERVATION_URL);
-                                        final message = {
-                                          "reservationID":
-                                          reservationIDByScan.toString(),
-                                          "content": "GetStatus"
-                                        };
-                                        final messageJson = jsonEncode(message);
-                                        channel.sink.add(messageJson);
-                                        print(messageJson);
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                         const SnackBar(
-                                            content: Text('Check-out thành công'),
-                                          ),
-                                        );
-                                        setState(() {
-                                          imageFile = null;
-                                          scannedText = "";
-                                          status = false;
-                                        });
-                                      });
-
+                  ),
+                  Column(
+                    children: [
+                      Container(
+                        width: 1,
+                        height: 48,
+                        color: const Color(0xffb3abab),
+                      ),
+                    ],
+                  ),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 1,
+                          color: const Color(0xffb3abab),
+                        ),
+                        TextButton(
+                          onPressed: () async {
+                            try {
+                              await ParkingAPI
+                                      .checkoutReservationWithLicensePlate(
+                                          scannedText)
+                                  .then((_) async {
+                                await FirebaseAPI.deleteUser(customerID)
+                                    .then((_) {
+                                  widget.updateUI();
+                                  WebSocketChannel channel =
+                                      IOWebSocketChannel.connect(BaseConstants
+                                          .WEBSOCKET_PRIVATE_RESERVATION_URL);
+                                  final message = {
+                                    "reservationID":
+                                        reservationIDByScan.toString(),
+                                    "content": "GetStatus"
+                                  };
+                                  final messageJson = jsonEncode(message);
+                                  channel.sink.add(messageJson);
+                                  print(messageJson);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Check-out thành công'),
+                                    ),
+                                  );
+                                  setState(() {
+                                    imageFile = null;
+                                    scannedText = "";
+                                    status = false;
+                                  });
                                 });
-                              } catch (e) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                 const SnackBar(
-                                    content: Text('Việc check-out thất bại'),
-                                  ),
-                                );
-                              }
-                              Navigator.of(context).pop();
-                            },
-                            child: const Text(
-                              'Xác nhận',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xffff3737),
-                              ),
+                              });
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Việc check-out thất bại'),
+                                ),
+                              );
+                            }
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text(
+                            'Xác nhận',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xffff3737),
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ],
-            ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         );
       },
     );
