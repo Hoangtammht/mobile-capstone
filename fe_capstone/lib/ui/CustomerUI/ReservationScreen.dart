@@ -36,7 +36,7 @@ class ReservationScreen extends StatefulWidget {
 }
 
 class _ReservationScreenState extends State<ReservationScreen> {
-  Future<List<ReservationMethod>>? reservationMethod;
+  Future<ReservationMethod>? reservationMethod;
   late VehicleProvider _vehicleProvider;
   late Future<List<ListVehicleCustomer>> vehicleFuture;
   TextEditingController _vehicleNumberController = TextEditingController();
@@ -62,14 +62,9 @@ class _ReservationScreenState extends State<ReservationScreen> {
       dropdownVehicleID = value.first.motorbikeID;
     });
     reservationMethod = _getReservationMethod();
-    reservationMethod!.then((data) {
-      reserMethod = data;
-      dropdownType = data.first.methodName;
-      price = data.first.price;
-    });
   }
 
-  Future<List<ReservationMethod>> _getReservationMethod() {
+  Future<ReservationMethod> _getReservationMethod() {
     return ReservationAPI.getMethodofPLO(widget.ploID);
   }
 
@@ -334,38 +329,21 @@ class _ReservationScreenState extends State<ReservationScreen> {
                       Padding(
                         padding:
                             EdgeInsets.only(top: 30 * fem, bottom: 15 * fem),
-                        child: Text(
-                          'Phương thức gửi:',
-                          style: TextStyle(
-                              fontSize: 17 * fem, fontWeight: FontWeight.bold),
+                        child: Row(
+                          children: [
+                            Text(
+                              'Phương thức gửi:',
+                              style: TextStyle(
+                                  fontSize: 17 * fem,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(width: 30),
+                            Text(
+                              data.methodName,
+                              style: TextStyle(fontSize: 16 * fem, fontWeight:  FontWeight.bold),
+                            ),
+                          ],
                         ),
-                      ),
-                      DropdownMenu<String>(
-                        initialSelection: data.first.methodName,
-                        width: 350 * fem,
-                        textStyle: TextStyle(fontSize: 16 * fem),
-                        onSelected: (String? value) {
-                          ReservationMethod selectedMap =
-                              data.firstWhere((map) => map.methodName == value);
-                          setState(() {
-                            dropdownType = selectedMap.methodName;
-                            if (selectedMap.methodName.contains('Ban ngày')) {
-                              price = selectedMap.price;
-                            } else if (selectedMap.methodName
-                                .contains('Ban đêm')) {
-                              price = selectedMap.price;
-                            } else {
-                              price = selectedMap.price;
-                            }
-                          });
-                        },
-                        dropdownMenuEntries:
-                            data.map<DropdownMenuEntry<String>>((map) {
-                          return DropdownMenuEntry<String>(
-                            value: map.methodName,
-                            label: map.methodName,
-                          );
-                        }).toList(),
                       ),
                       Padding(
                         padding:
@@ -419,7 +397,8 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                         setState(() {
                                           dropdownVehicle =
                                               selectedMap.licensePlate;
-                                          dropdownVehicleID = selectedMap.motorbikeID;
+                                          dropdownVehicleID =
+                                              selectedMap.motorbikeID;
                                         });
                                       },
                                       dropdownMenuEntries: vehicleProvider
@@ -477,13 +456,13 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                 Column(
                                   children: [
                                     Text(
-                                      '${formatCurrency.format(price)}',
+                                      '${formatCurrency.format(data.price)}',
                                       style: TextStyle(
                                           fontSize: 22 * fem,
                                           fontWeight: FontWeight.bold),
                                     ),
                                     Text(
-                                      dropdownType,
+                                      data.methodName,
                                       style: TextStyle(
                                         fontSize: 16 * fem,
                                         fontWeight: FontWeight.bold,
@@ -494,7 +473,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                 InkWell(
                                   onTap: () {
                                     _showAddReservationDialog(context,
-                                        widget.refreshHomeScreen, reserMethod);
+                                        widget.refreshHomeScreen, data);
                                   },
                                   child: Container(
                                     padding: EdgeInsets.fromLTRB(
@@ -726,16 +705,9 @@ class _ReservationScreenState extends State<ReservationScreen> {
     );
   }
 
-  Future<void> _showAddReservationDialog(
-      BuildContext context,
-      Function refreshHomeScreen,
-      List<ReservationMethod> reservationMethod) async {
+  Future<void> _showAddReservationDialog(BuildContext context,
+      Function refreshHomeScreen, ReservationMethod reservationMethod) async {
     final formatCurrency = NumberFormat.simpleCurrency(locale: 'vi_VN');
-    int methodID = reservationMethod
-        .firstWhere(
-          (item) => item.methodName == dropdownType,
-        )
-        .methodID;
 
     await showDialog(
       context: context,
@@ -746,13 +718,12 @@ class _ReservationScreenState extends State<ReservationScreen> {
           ),
           backgroundColor: const Color(0xffffffff),
           child: Container(
-
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 10 * fem),
-                  child:  Column(
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
@@ -769,28 +740,26 @@ class _ReservationScreenState extends State<ReservationScreen> {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8 * fem),
-                        child:
-                        ListTile(
+                          padding: EdgeInsets.symmetric(vertical: 8 * fem),
+                          child: ListTile(
                             contentPadding: EdgeInsets.zero,
-                          leading: Text(
-                                  'Tên bãi:  ',
-                                  style: TextStyle(
-                                    fontSize: 18 * fem,
-                                    fontWeight: FontWeight.w600,
-                                    color: const Color(0xff000000),
-                                  ),
-                                ),
-                          title: Text(
-                                  widget.parkinglotDetail.parkingName,
-                                  style: TextStyle(
-                                    fontSize: 18 * fem,
-                                    fontWeight: FontWeight.w600,
-                                    color: const Color(0xff000000),
-                                  ),
-                                ),
-                        )
-                      ),
+                            leading: Text(
+                              'Tên bãi:  ',
+                              style: TextStyle(
+                                fontSize: 18 * fem,
+                                fontWeight: FontWeight.w600,
+                                color: const Color(0xff000000),
+                              ),
+                            ),
+                            title: Text(
+                              widget.parkinglotDetail.parkingName,
+                              style: TextStyle(
+                                fontSize: 18 * fem,
+                                fontWeight: FontWeight.w600,
+                                color: const Color(0xff000000),
+                              ),
+                            ),
+                          )),
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 4 * fem),
                         child: Container(
@@ -812,7 +781,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                 ),
                               ),
                               Text(
-                                dropdownType,
+                                reservationMethod.methodName,
                                 style: TextStyle(
                                   fontSize: 18 * fem,
                                   fontWeight: FontWeight.w600,
@@ -826,8 +795,8 @@ class _ReservationScreenState extends State<ReservationScreen> {
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 2 * fem),
                         child: Container(
-                          margin:
-                          EdgeInsets.fromLTRB(0 * fem, 0 * fem, 0 * fem, 8 * fem),
+                          margin: EdgeInsets.fromLTRB(
+                              0 * fem, 0 * fem, 0 * fem, 8 * fem),
                           child: Text(
                             'Biển số xe: ',
                             style: TextStyle(
@@ -877,7 +846,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                               ),
                             ),
                             Text(
-                              '${formatCurrency.format(price)}',
+                              '${formatCurrency.format(reservationMethod.price)}',
                               style: TextStyle(
                                 fontSize: 18 * fem,
                                 fontWeight: FontWeight.w600,
@@ -890,8 +859,6 @@ class _ReservationScreenState extends State<ReservationScreen> {
                     ],
                   ),
                 ),
-
-
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -934,44 +901,48 @@ class _ReservationScreenState extends State<ReservationScreen> {
                             height: 1,
                             color: const Color(0xffb3abab),
                           ),
-
                           TextButton(
-
                             onPressed: () async {
                               try {
                                 await ReservationAPI.getBooking(
-                                        dropdownVehicleID, methodID, widget.ploID)
+                                        dropdownVehicleID,
+                                        reservationMethod.methodID,
+                                        widget.ploID)
                                     .then((value) async {
-                                     if(value == 1){
-                                       await FirebaseAPI.createUserForCus(
-                                           widget.ploID)
-                                           .then((value) async {
-                                         final message = {
-                                           "ploID": widget.ploID.toString(),
-                                           "content": "GetParking"
-                                         };
-                                         final messageJson = jsonEncode(message);
-                                         ploChannel.sink.add(messageJson);
-                                         print("Đặt chỗ socket: $messageJson");
-                                         Navigator.of(context).pop();
-                                         refreshHomeScreen();
-                                         ScaffoldMessenger.of(context).showSnackBar(
-                                           const SnackBar(
-                                               content: Text('Đặt chỗ thành công')),
-                                         );
-                                         final walletProvider =
-                                         Provider.of<WalletDataProvider>(context,
-                                             listen: false);
-                                         await walletProvider.updateTransactions();
-                                       });
-                                     } else {
-                                       Navigator.of(context).pop();
-                                       ScaffoldMessenger.of(context).showSnackBar(
-                                         const SnackBar(
-                                           content: Text('Bãi xe hiện tại đã hết chỗ, xin vui lòng đặt nơi khác!'),
-                                         ),
-                                       );
-                                     }
+                                  if (value == 1) {
+                                    await FirebaseAPI.createUserForCus(
+                                            widget.ploID)
+                                        .then((value) async {
+                                      final message = {
+                                        "ploID": widget.ploID.toString(),
+                                        "content": "GetParking"
+                                      };
+                                      final messageJson = jsonEncode(message);
+                                      ploChannel.sink.add(messageJson);
+                                      print("Đặt chỗ socket: $messageJson");
+                                      Navigator.of(context).pop();
+                                      refreshHomeScreen();
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                            content:
+                                                Text('Đặt chỗ thành công')),
+                                      );
+                                      final walletProvider =
+                                          Provider.of<WalletDataProvider>(
+                                              context,
+                                              listen: false);
+                                      await walletProvider.updateTransactions();
+                                    });
+                                  } else {
+                                    Navigator.of(context).pop();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                            'Bãi xe hiện tại đã hết chỗ, xin vui lòng đặt nơi khác!'),
+                                      ),
+                                    );
+                                  }
                                 });
                               } catch (e) {
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -996,7 +967,6 @@ class _ReservationScreenState extends State<ReservationScreen> {
                     ),
                   ],
                 ),
-
               ],
             ),
           ),
