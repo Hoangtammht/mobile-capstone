@@ -41,6 +41,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
   void update() {
     widget.updateUI();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -181,7 +182,8 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                     ),
                                   ),
                                   Container(
-                                    margin: const EdgeInsets.only(top: 20.0, bottom: 20.0),
+                                    margin: const EdgeInsets.only(
+                                        top: 20.0, bottom: 20.0),
                                     width: 150 * fem,
                                     height: 42 * fem,
                                     decoration: BoxDecoration(
@@ -200,7 +202,9 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                       onPressed: () {
                                         Navigator.of(context).push(
                                           MaterialPageRoute(
-                                            builder: (context) => StrangerBooking(updateUI: update ),
+                                            builder: (context) =>
+                                                StrangerBooking(
+                                                    updateUI: update),
                                           ),
                                         );
                                       },
@@ -920,48 +924,45 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                     status = false;
                                   });
                                 });
-                              } catch (e) {
-                                if (e is DioException) {
-                                  if (e.response != null &&
-                                      e.response!.statusCode == 500) {
-                                    final errorResponse = e.response!;
-                                    final errorData = errorResponse.data;
-                                    if (errorData is Map<String, dynamic> &&
-                                        errorData.containsKey('message')) {
-                                      final errorMessage = errorData['message'];
-                                      print("Lỗi gặp phải là $errorMessage");
-                                      if (errorMessage.contains(
-                                          'Failed checkOut user.Customer not enough wallet. Need')) {
-                                        Navigator.of(context).pop();
-                                        _showUpdateVehicleExitDialogWithoutCondition(
-                                          context,
-                                          errorMessage,
-                                          customerID
-                                        );
-                                      }
-                                    } else {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                          content: Text('Check out thất bại'),
-                                        ),
-                                      );
+                              });
+                            } catch (e) {
+                              if (e is DioException) {
+                                if (e.response != null &&
+                                    e.response!.statusCode == 500) {
+                                  final errorResponse = e.response!;
+                                  final errorData = errorResponse.data;
+                                  if (errorData is Map<String, dynamic> &&
+                                      errorData.containsKey('message')) {
+                                    final errorMessage = errorData['message'];
+                                    print("Lỗi gặp phải là $errorMessage");
+                                    if (errorMessage.contains(
+                                        'Failed checkOut user.Customer not enough wallet. Need')) {
                                       Navigator.of(context).pop();
+                                      _showUpdateVehicleExitDialogWithoutCondition(
+                                          context, errorMessage, customerID);
                                     }
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('Check out thất bại'),
+                                      ),
+                                    );
+                                    Navigator.of(context).pop();
                                   }
                                 }
                               }
-                              Navigator.of(context).pop();
-                            },
-                            child: const Text(
-                              'Xác nhận',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xffff3737),
-                              ),
+                            }
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text(
+                            'Xác nhận',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xffff3737),
                             ),
                           ),
-                        ),
+                        )
                       ],
                     ),
                   ),
@@ -1005,7 +1006,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                             ),
                             TextSpan(
                               text:
-                              '\nBạn có chắc chắn cho xe rời bãi hay không ?',
+                                  '\nBạn có chắc chắn cho xe rời bãi hay không ?',
                               style: TextStyle(
                                 color: Colors.red,
                                 fontWeight: FontWeight.bold,
@@ -1078,18 +1079,20 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                         TextButton(
                           onPressed: () async {
                             int reservationID =
-                            int.parse(reservationIDByScan.toString());
+                                int.parse(reservationIDByScan.toString());
                             try {
                               await ParkingAPI.checkoutWithOutCondition(
-                                  reservationID)
+                                      reservationID)
                                   .then((_) async {
-                                await FirebaseAPI.deleteUser(customerID).then((_){
+                                await FirebaseAPI.deleteUser(customerID)
+                                    .then((_) {
                                   widget.updateUI();
-                                  WebSocketChannel channel = IOWebSocketChannel.connect(
-                                      BaseConstants.WEBSOCKET_PRIVATE_RESERVATION_URL);
+                                  WebSocketChannel channel =
+                                      IOWebSocketChannel.connect(BaseConstants
+                                          .WEBSOCKET_PRIVATE_RESERVATION_URL);
                                   final message = {
                                     "reservationID":
-                                    reservationIDByScan.toString(),
+                                        reservationIDByScan.toString(),
                                     "content": "GetStatus"
                                   };
                                   final messageJson = jsonEncode(message);
