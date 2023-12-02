@@ -11,6 +11,7 @@ import 'package:fe_capstone/ui/PLOwnerUI/StrangerBooking.dart';
 import 'package:flutter/material.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -939,7 +940,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                         'Failed checkOut user.Customer not enough wallet. Need')) {
                                       Navigator.of(context).pop();
                                       _showUpdateVehicleExitDialogWithoutCondition(
-                                          context, errorMessage, customerID);
+                                          context, convertErrorMessage(errorMessage), customerID);
                                     }
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
@@ -1139,4 +1140,17 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
       },
     );
   }
+
+  String convertErrorMessage(String originalMessage) {
+    if (originalMessage.contains('Failed checkOut user.')) {
+      String cleanedMessage = originalMessage.replaceAll('Failed checkOut user.', '');
+      cleanedMessage = cleanedMessage.replaceAllMapped(
+        RegExp(r'(\d+\.\d+)'),
+            (match) => NumberFormat.currency(locale: 'vi_VN', symbol: 'VNĐ').format(double.parse(match.group(1)!)),
+      );
+      return cleanedMessage;
+    }
+    return originalMessage;
+  }
+
 }
