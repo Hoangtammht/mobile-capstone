@@ -318,10 +318,10 @@ class ParkingAPI {
       if (response.statusCode == 200) {
         print("CheckIn successfully");
       } else {
-        throw Exception('Failed to update parking setting');
+        throw Exception('Failed to check-in reservation');
       }
     } catch (e) {
-      throw Exception('Failed to checkout reservation: $e');
+      throw Exception('Failed to check-in reservation: $e');
     }
   }
 

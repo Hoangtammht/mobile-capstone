@@ -135,11 +135,11 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
                               ),
                               Spacer(),
                               Text(
-                                  snapshot.connectionState == ConnectionState.waiting
-                                      ? 'Đang tải...'
-                                      : (reservationDetail != null
-                                      ? '${NumberFormat("#,##0", "vi_VN").format(reservationDetail.price)} đ'
-                                      : '${NumberFormat("#,##0", "vi_VN").format(0.0)} đ'),
+                                snapshot.connectionState == ConnectionState.waiting
+                                    ? 'Đang tải...'
+                                    : (reservationDetail != null
+                                    ? '${NumberFormat("#,##0", "vi_VN").format(reservationDetail.totalPrice != null && reservationDetail.totalPrice != 0.0 ? reservationDetail.totalPrice : reservationDetail.price)} đ'
+                                    : '${NumberFormat("#,##0", "vi_VN").format(0.0)} đ'),
                                 style: TextStyle(
                                   fontSize: 22 * ffem,
                                   fontWeight: FontWeight.w600,

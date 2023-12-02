@@ -10,6 +10,7 @@ class ReservationDetail {
     required this.endTime,
     required this.checkIn,
     required this.checkOut,
+    required this.totalPrice,
   });
 
   late final String licensePlate;
@@ -22,6 +23,7 @@ class ReservationDetail {
   late final String endTime;
   late final String checkIn;
   late final String checkOut;
+  late final double totalPrice;
 
   ReservationDetail.fromJson(Map<String, dynamic> json){
     licensePlate = json['licensePlate'] ?? '';
@@ -34,6 +36,7 @@ class ReservationDetail {
     endTime = json['endTime'] ?? '';
     checkIn = json['checkIn'] ?? '';
     checkOut = json['checkOut'] ?? '';
+    totalPrice = json['totalPrice'] ?? 0.0;
   }
 
   Map<String, dynamic> toJson() {
@@ -48,6 +51,7 @@ class ReservationDetail {
     _data['endTime'] = endTime;
     _data['checkIn'] = checkIn;
     _data['checkOut'] = checkOut;
+    _data['totalPrice'] = totalPrice;
     return _data;
   }
 }

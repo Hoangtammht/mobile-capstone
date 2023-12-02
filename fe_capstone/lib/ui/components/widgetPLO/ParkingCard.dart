@@ -500,6 +500,7 @@ class _ParkingCardState extends State<ParkingCard> {
                                   );
                                 });
                               });
+                              Navigator.of(context).pop();
                             } catch (e) {
                               if (e is DioException) {
                                 if (e.response != null &&
