@@ -29,6 +29,7 @@ class HistoryCard extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 8 * fem),
+
               Text(
                 '${history.address}',
                 style: TextStyle(
@@ -37,6 +38,7 @@ class HistoryCard extends StatelessWidget {
                   color: Color(0xff969696),
                 ),
               ),
+
               SizedBox(height: 4 * fem),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -103,30 +105,30 @@ class HistoryCard extends StatelessWidget {
                 ],
               ),
 
-              SizedBox(height: 8 * fem),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    '${history.checkIn}',
-                    style: TextStyle(
-                      fontSize: 15 * ffem,
-                      fontWeight: FontWeight.w600,
-                      fontStyle: FontStyle.italic,
-                      color: Color(0xff969696),
-                    ),
-                  ),
-                  Text(
-                    '${history.checkOut}',
-                    style: TextStyle(
-                      fontSize: 15 * ffem,
-                      fontWeight: FontWeight.w600,
-                      fontStyle: FontStyle.italic,
-                      color: Color(0xff969696),
-                    ),
-                  ),
-                ],
-              ),
+              // SizedBox(height: 8 * fem),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //   children: [
+              //     Text(
+              //       '${history.checkIn}',
+              //       style: TextStyle(
+              //         fontSize: 15 * ffem,
+              //         fontWeight: FontWeight.w600,
+              //         fontStyle: FontStyle.italic,
+              //         color: Color(0xff969696),
+              //       ),
+              //     ),
+              //     Text(
+              //       '${history.checkOut}',
+              //       style: TextStyle(
+              //         fontSize: 15 * ffem,
+              //         fontWeight: FontWeight.w600,
+              //         fontStyle: FontStyle.italic,
+              //         color: Color(0xff969696),
+              //       ),
+              //     ),
+              //   ],
+              // ),
             ],
           ),
         ),
