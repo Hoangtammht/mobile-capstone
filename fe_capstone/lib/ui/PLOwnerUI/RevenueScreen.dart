@@ -218,8 +218,11 @@ class _RevenueScreenState extends State<RevenueScreen> {
                                       lastDate: DateTime.now(),
                                     ).then((date) {
                                       if (date != null) {
+                                        if (date.isAfter(selectedToDate)) {
+                                          date = selectedToDate;
+                                        }
                                         setState(() {
-                                          selectedFromDate = date;
+                                          selectedFromDate = date!;
                                           _fromDateController.text = DateFormat('dd/MM/yyyy').format(selectedFromDate);
                                           _getDataFromAPI();
                                         });
@@ -275,8 +278,11 @@ class _RevenueScreenState extends State<RevenueScreen> {
                                       lastDate: DateTime.now(),
                                     ).then((date) {
                                       if (date != null) {
+                                        if (date.isBefore(selectedFromDate)) {
+                                          date = selectedFromDate;
+                                        }
                                         setState(() {
-                                          selectedToDate = date;
+                                          selectedToDate = date!;
                                           _toDateController.text =
                                               DateFormat('dd/MM/yyyy')
                                                   .format(selectedToDate);
