@@ -205,7 +205,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                           MaterialPageRoute(
                                             builder: (context) =>
                                                 StrangerBooking(
-                                                    updateUI: update),
+                                                    updateUI: update, imageFile: imageFile , scannedText: scannedText),
                                           ),
                                         );
                                       },

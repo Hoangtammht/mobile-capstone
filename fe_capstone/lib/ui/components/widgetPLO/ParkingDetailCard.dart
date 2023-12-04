@@ -229,6 +229,7 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
                             ],
                           ),
                         ),
+                        if(reservationDetail?.phoneNumber != '0000000000')
                         Container(
                           padding: EdgeInsets.fromLTRB(16 * fem, 21 * fem, 0, 0),
                           child: Row(

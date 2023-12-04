@@ -171,7 +171,7 @@ class ParkingAPI {
           },
         ),
       );
-
+      print(response.data);
       if (response.statusCode == 200) {
         List<ListVehicleInParking> list = [];
         for (var item in response.data) {
@@ -790,13 +790,12 @@ class ParkingAPI {
           final data = response.data['data'];
           reservationByLicensePlate  = ReservationByLicensePlate.fromJson(data);
         }
-        print(reservationByLicensePlate);
         return reservationByLicensePlate;
       } else {
-        throw Exception('Failed to get RatingList');
+        throw Exception('Failed to get reservation by LicensePlate');
       }
     } catch (e) {
-      throw Exception('Failed to get RatingList: $e');
+      throw Exception('Failed to get reservation by LicensePlate: $e');
     }
   }
 
