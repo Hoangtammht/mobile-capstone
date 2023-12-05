@@ -45,8 +45,6 @@ class ReservationAPI {
 
 
   static Future<int> getBookingForStranger(String image, String licensePlate) async {
-    print('test $image');
-    print('test $licensePlate');
     try {
       String? token = await UserPreferences.getAccessToken();
       if (token == null) {
@@ -75,7 +73,12 @@ class ReservationAPI {
         throw Exception('Failed to get booking reservation');
       }
     } catch (e) {
-      throw Exception('Failed to get booking reservation: $e');
+      if (e is DioException) {
+        if (e.response != null) {
+          throw DioException(requestOptions: e.requestOptions, error: 'Failed to checkout reservation', response: e.response);
+        }
+      }
+      throw Exception("Fail to checkout reservation");
     }
   }
 
