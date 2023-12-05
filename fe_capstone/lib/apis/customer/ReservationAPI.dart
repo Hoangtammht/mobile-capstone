@@ -43,6 +43,42 @@ class ReservationAPI {
     }
   }
 
+
+  static Future<int> getBookingForStranger(String image, String licensePlate) async {
+    print('test $image');
+    print('test $licensePlate');
+    try {
+      String? token = await UserPreferences.getAccessToken();
+      if (token == null) {
+        throw Exception('Access token is null');
+      }
+      final response = await dio.post(
+        '${UrlConstant.RESERVATION}/bookingGuest',
+        data: {
+          "image": image,
+          "licensePlate": licensePlate,
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+      if (response.statusCode == 200) {
+        String responseMessage = response.data;
+        if(responseMessage.contains('Full')){
+          return 2;
+        }
+        return 1;
+      } else {
+        throw Exception('Failed to get booking reservation');
+      }
+    } catch (e) {
+      throw Exception('Failed to get booking reservation: $e');
+    }
+  }
+
   static Future<void> cancelReservation(int reservationID) async {
     try {
       String? token = await UserPreferences.getAccessToken();

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:fe_capstone/apis/FirebaseAPI.dart';
+import 'package:fe_capstone/apis/customer/ReservationAPI.dart';
 import 'package:fe_capstone/apis/plo/ParkingAPI.dart';
 import 'package:fe_capstone/blocs/UserPreferences.dart';
 import 'package:fe_capstone/constant/base_constant.dart';
@@ -15,8 +16,10 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 
 class StrangerBooking extends StatefulWidget {
   final void Function() updateUI;
-
-  const StrangerBooking({Key? key, required this.updateUI}) : super(key: key);
+  final String? scannedText;
+  final XFile? imageFile;
+  final void Function()? updateCheckCamUI;
+  const StrangerBooking({Key? key, required this.updateUI, this.scannedText, this.imageFile, this.updateCheckCamUI}) : super(key: key);
 
   @override
   State<StrangerBooking> createState() => _ScanLicensePlateState();
@@ -28,6 +31,7 @@ class _ScanLicensePlateState extends State<StrangerBooking> {
   bool statusStep1 = false;
   XFile? imageFileStep1;
 
+  String? image;
   bool textScanningStep2 = false;
   bool statusStep2 = false;
   XFile? imageFileStep2;
@@ -36,8 +40,19 @@ class _ScanLicensePlateState extends State<StrangerBooking> {
   @override
   void initState() {
     super.initState();
+    setState(() {
+      print('tEST ${widget.scannedText}');
+        if(widget.scannedText != null){
+          imageFileStep2 = widget.imageFile;
+          scannedTextStep2 = widget.scannedText!;
+        }
+    });
   }
-
+ void UpdateCheckCam(){
+   if(widget.scannedText != null){
+     widget.updateCheckCamUI!();
+   }
+ }
   void Update() {
     widget.updateUI();
   }
@@ -54,6 +69,7 @@ class _ScanLicensePlateState extends State<StrangerBooking> {
               color: Colors.white,
             ),
             onPressed: () {
+              UpdateCheckCam();
               Navigator.of(context).pop();
             },
           ),
@@ -74,12 +90,17 @@ class _ScanLicensePlateState extends State<StrangerBooking> {
           onStepContinue: (currentStep == 0 && imageFileStep1 == null) ||
                   (currentStep == 1 && imageFileStep2 == null)
               ? null
-              : () {
+              : () async {
                   final isLastStep = currentStep == getSteps().length - 1;
                   if (isLastStep) {
                     _showCreateBookingDialog(context);
                   } else {
-                    setState(() => currentStep += 1);
+                    String? imageLink = await ParkingAPI.uploadFile(
+                        File(imageFileStep1!.path));
+                   setState(() {
+                     currentStep +=1;
+                     image = imageLink;
+                   });
                   }
                 },
           onStepTapped: (step) => setState(() => currentStep = step),
@@ -313,7 +334,7 @@ class _ScanLicensePlateState extends State<StrangerBooking> {
         textScanningStep1 = false;
         statusStep1 = true;
       } else {
-        this.scannedTextStep2 = scannedText;
+       scannedTextStep2 = scannedText;
         textScanningStep2 = false;
         statusStep2 = true;
       }
@@ -418,33 +439,45 @@ class _ScanLicensePlateState extends State<StrangerBooking> {
                         TextButton(
                           onPressed: () async {
                             try {
-                              String? ploID = await UserPreferences.getUserID();
-                              String? image = await ParkingAPI.uploadFile(
-                                  File(imageFileStep1!.path!));
-                              print(image);
-                              print(ploID);
-                              print(scannedTextStep2);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Tạo giao dịch mới thành công'),
-                                ),
-                              );
-                              setState(() {
-                                imageFileStep1 = null;
-                                imageFileStep2 = null;
-                                scannedTextStep2 = "";
-                                statusStep1 = false;
-                                statusStep2 = false;
-                                currentStep = 0;
+                              await ReservationAPI.getBookingForStranger(
+                                  image!,
+                                  scannedTextStep2)
+                                  .then((value) async {
+                                if (value == 1) {
+
+                                  Navigator.of(context).pop();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Tạo giao dịch mới thành công'),
+                                    ),
+                                  );
+                                  setState(() {
+                                    imageFileStep1 = null;
+                                    imageFileStep2 = null;
+                                    scannedTextStep2 = "";
+                                    statusStep1 = false;
+                                    statusStep2 = false;
+                                    currentStep = 0;
+                                  });
+                                  widget.updateUI();
+                                } else {
+                                  Navigator.of(context).pop();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                          'Bãi xe hiện tại đã hết chỗ rồi, không thể nhập thêm nữa!'),
+                                    ),
+                                  );
+                                }
                               });
                             } catch (e) {
+                              Navigator.of(context).pop();
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text('Tạo giao dịch mới thất bại'),
                                 ),
                               );
                             }
-                            Navigator.of(context).pop();
                           },
                           child: const Text(
                             'Xác nhận',

@@ -394,6 +394,19 @@ class _ParkingCardState extends State<ParkingCard> {
                         ),
                       ),
                     ),
+                    if(widget.vehicleData.fullName.contains('Cus'))
+                    Padding(
+                      padding: const EdgeInsets.all(2.0),
+                      child: Container(
+                        width: 300 * fem,
+                        height: 300 * fem,
+                        margin: EdgeInsets.only(bottom: 10),
+                        child: Image.network(
+                          widget.vehicleData.image,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
                     Center(
                       child: Container(
                         padding: const EdgeInsets.only(bottom: 30),
@@ -407,23 +420,24 @@ class _ParkingCardState extends State<ParkingCard> {
                         ),
                       ),
                     ),
-                    if (widget.type.contains('Later'))
-                      const Text.rich(
-                        TextSpan(children: [
-                          TextSpan(
-                              text: '*Lưu ý: ',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                              )),
-                          TextSpan(
-                              text:
-                                  'Biển số xe này đã rời bãi trễ giờ. Phải đóng phí phạt',
-                              style: TextStyle(
-                                fontSize: 18,
-                              ))
-                        ]),
-                        textAlign: TextAlign.center,
-                      ),
+                    if(widget.vehicleData.fullName.contains('Cus'))
+                    Text.rich(
+                      TextSpan(children: [
+                      const TextSpan(
+                            text: 'Số tiền phải trả: ',
+                            style: TextStyle(
+                                fontSize: 20
+                            )),
+                        TextSpan(
+                            text:
+                            '${NumberFormat("#,##0", "vi_VN").format(widget.vehicleData.totalPrice)}VNĐ',
+                            style: TextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold
+                            ))
+                      ]),
+                      textAlign: TextAlign.center,
+                    ),
                   ],
                 ),
               ),
@@ -571,10 +585,10 @@ class _ParkingCardState extends State<ParkingCard> {
                     Center(
                       child: Container(
                         padding: const EdgeInsets.only(bottom: 30),
-                        child: Text.rich(
+                        child: const Text.rich(
                           TextSpan(children: [
                             TextSpan(
-                              text: message,
+                              text: 'Tài khoản của khách hàng không đủ tiền.',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 20,
@@ -582,7 +596,7 @@ class _ParkingCardState extends State<ParkingCard> {
                             ),
                             TextSpan(
                               text:
-                                  '\nBạn có chắc chắn cho xe rời bãi hay không ?',
+                                  '\nLựa chọn phương thức trả tiền để xe này có thể rời bãi?',
                               style: TextStyle(
                                 color: Colors.red,
                                 fontWeight: FontWeight.bold,
@@ -607,6 +621,23 @@ class _ParkingCardState extends State<ParkingCard> {
                         ),
                       ),
                     ),
+                    Text.rich(
+                      TextSpan(children: [
+                        const TextSpan(
+                            text: 'Số tiền phải trả: ',
+                            style: TextStyle(
+                                fontSize: 20
+                            )),
+                        TextSpan(
+                            text:
+                            '${NumberFormat("#,##0", "vi_VN").format(widget.vehicleData.totalPrice)}VNĐ',
+                            style: TextStyle(
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold
+                            ))
+                      ]),
+                      textAlign: TextAlign.center,
+                    ),
                   ],
                 ),
               ),
@@ -625,7 +656,7 @@ class _ParkingCardState extends State<ParkingCard> {
                             Navigator.of(context).pop();
                           },
                           child: const Text(
-                            'Hủy',
+                            'Ví',
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w600,
@@ -690,7 +721,7 @@ class _ParkingCardState extends State<ParkingCard> {
                             Navigator.of(context).pop();
                           },
                           child: const Text(
-                            'Xác nhận',
+                            'Tiền mặt',
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w600,

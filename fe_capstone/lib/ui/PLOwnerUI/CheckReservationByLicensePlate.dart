@@ -20,7 +20,6 @@ class CheckOutByLicensePlate extends StatefulWidget {
 
   const CheckOutByLicensePlate({Key? key, required this.updateUI})
       : super(key: key);
-
   @override
   State<CheckOutByLicensePlate> createState() => _ScanLicensePlateState();
 }
@@ -41,6 +40,15 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
 
   void update() {
     widget.updateUI();
+  }
+
+  void updateCheckCam() {
+    setState(() {
+      textScanning = false;
+      status = false;
+      scannedText = '';
+      imageFile = null;
+    });
   }
 
   @override
@@ -74,7 +82,6 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // if (textScanning) const CircularProgressIndicator(),
                 if (!textScanning && imageFile == null)
                   Container(
                     width: 300,
@@ -146,7 +153,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                           } else {
                             ReservationByLicensePlate data = snapshot.data!;
                             reservationIDByScan = data.reservationID;
-                            final checkStatus = data.status;
+                            final checkStatus = data.statusID;
                             print('status : $checkStatus');
                             if (checkStatus == 0) {
                               return Column(
@@ -205,7 +212,10 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                           MaterialPageRoute(
                                             builder: (context) =>
                                                 StrangerBooking(
-                                                    updateUI: update),
+                                                    updateUI: update,
+                                                    imageFile: imageFile,
+                                                    scannedText: scannedText,
+                                                updateCheckCamUI: updateCheckCam),
                                           ),
                                         );
                                       },
@@ -337,23 +347,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                           ),
                                         ],
                                       ),
-                                      if (checkStatus == 3)
-                                        Column(
-                                          children: [
-                                            const SizedBox(
-                                              height: 20,
-                                            ),
-                                            Center(
-                                              child: Text(
-                                                  'Khách hàng đã lấy trễ giờ',
-                                                  style: TextStyle(
-                                                      color: Colors.red,
-                                                      fontSize: 20 * fem,
-                                                      fontWeight:
-                                                          FontWeight.w400)),
-                                            ),
-                                          ],
-                                        ),
+
                                       if (checkStatus == 1)
                                         Row(
                                             mainAxisAlignment:
@@ -545,7 +539,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                                     _showUpdateVehicleExitDialog(
                                                         context,
                                                         checkStatus,
-                                                        data.customerID);
+                                                        data);
                                                   },
                                                   child: Center(
                                                     child: Text(
@@ -782,7 +776,9 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
   }
 
   Future<void> _showUpdateVehicleExitDialog(
-      BuildContext context, int checkStatus, String customerID) async {
+      BuildContext context,
+      int checkStatus,
+      ReservationByLicensePlate reservationByLicensePlate) async {
     await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -818,11 +814,25 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                         ),
                       ),
                     ),
+                    if (reservationByLicensePlate.customerName
+                        .contains('Khách Vãng Lai'))
+                      Padding(
+                        padding: const EdgeInsets.all(2.0),
+                        child: Container(
+                          width: 300 * fem,
+                          height: 300 * fem,
+                          margin: EdgeInsets.only(bottom: 10),
+                          child: Image.network(
+                            reservationByLicensePlate.image!,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
                     Center(
                       child: Container(
                         padding: const EdgeInsets.only(bottom: 30),
                         child: Text(
-                          scannedText,
+                          reservationByLicensePlate.licensePlate,
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 23,
@@ -831,20 +841,18 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                         ),
                       ),
                     ),
-                    if (checkStatus == 3)
-                      const Text.rich(
+                    if (reservationByLicensePlate.customerName
+                        .contains('Khách Vãng Lai'))
+                      Text.rich(
                         TextSpan(children: [
-                          TextSpan(
-                              text: '*Lưu ý: ',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                              )),
+                          const TextSpan(
+                              text: 'Số tiền phải trả: ',
+                              style: TextStyle(fontSize: 20)),
                           TextSpan(
                               text:
-                                  'Biển số xe này đã rời bãi trễ giờ. Phải đóng phí phạt',
+                                  '${NumberFormat("#,##0", "vi_VN").format(reservationByLicensePlate.total)}VNĐ',
                               style: TextStyle(
-                                fontSize: 18,
-                              ))
+                                  fontSize: 25, fontWeight: FontWeight.bold))
                         ]),
                         textAlign: TextAlign.center,
                       ),
@@ -898,9 +906,35 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                             try {
                               await ParkingAPI
                                       .checkoutReservationWithLicensePlate(
-                                          scannedText)
+                                  reservationByLicensePlate.licensePlate)
                                   .then((_) async {
-                                await FirebaseAPI.deleteUser(customerID)
+                                    if(reservationByLicensePlate.customerName.contains('Khách Vãng Lai')){
+                                      widget.updateUI();
+                                      WebSocketChannel channel =
+                                      IOWebSocketChannel.connect(BaseConstants
+                                          .WEBSOCKET_PRIVATE_RESERVATION_URL);
+                                      final message = {
+                                        "reservationID":
+                                        reservationIDByScan.toString(),
+                                        "content": "GetStatus"
+                                      };
+                                      final messageJson = jsonEncode(message);
+                                      channel.sink.add(messageJson);
+                                      print(messageJson);
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text('Check-out thành công'),
+                                        ),
+                                      );
+                                      setState(() {
+                                        imageFile = null;
+                                        scannedText = "";
+                                        status = false;
+                                      });
+                                      Navigator.of(context).pop();
+                                    } else {
+                                await FirebaseAPI.deleteUser(
+                                        reservationByLicensePlate.customerID)
                                     .then((_) {
                                   widget.updateUI();
                                   WebSocketChannel channel =
@@ -925,7 +959,8 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                     status = false;
                                   });
                                 });
-                              });
+                                Navigator.of(context).pop();
+                              }});
                             } catch (e) {
                               if (e is DioException) {
                                 if (e.response != null &&
@@ -937,10 +972,12 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                     final errorMessage = errorData['message'];
                                     print("Lỗi gặp phải là $errorMessage");
                                     if (errorMessage.contains(
-                                        'Failed checkOut user.Customer not enough wallet. Need')) {
+                                        'Failed checkOut user')) {
                                       Navigator.of(context).pop();
                                       _showUpdateVehicleExitDialogWithoutCondition(
-                                          context, convertErrorMessage(errorMessage), customerID);
+                                          context,
+                                          convertErrorMessage(errorMessage),
+                                          reservationByLicensePlate);
                                     }
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
@@ -953,7 +990,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                                 }
                               }
                             }
-                            Navigator.of(context).pop();
+
                           },
                           child: const Text(
                             'Xác nhận',
@@ -975,9 +1012,8 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
       },
     );
   }
-
   Future<void> _showUpdateVehicleExitDialogWithoutCondition(
-      BuildContext context, String message, String customerID) async {
+      BuildContext context, String message, ReservationByLicensePlate reservationByLicensePlate) async {
     await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -996,10 +1032,10 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                     Center(
                       child: Container(
                         padding: const EdgeInsets.only(bottom: 30),
-                        child: Text.rich(
+                        child: const Text.rich(
                           TextSpan(children: [
                             TextSpan(
-                              text: message,
+                              text: 'Tài khoản của khách hàng không đủ tiền.',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 20,
@@ -1007,7 +1043,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                             ),
                             TextSpan(
                               text:
-                                  '\nBạn có chắc chắn cho xe rời bãi hay không ?',
+                              '\nLựa chọn phương thức trả tiền để xe này có thể rời bãi?',
                               style: TextStyle(
                                 color: Colors.red,
                                 fontWeight: FontWeight.bold,
@@ -1023,7 +1059,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                       child: Container(
                         padding: const EdgeInsets.only(bottom: 30),
                         child: Text(
-                          scannedText,
+                          reservationByLicensePlate.licensePlate,
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 23,
@@ -1031,6 +1067,23 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                           textAlign: TextAlign.center,
                         ),
                       ),
+                    ),
+                    Text.rich(
+                      TextSpan(children: [
+                        const TextSpan(
+                            text: 'Số tiền phải trả: ',
+                            style: TextStyle(
+                                fontSize: 20
+                            )),
+                        TextSpan(
+                            text:
+                            '${NumberFormat("#,##0", "vi_VN").format(reservationByLicensePlate.total)}VNĐ',
+                            style: TextStyle(
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold
+                            ))
+                      ]),
+                      textAlign: TextAlign.center,
                     ),
                   ],
                 ),
@@ -1050,7 +1103,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                             Navigator.of(context).pop();
                           },
                           child: const Text(
-                            'Hủy',
+                            'Ví',
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w600,
@@ -1079,36 +1132,34 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                         ),
                         TextButton(
                           onPressed: () async {
-                            int reservationID =
-                                int.parse(reservationIDByScan.toString());
+
                             try {
                               await ParkingAPI.checkoutWithOutCondition(
-                                      reservationID)
+                                  reservationByLicensePlate.reservationID)
                                   .then((_) async {
-                                await FirebaseAPI.deleteUser(customerID)
+                                await FirebaseAPI.deleteUser(
+                                    reservationByLicensePlate.customerID)
                                     .then((_) {
                                   widget.updateUI();
                                   WebSocketChannel channel =
-                                      IOWebSocketChannel.connect(BaseConstants
-                                          .WEBSOCKET_PRIVATE_RESERVATION_URL);
+                                  IOWebSocketChannel.connect(BaseConstants
+                                      .WEBSOCKET_PRIVATE_RESERVATION_URL);
                                   final message = {
-                                    "reservationID":
-                                        reservationIDByScan.toString(),
+                                    "reservationID": reservationByLicensePlate.reservationID.toString(),
                                     "content": "GetStatus"
                                   };
-                                  final messageJson = jsonEncode(message);
-                                  channel.sink.add(messageJson);
-                                  print(messageJson);
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Check-out thành công'),
-                                    ),
-                                  );
                                   setState(() {
                                     imageFile = null;
                                     scannedText = "";
                                     status = false;
                                   });
+                                  final messageJson = jsonEncode(message);
+                                  channel.sink.add(messageJson);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Check-out thành công'),
+                                    ),
+                                  );
                                 });
                               });
                             } catch (e) {
@@ -1121,7 +1172,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                             Navigator.of(context).pop();
                           },
                           child: const Text(
-                            'Xác nhận',
+                            'Tiền mặt',
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w600,
@@ -1141,16 +1192,182 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
     );
   }
 
+  // Future<void> _showUpdateVehicleExitDialogWithoutCondition(
+  //     BuildContext context, String message, String customerID) async {
+  //   await showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return Dialog(
+  //         shape: RoundedRectangleBorder(
+  //           borderRadius: BorderRadius.circular(23),
+  //         ),
+  //         backgroundColor: const Color(0xffffffff),
+  //         child: Column(
+  //           mainAxisSize: MainAxisSize.min,
+  //           children: [
+  //             Container(
+  //               padding: const EdgeInsets.all(10),
+  //               child: Column(
+  //                 children: [
+  //                   Center(
+  //                     child: Container(
+  //                       padding: const EdgeInsets.only(bottom: 30),
+  //                       child: Text.rich(
+  //                         TextSpan(children: [
+  //                           TextSpan(
+  //                             text: message,
+  //                             style: TextStyle(
+  //                               fontWeight: FontWeight.bold,
+  //                               fontSize: 20,
+  //                             ),
+  //                           ),
+  //                           TextSpan(
+  //                             text:
+  //                                 '\nBạn có chắc chắn cho xe rời bãi hay không ?',
+  //                             style: TextStyle(
+  //                               color: Colors.red,
+  //                               fontWeight: FontWeight.bold,
+  //                               fontSize: 20,
+  //                             ),
+  //                           ),
+  //                         ]),
+  //                         textAlign: TextAlign.center,
+  //                       ),
+  //                     ),
+  //                   ),
+  //                   Center(
+  //                     child: Container(
+  //                       padding: const EdgeInsets.only(bottom: 30),
+  //                       child: Text(
+  //                         scannedText,
+  //                         style: const TextStyle(
+  //                           fontWeight: FontWeight.bold,
+  //                           fontSize: 23,
+  //                         ),
+  //                         textAlign: TextAlign.center,
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //             Row(
+  //               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //               children: [
+  //                 Expanded(
+  //                   child: Column(
+  //                     children: [
+  //                       Container(
+  //                         height: 1,
+  //                         color: Color(0xffb3abab),
+  //                       ),
+  //                       TextButton(
+  //                         onPressed: () {
+  //                           Navigator.of(context).pop();
+  //                         },
+  //                         child: const Text(
+  //                           'Hủy',
+  //                           style: TextStyle(
+  //                             fontSize: 20,
+  //                             fontWeight: FontWeight.w600,
+  //                             color: Color(0xff5767f5),
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ),
+  //                 Column(
+  //                   children: [
+  //                     Container(
+  //                       width: 1,
+  //                       height: 48,
+  //                       color: Color(0xffb3abab),
+  //                     ),
+  //                   ],
+  //                 ),
+  //                 Expanded(
+  //                   child: Column(
+  //                     children: [
+  //                       Container(
+  //                         height: 1,
+  //                         color: Color(0xffb3abab),
+  //                       ),
+  //                       TextButton(
+  //                         onPressed: () async {
+  //                           int reservationID =
+  //                               int.parse(reservationIDByScan.toString());
+  //                           try {
+  //                             await ParkingAPI.checkoutWithOutCondition(
+  //                                     reservationID)
+  //                                 .then((_) async {
+  //                               await FirebaseAPI.deleteUser(customerID)
+  //                                   .then((_) {
+  //                                 widget.updateUI();
+  //                                 WebSocketChannel channel =
+  //                                     IOWebSocketChannel.connect(BaseConstants
+  //                                         .WEBSOCKET_PRIVATE_RESERVATION_URL);
+  //                                 final message = {
+  //                                   "reservationID":
+  //                                       reservationIDByScan.toString(),
+  //                                   "content": "GetStatus"
+  //                                 };
+  //                                 final messageJson = jsonEncode(message);
+  //                                 channel.sink.add(messageJson);
+  //                                 print(messageJson);
+  //                                 ScaffoldMessenger.of(context).showSnackBar(
+  //                                   const SnackBar(
+  //                                     content: Text('Check-out thành công'),
+  //                                   ),
+  //                                 );
+  //                                 setState(() {
+  //                                   imageFile = null;
+  //                                   scannedText = "";
+  //                                   status = false;
+  //                                 });
+  //                               });
+  //                             });
+  //                           } catch (e) {
+  //                             ScaffoldMessenger.of(context).showSnackBar(
+  //                               const SnackBar(
+  //                                 content: Text('Việc check-out thất bại'),
+  //                               ),
+  //                             );
+  //                           }
+  //                           Navigator.of(context).pop();
+  //                         },
+  //                         child: const Text(
+  //                           'Xác nhận',
+  //                           style: TextStyle(
+  //                             fontSize: 20,
+  //                             fontWeight: FontWeight.w600,
+  //                             color: Color(0xffff3737),
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           ],
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
+
   String convertErrorMessage(String originalMessage) {
     if (originalMessage.contains('Failed checkOut user.')) {
-      String cleanedMessage = originalMessage.replaceAll('Failed checkOut user.', '');
+      String cleanedMessage =
+          originalMessage.replaceAll('Failed checkOut user.', '');
       cleanedMessage = cleanedMessage.replaceAllMapped(
         RegExp(r'(\d+\.\d+)'),
-            (match) => NumberFormat.currency(locale: 'vi_VN', symbol: 'VNĐ').format(double.parse(match.group(1)!)),
+        (match) => NumberFormat.currency(locale: 'vi_VN', symbol: 'VNĐ')
+            .format(double.parse(match.group(1)!)),
       );
       return cleanedMessage;
     }
     return originalMessage;
   }
-
 }

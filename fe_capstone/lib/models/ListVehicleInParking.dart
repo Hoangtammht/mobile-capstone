@@ -10,6 +10,8 @@ class ListVehicleInParking {
     required this.endTime,
     required this.methodName,
     required this.statusName,
+    required this.totalPrice,
+    required this.image,
   });
   late final String reservationID;
   late final String customerID;
@@ -21,6 +23,8 @@ class ListVehicleInParking {
   late final String endTime;
   late final String methodName;
   late final String statusName;
+  late final double totalPrice;
+  late final String image;
 
   ListVehicleInParking.fromJson(Map<String, dynamic> json) {
     reservationID = json['reservationID'] ?? '';
@@ -33,6 +37,8 @@ class ListVehicleInParking {
     endTime = json['endTime'] ?? '';
     methodName = json['methodName'] ?? '';
     statusName = json['statusName'] ?? '';
+    totalPrice = json['totalPrice'] ?? 0;
+    image = json['image'] ?? '';
   }
 
   Map<String, dynamic> toJson() {
@@ -47,6 +53,8 @@ class ListVehicleInParking {
     _data['endTime'] = endTime;
     _data['methodName'] = methodName;
     _data['statusName'] = statusName;
+    _data['totalPrice'] = totalPrice;
+    _data['image'] = image;
     return _data;
   }
 }
