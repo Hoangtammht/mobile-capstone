@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:fe_capstone/apis/FirebaseAPI.dart';
 import 'package:fe_capstone/apis/customer/ReservationAPI.dart';
 import 'package:fe_capstone/apis/plo/ParkingAPI.dart';
@@ -471,12 +472,36 @@ class _ScanLicensePlateState extends State<StrangerBooking> {
                                 }
                               });
                             } catch (e) {
-                              Navigator.of(context).pop();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Tạo giao dịch mới thất bại'),
-                                ),
-                              );
+                              if (e is DioException) {
+                                if (e.response != null &&
+                                    e.response!.statusCode == 500) {
+                                  final errorResponse = e.response!;
+                                  final errorData = errorResponse.data;
+                                  if (errorData is Map<String, dynamic> &&
+                                      errorData.containsKey('message')) {
+                                    final errorMessage = errorData['message'];
+                                    print("Lỗi gặp phải là $errorMessage");
+                                    if (errorMessage.contains(
+                                        'Current slot is invalid')) {
+                                      Navigator.of(context).pop();
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                              'Bãi xe hiện tại đã hết chỗ, xin vui lòng đặt nơi khác!'),
+                                        ),
+                                      );
+                                    }
+                                  } else {
+                                    Navigator.of(context).pop();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Tạo giao dịch mới thất bại'),
+                                      ),
+                                    );
+                                  }
+                                }
+                              }
+
                             }
                           },
                           child: const Text(
