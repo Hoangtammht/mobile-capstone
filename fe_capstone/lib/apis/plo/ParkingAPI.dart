@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -780,12 +781,12 @@ class ParkingAPI {
               'Content-Type': 'application/json',
             },
           ));
+      print('check: ${response.statusCode}');
+      print('check: ${response.data}');
 
       if (response.statusCode == 200) {
-        ReservationByLicensePlate reservationByLicensePlate = ReservationByLicensePlate(customerID: '',reservationID: 0,customerName: '', licensePlate: '', methodName: '', status: 0, statusName: '', checkIn: '', checkOut: '');
-        final status = response.data['status'];
-
-        if(status == 200){
+        ReservationByLicensePlate reservationByLicensePlate = ReservationByLicensePlate(customerID: '',reservationID: 0,customerName: '', licensePlate: '', methodName: '', statusID: 0, statusName: '', checkIn: '', checkOut: '', image: null,total: 0);
+        if(response.data['status'] == 200){
           print("get reservation by LicensePlate  successful");
           final data = response.data['data'];
           reservationByLicensePlate  = ReservationByLicensePlate.fromJson(data);

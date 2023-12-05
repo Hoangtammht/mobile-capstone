@@ -15,7 +15,14 @@ class ParkingDetailCard extends StatefulWidget {
   final String licensePlate;
   final int reservationID;
   final void Function() updateUI;
-  const ParkingDetailCard({Key? key, required this.type, required this.licensePlate, required this.reservationID, required this.updateUI}) : super(key: key);
+
+  const ParkingDetailCard(
+      {Key? key,
+      required this.type,
+      required this.licensePlate,
+      required this.reservationID,
+      required this.updateUI})
+      : super(key: key);
 
   @override
   State<ParkingDetailCard> createState() => _ParkingDetailCardState();
@@ -23,6 +30,7 @@ class ParkingDetailCard extends StatefulWidget {
 
 class _ParkingDetailCardState extends State<ParkingDetailCard> {
   late Future<ReservationDetail> reservationDetailFuture;
+
   @override
   void initState() {
     super.initState();
@@ -30,9 +38,8 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
   }
 
   Future<ReservationDetail> _getReservationDetailFuture() async {
-      return ParkingAPI.getReservationDetail(widget.reservationID);
+    return ParkingAPI.getReservationDetail(widget.reservationID);
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -67,18 +74,16 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
                   "Chủ xe sẽ nhận được thông báo khi bạn xóa xe khỏi bãi.",
                   "Xác nhận",
                   Color(0xffff3737),
-                      () async {
-                          int reservationID = widget.reservationID;
-                          try {
-                            await ParkingAPI.checkInReservation(reservationID);
-                            Navigator.popUntil(
-                                context, (route) => route.isFirst);
-                            widget.updateUI();
-                          } catch (e) {}
+                  () async {
+                    int reservationID = widget.reservationID;
+                    try {
+                      await ParkingAPI.checkInReservation(reservationID);
+                      Navigator.popUntil(context, (route) => route.isFirst);
+                      widget.updateUI();
+                    } catch (e) {}
                   },
                 );
               },
-
               icon: Icon(Icons.delete),
             ),
         ],
@@ -106,7 +111,8 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
               } else {
                 statusColor = Colors.red;
               }
-              return Column(
+              return SingleChildScrollView(
+                  child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
@@ -121,7 +127,8 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
-                          padding: EdgeInsets.fromLTRB(16 * fem, 30 * fem, 0, 0),
+                          padding:
+                              EdgeInsets.fromLTRB(16 * fem, 30 * fem, 0, 0),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
@@ -135,11 +142,12 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
                               ),
                               Spacer(),
                               Text(
-                                snapshot.connectionState == ConnectionState.waiting
+                                snapshot.connectionState ==
+                                        ConnectionState.waiting
                                     ? 'Đang tải...'
                                     : (reservationDetail != null
-                                    ? '${NumberFormat("#,##0", "vi_VN").format(reservationDetail.totalPrice != null && reservationDetail.totalPrice != 0.0 ? reservationDetail.totalPrice : reservationDetail.price)} đ'
-                                    : '${NumberFormat("#,##0", "vi_VN").format(0.0)} đ'),
+                                        ? '${NumberFormat("#,##0", "vi_VN").format(reservationDetail.totalPrice != null && reservationDetail.totalPrice != 0.0 ? reservationDetail.totalPrice : reservationDetail.price)} đ'
+                                        : '${NumberFormat("#,##0", "vi_VN").format(0.0)} đ'),
                                 style: TextStyle(
                                   fontSize: 22 * ffem,
                                   fontWeight: FontWeight.w600,
@@ -150,7 +158,8 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
                           ),
                         ),
                         Container(
-                          padding: EdgeInsets.fromLTRB(16 * fem, 25 * fem, 0, 0),
+                          padding:
+                              EdgeInsets.fromLTRB(16 * fem, 25 * fem, 0, 0),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
@@ -164,29 +173,38 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
                               ),
                               Spacer(),
                               Container(
-                                width:  100* fem,
+                                width: 100 * fem,
                                 height: 25 * fem,
                                 decoration: BoxDecoration(
                                   color: statusColor,
-                                  borderRadius: BorderRadius.circular(100 * fem),
+                                  borderRadius:
+                                      BorderRadius.circular(100 * fem),
                                 ),
                                 child: Center(
                                   child: Text(
-                                    snapshot.connectionState == ConnectionState.waiting
+                                    snapshot.connectionState ==
+                                            ConnectionState.waiting
                                         ? 'Đang tải...'
                                         : () {
-                                      if (reservationDetail?.statusName == 'Checked In') {
-                                        return 'Trong bãi';
-                                      } else if (reservationDetail?.statusName == 'Occupied') {
-                                        return 'Đang tới';
-                                      } else if (reservationDetail?.statusName == 'Overdue') {
-                                        return 'Trễ giờ';
-                                      } else if (reservationDetail?.statusName == 'Historical') {
-                                        return 'Đã rời';
-                                      } else {
-                                        return '';
-                                      }
-                                    }(),
+                                            if (reservationDetail?.statusName ==
+                                                'Checked In') {
+                                              return 'Trong bãi';
+                                            } else if (reservationDetail
+                                                    ?.statusName ==
+                                                'Occupied') {
+                                              return 'Đang tới';
+                                            } else if (reservationDetail
+                                                    ?.statusName ==
+                                                'Overdue') {
+                                              return 'Trễ giờ';
+                                            } else if (reservationDetail
+                                                    ?.statusName ==
+                                                'Historical') {
+                                              return 'Đã rời';
+                                            } else {
+                                              return '';
+                                            }
+                                          }(),
                                     style: TextStyle(
                                       fontSize: 22 * ffem,
                                       fontWeight: FontWeight.w600,
@@ -205,7 +223,8 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
                           ),
                         ),
                         Container(
-                          padding: EdgeInsets.fromLTRB(16 * fem, 25 * fem, 0, 0),
+                          padding:
+                              EdgeInsets.fromLTRB(16 * fem, 25 * fem, 0, 0),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
@@ -219,7 +238,10 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
                               ),
                               Spacer(),
                               Text(
-                                snapshot.connectionState == ConnectionState.waiting ? 'Đang tải...' : reservationDetail?.fullName ?? '',
+                                snapshot.connectionState ==
+                                        ConnectionState.waiting
+                                    ? 'Đang tải...'
+                                    : reservationDetail?.fullName ?? '',
                                 style: TextStyle(
                                   fontSize: 22 * ffem,
                                   fontWeight: FontWeight.w600,
@@ -229,34 +251,40 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
                             ],
                           ),
                         ),
-                        if(reservationDetail?.phoneNumber != '0000000000')
-                        Container(
-                          padding: EdgeInsets.fromLTRB(16 * fem, 21 * fem, 0, 0),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                'Số điện thoại',
-                                style: TextStyle(
-                                  fontSize: 22 * ffem,
-                                  fontWeight: FontWeight.w400,
-                                  height: 1.175 * ffem / fem,
-                                  color: Color(0xff5b5b5b),
+                        if (snapshot.connectionState !=
+                                ConnectionState.waiting &&
+                            reservationDetail?.phoneNumber != '0000000000')
+                          Container(
+                            padding:
+                                EdgeInsets.fromLTRB(16 * fem, 21 * fem, 0, 0),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Số điện thoại',
+                                  style: TextStyle(
+                                    fontSize: 22 * ffem,
+                                    fontWeight: FontWeight.w400,
+                                    height: 1.175 * ffem / fem,
+                                    color: Color(0xff5b5b5b),
+                                  ),
                                 ),
-                              ),
-                              Spacer(),
-                              Text(
-                                snapshot.connectionState == ConnectionState.waiting ? 'Đang tải...' : reservationDetail?.phoneNumber ?? '',
-                                style: TextStyle(
-                                  fontSize: 22 * ffem,
-                                  fontWeight: FontWeight.w600,
-                                  height: 1.2175 * ffem / fem,
-                                  color: Color(0xff000000),
+                                Spacer(),
+                                Text(
+                                  snapshot.connectionState ==
+                                          ConnectionState.waiting
+                                      ? 'Đang tải...'
+                                      : reservationDetail?.phoneNumber ?? '',
+                                  style: TextStyle(
+                                    fontSize: 22 * ffem,
+                                    fontWeight: FontWeight.w600,
+                                    height: 1.2175 * ffem / fem,
+                                    color: Color(0xff000000),
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Divider(
@@ -264,7 +292,8 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
                           ),
                         ),
                         Container(
-                          padding: EdgeInsets.fromLTRB(16 * fem, 15 * fem, 0, 0),
+                          padding:
+                              EdgeInsets.fromLTRB(16 * fem, 15 * fem, 0, 0),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
@@ -278,7 +307,10 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
                               ),
                               Spacer(),
                               Text(
-                                snapshot.connectionState == ConnectionState.waiting ? 'Đang tải...' : reservationDetail?.licensePlate ?? '',
+                                snapshot.connectionState ==
+                                        ConnectionState.waiting
+                                    ? 'Đang tải...'
+                                    : reservationDetail?.licensePlate ?? '',
                                 style: TextStyle(
                                   fontSize: 22 * ffem,
                                   fontWeight: FontWeight.w600,
@@ -295,7 +327,43 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
                           ),
                         ),
                         Container(
-                          padding: EdgeInsets.fromLTRB(16 * fem, 21 * fem, 0, 0),
+                          padding:
+                          EdgeInsets.fromLTRB(16 * fem, 15 * fem, 0, 0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Phương thức gửi',
+                                style: TextStyle(
+                                  fontSize: 22 * ffem,
+                                  fontWeight: FontWeight.w400,
+                                  color: Color(0xff5b5b5b),
+                                ),
+                              ),
+                              Spacer(),
+                              Text(
+                                snapshot.connectionState ==
+                                    ConnectionState.waiting
+                                    ? 'Đang tải...'
+                                    : reservationDetail?.methodName ?? '',
+                                style: TextStyle(
+                                  fontSize: 22 * ffem,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xff000000),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Divider(
+                            thickness: 1,
+                          ),
+                        ),
+                        Container(
+                          padding:
+                              EdgeInsets.fromLTRB(16 * fem, 21 * fem, 0, 0),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
@@ -309,9 +377,12 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
                               ),
                               Spacer(),
                               Text(
-                                snapshot.connectionState == ConnectionState.waiting
+                                snapshot.connectionState ==
+                                        ConnectionState.waiting
                                     ? 'Đang tải...'
-                                    : MyDateUtil.formatCheckInAndCheckOutDate(reservationDetail?.checkIn) ?? '',
+                                    : MyDateUtil.formatCheckInAndCheckOutDate(
+                                            reservationDetail?.checkIn) ??
+                                        'Chưa tới',
                                 style: TextStyle(
                                   fontSize: 22 * ffem,
                                   fontWeight: FontWeight.w600,
@@ -322,7 +393,8 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
                           ),
                         ),
                         Container(
-                          padding: EdgeInsets.fromLTRB(16 * fem, 10 * fem, 0, 0),
+                          padding:
+                              EdgeInsets.fromLTRB(16 * fem, 10 * fem, 0, 0),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
@@ -336,9 +408,12 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
                               ),
                               Spacer(),
                               Text(
-                                snapshot.connectionState == ConnectionState.waiting
+                                snapshot.connectionState ==
+                                        ConnectionState.waiting
                                     ? 'Đang tải...'
-                                    : MyDateUtil.formatCheckInAndCheckOutDate(reservationDetail?.checkOut) ?? '',
+                                    : MyDateUtil.formatCheckInAndCheckOutDate(
+                                            reservationDetail?.checkOut) ??
+                                        '',
                                 style: TextStyle(
                                   fontSize: 22 * ffem,
                                   fontWeight: FontWeight.w600,
@@ -351,8 +426,37 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
                       ],
                     ),
                   ),
+                  if (snapshot.connectionState != ConnectionState.waiting &&
+                      reservationDetail?.phoneNumber == '0000000000')
+                    Container(
+                      margin: EdgeInsets.only(bottom: 20, top: 10),
+                      child: Center(
+                        child: Column(children: [
+                          Container(
+                            margin: EdgeInsets.only(top: 30),
+                            child: Text(
+                              'Hình ảnh khách hàng',
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                              Padding(
+                                  padding: const EdgeInsets.all(2.0),
+                                  child: Container(
+                                    width: 300 * fem,
+                                    height: 300 * fem,
+                                    child: Image.network(
+                                      reservationDetail!.image,
+                                      fit: BoxFit.cover,
+
+                                    ),
+                                  ),
+                                )
+                        ]),
+                      ),
+                    )
                 ],
-              );
+              ));
             }
           },
         ),

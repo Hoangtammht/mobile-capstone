@@ -11,6 +11,8 @@ class ReservationDetail {
     required this.checkIn,
     required this.checkOut,
     required this.totalPrice,
+    required this.image,
+
   });
 
   late final String licensePlate;
@@ -24,6 +26,7 @@ class ReservationDetail {
   late final String checkIn;
   late final String checkOut;
   late final double totalPrice;
+  late final String image;
 
   ReservationDetail.fromJson(Map<String, dynamic> json){
     licensePlate = json['licensePlate'] ?? '';
@@ -37,6 +40,7 @@ class ReservationDetail {
     checkIn = json['checkIn'] ?? '';
     checkOut = json['checkOut'] ?? '';
     totalPrice = json['totalPrice'] ?? 0.0;
+    image = json['image'] ?? '';
   }
 
   Map<String, dynamic> toJson() {
@@ -52,6 +56,7 @@ class ReservationDetail {
     _data['checkIn'] = checkIn;
     _data['checkOut'] = checkOut;
     _data['totalPrice'] = totalPrice;
+    _data['image'] = image;
     return _data;
   }
 }
@@ -59,6 +64,68 @@ class ReservationDetail {
 
 class ReservationByLicensePlate {
   ReservationByLicensePlate({
+    required this.customerID,
+    required this.reservationID,
+    required this.customerName,
+    required this.methodName,
+    required this.statusID,
+    required this.statusName,
+    required this.checkIn,
+    required this.checkOut,
+    required this.licensePlate,
+    this.image,
+    required this.total,
+  });
+  late final String customerID;
+  late final int reservationID;
+  late final String customerName;
+  late final String methodName;
+  late final int statusID;
+  late final String statusName;
+  late final String checkIn;
+  late final String checkOut;
+  late final String licensePlate;
+  late final String? image;
+  late final double total;
+
+
+  ReservationByLicensePlate.fromJson
+      (Map<String, dynamic> json){
+    customerID = json['customerID'] ?? '';
+    reservationID = json['reservationID'] ?? 0;
+    customerName = json['customerName'] ?? '';
+    methodName = json['methodName'] ?? '';
+    statusID = json['statusID'] ?? 0;
+    statusName = json['statusName'] ?? '';
+    checkIn = json['checkIn'] ?? '';
+    checkOut = json['checkOut'] ?? '';
+    licensePlate = json['licensePlate'] ?? '';
+    image = json['image'];
+    total = json['total'] ?? 0;
+  }
+
+  Map<String, dynamic> toJson() {
+    final _data = <String, dynamic>{};
+    _data['customerID'] = customerID;
+    _data['reservationID'] = reservationID;
+    _data['customerName'] = customerName;
+    _data['licensePlate'] = licensePlate;
+    _data['methodName'] = methodName;
+    _data['statusID'] = statusID;
+    _data['statusName'] = statusName;
+    _data['checkIn'] = checkIn;
+    _data['checkOut'] = checkOut;
+    if (image != null) {
+      _data['image'] = image;
+    }
+    _data['total'] = total;
+    return _data;
+  }
+}
+
+
+class ReservationByLicensePlateForGuest {
+  ReservationByLicensePlateForGuest({
     required this.customerID,
     required this.reservationID,
     required this.customerName,
@@ -79,7 +146,7 @@ class ReservationByLicensePlate {
   late final String checkOut;
   late final String licensePlate;
 
-  ReservationByLicensePlate.fromJson
+  ReservationByLicensePlateForGuest.fromJson
       (Map<String, dynamic> json){
     customerID = json['customerID'] ?? '';
     reservationID = json['reservationID'] ?? 0;

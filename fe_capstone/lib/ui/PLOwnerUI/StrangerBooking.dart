@@ -18,7 +18,8 @@ class StrangerBooking extends StatefulWidget {
   final void Function() updateUI;
   final String? scannedText;
   final XFile? imageFile;
-  const StrangerBooking({Key? key, required this.updateUI, this.scannedText, this.imageFile}) : super(key: key);
+  final void Function()? updateCheckCamUI;
+  const StrangerBooking({Key? key, required this.updateUI, this.scannedText, this.imageFile, this.updateCheckCamUI}) : super(key: key);
 
   @override
   State<StrangerBooking> createState() => _ScanLicensePlateState();
@@ -47,7 +48,11 @@ class _ScanLicensePlateState extends State<StrangerBooking> {
         }
     });
   }
-
+ void UpdateCheckCam(){
+   if(widget.scannedText != null){
+     widget.updateCheckCamUI!();
+   }
+ }
   void Update() {
     widget.updateUI();
   }
@@ -64,7 +69,7 @@ class _ScanLicensePlateState extends State<StrangerBooking> {
               color: Colors.white,
             ),
             onPressed: () {
-
+              UpdateCheckCam();
               Navigator.of(context).pop();
             },
           ),
@@ -433,9 +438,6 @@ class _ScanLicensePlateState extends State<StrangerBooking> {
                         ),
                         TextButton(
                           onPressed: () async {
-                            // String? image = await ParkingAPI.uploadFile(
-                            //     File(imageFileStep1!.path));
-                            // String image2 = image!;
                             try {
                               await ReservationAPI.getBookingForStranger(
                                   image!,
