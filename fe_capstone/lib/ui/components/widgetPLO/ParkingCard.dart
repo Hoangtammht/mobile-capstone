@@ -394,7 +394,7 @@ class _ParkingCardState extends State<ParkingCard> {
                         ),
                       ),
                     ),
-                    if(widget.vehicleData.fullName.contains('Cus'))
+                    if(widget.vehicleData.fullName.contains('Khách Vãng Lai'))
                     Padding(
                       padding: const EdgeInsets.all(2.0),
                       child: Container(
@@ -420,7 +420,7 @@ class _ParkingCardState extends State<ParkingCard> {
                         ),
                       ),
                     ),
-                    if(widget.vehicleData.fullName.contains('Cus'))
+                    if(widget.vehicleData.fullName.contains('Khách Vãng Lai'))
                     Text.rich(
                       TextSpan(children: [
                       const TextSpan(
