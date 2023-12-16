@@ -815,7 +815,7 @@ class _ScanLicensePlateState extends State<CheckOutByLicensePlate> {
                       ),
                     ),
                     if (reservationByLicensePlate.customerName
-                        .contains('Khách Vãng Lai'))
+                        .contains('Khách Vãng Lai') && !reservationByLicensePlate.image!.contains('NoImageFile'))
                       Padding(
                         padding: const EdgeInsets.all(2.0),
                         child: Container(

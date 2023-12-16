@@ -427,7 +427,7 @@ class _ParkingDetailCardState extends State<ParkingDetailCard> {
                     ),
                   ),
                   if (snapshot.connectionState != ConnectionState.waiting &&
-                      reservationDetail?.phoneNumber == '0000000000')
+                      reservationDetail?.phoneNumber == '0000000000' && !reservationDetail!.image.contains('NoImageFile'))
                     Container(
                       margin: EdgeInsets.only(bottom: 20, top: 10),
                       child: Center(

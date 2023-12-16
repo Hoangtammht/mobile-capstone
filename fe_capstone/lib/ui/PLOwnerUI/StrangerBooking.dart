@@ -88,7 +88,7 @@ class _ScanLicensePlateState extends State<StrangerBooking> {
           type: StepperType.horizontal,
           steps: getSteps(),
           currentStep: currentStep,
-          onStepContinue: (currentStep == 0 && imageFileStep1 == null) ||
+          onStepContinue:
                   (currentStep == 1 && imageFileStep2 == null)
               ? null
               : () async {
@@ -96,12 +96,19 @@ class _ScanLicensePlateState extends State<StrangerBooking> {
                   if (isLastStep) {
                     _showCreateBookingDialog(context);
                   } else {
-                    String? imageLink = await ParkingAPI.uploadFile(
-                        File(imageFileStep1!.path));
-                   setState(() {
-                     currentStep +=1;
-                     image = imageLink;
-                   });
+                    if(imageFileStep1 == null){
+                      setState(() {
+                        currentStep +=1;
+                        image = 'NoImageFile';
+                      });
+                    } else {
+                      String? imageLink = await ParkingAPI.uploadFile(
+                          File(imageFileStep1!.path));
+                      setState(() {
+                        currentStep +=1;
+                        image = imageLink;
+                      });
+                    }
                   }
                 },
           onStepTapped: (step) => setState(() => currentStep = step),
@@ -120,7 +127,7 @@ class _ScanLicensePlateState extends State<StrangerBooking> {
                   const SizedBox(width: 12),
                   Expanded(
                       child: ElevatedButton(
-                    child: Text('Tiếp tục'),
+                    child: Text(currentStep == 0 ? 'Bỏ qua' : 'Tiếp tục'),
                     onPressed: details.onStepContinue,
                   )),
                 ],
@@ -155,6 +162,10 @@ class _ScanLicensePlateState extends State<StrangerBooking> {
                         // Đặt padding cho phía bên trái và phải là 20
                         child: Image.file(File(imageFileStep1!.path)),
                       ),
+                    Container(
+                      margin: EdgeInsets.only(top: 20),
+                      child: Text('Chụp hình khách hàng và xe' ,style: TextStyle(fontSize:  25, fontWeight: FontWeight.bold),),
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -209,7 +220,7 @@ class _ScanLicensePlateState extends State<StrangerBooking> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // if (textScanning) const CircularProgressIndicator(),
+
                     if (!textScanningStep2 && imageFileStep2 == null)
                       Container(
                         width: 300,
@@ -220,9 +231,13 @@ class _ScanLicensePlateState extends State<StrangerBooking> {
                       Container(
                         padding:
                             EdgeInsets.only(left: 20 * fem, right: 20 * fem),
-                        // Đặt padding cho phía bên trái và phải là 20
+
                         child: Image.file(File(imageFileStep2!.path)),
                       ),
+                    Container(
+                      margin: EdgeInsets.only(top: 20),
+                      child: Text('Chụp hình biển số' ,style: TextStyle(fontSize:  25, fontWeight: FontWeight.bold),),
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
